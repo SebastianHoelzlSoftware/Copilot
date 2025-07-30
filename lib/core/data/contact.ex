@@ -26,9 +26,9 @@ defmodule CopilotApi.Core.Data.Contact do
     if Enum.any?(missing_keys) do
       {:error, {:missing_required_fields, missing_keys}}
     else
-      with {:ok, name} <- Name.new(attrs.name),
-           {:ok, email} <- Email.new(attrs.email),
-           {:ok, address} <- Address.new(attrs.address) do
+      with {:ok, name} <- Name.new(attrs[:name]),
+           {:ok, email} <- Email.new(attrs[:email]),
+           {:ok, address} <- Address.new(attrs[:address]) do
         {:ok, struct(__MODULE__, name: name, email: email, address: address)}
       end
     end
