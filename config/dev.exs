@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :copilot_api, CopilotApi.Repo,
   username: "postgres",
-  password: "postgres",
+  password: "getthefuckoutofmysystembitch",
   hostname: "localhost",
   database: "copilot_api_dev",
   stacktrace: true,

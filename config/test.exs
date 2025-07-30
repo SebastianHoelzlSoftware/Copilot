@@ -7,7 +7,7 @@ import Config
 # Run `mix help test` for more information.
 config :copilot_api, CopilotApi.Repo,
   username: "postgres",
-  password: "postgres",
+  password: "getthefuckoutofmysystembitch",
   hostname: "localhost",
   database: "copilot_api_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
