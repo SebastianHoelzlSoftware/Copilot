@@ -17,12 +17,10 @@ defmodule CopilotApi.Core.Data.Address do
   Creates a new Address struct.
   Returns `{:ok, struct}` on success, `{:error, reason}` on validation failure.
   """
-  def new(attrs) do
-    # Ensure attrs is a map
-    unless is_map(attrs), do: {:error, :invalid_attributes_type}
-
+  def new(attrs) when is_map(attrs) do
     # Check for enforced keys
     missing_keys = Enum.filter(@enforce_keys, &(!Map.has_key?(attrs, &1)))
+
     if Enum.any?(missing_keys) do
       {:error, {:missing_required_fields, missing_keys}}
     else
@@ -33,13 +31,21 @@ defmodule CopilotApi.Core.Data.Address do
     end
   end
 
+  def new(_), do: {:error, :invalid_attributes_type}
+
   @doc """
   Returns a formatted string of the address.
   """
   def format(%__MODULE__{} = address) do
-    formatted_address = "#{address.street}"
-    formatted_address = if address.street_additional, do: formatted_address <> "\n#{address.street_additional}", else: formatted_address
-    formatted_address <> "\n#{address.city}\n#{address.postal_code}\n#{address.country}"
+    [
+      address.street,
+      address.street_additional,
+      address.city,
+      address.postal_code,
+      address.country
+    ]
+    |> Enum.reject(&is_nil/1)
+    |> Enum.join("\n")
   end
 
   @type t() :: %__MODULE__{

@@ -2,8 +2,6 @@ defmodule CopilotApi.Core.Data.Email do
   @moduledoc "Represents a validated email address."
   defstruct [:address]
 
-  @enforce_keys [:address]
-
   @type t() :: %__MODULE__{address: String.t()}
 
   @doc """

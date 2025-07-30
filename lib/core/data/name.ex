@@ -17,10 +17,7 @@ defmodule CopilotApi.Core.Data.Name do
   Expects `attrs` to be a map of name attributes.
   Returns `{:ok, struct}` on success, `{:error, reason}` on validation failure.
   """
-  def new(attrs) do
-    # Ensure attrs is a map, allowing empty map for default nil values
-    unless is_map(attrs), do: {:error, :invalid_attributes_type}
-
+  def new(attrs) when is_map(attrs) do
     # If you had @enforce_keys, you would check them here:
     # missing_keys = Enum.filter(@enforce_keys, &(!Map.has_key?(attrs, &1)))
     # if Enum.any?(missing_keys), do: {:error, {:missing_required_fields, missing_keys}}
@@ -30,15 +27,23 @@ defmodule CopilotApi.Core.Data.Name do
     filtered_attrs = Map.take(attrs, defined_keys)
 
     # Basic type validation for provided attributes
-    Enum.each(filtered_attrs, fn {key, value} ->
-      unless is_binary(value) do
-        {:error, {:"invalid_#{key}_type", value}}
-      end
-    end)
-    # If no error found, return success
-    {:ok, struct(__MODULE__, filtered_attrs)}
+    with :ok <- validate_attribute_types(filtered_attrs) do
+      {:ok, struct(__MODULE__, filtered_attrs)}
+    end
   end
 
+  def new(_), do: {:error, :invalid_attributes_type}
+
+  defp validate_attribute_types(attrs) do
+    Enum.reduce_while(attrs, :ok, fn {key, value}, _acc ->
+      # nil is a valid value for all fields
+      if is_nil(value) or is_binary(value) do
+        {:cont, :ok}
+      else
+        {:halt, {:error, {:"invalid_#{key}_type", value}}}
+      end
+    end)
+  end
 
   @type t() :: %__MODULE__{
     company_name: String.t() | nil,
