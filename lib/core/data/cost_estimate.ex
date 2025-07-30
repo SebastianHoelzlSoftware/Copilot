@@ -1,35 +1,31 @@
 defmodule CopilotApi.Core.Data.CostEstimate do
-  @moduledoc "Represents a preliminary cost estimate."
+  @moduledoc "Represents a cost estimate for a project or service."
+  use Ecto.Schema
+  import Ecto.Changeset
 
-  defstruct [:amount, :currency, :details]
+  alias CopilotApi.Core.Data.Customer
 
-  @enforce_keys [:amount, :currency]
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+  schema "cost_estimates" do
+    field :amount, :decimal
+    field :currency, :string
+    field :details, :string
 
-  @type t() :: %__MODULE__{
-          amount: number(),
-          currency: String.t(),
-          details: String.t() | nil
-        }
+    # Assuming a cost estimate belongs to a customer
+    belongs_to :customer, Customer
 
-  def new(attrs) when is_map(attrs) do
-    missing_keys = Enum.filter(@enforce_keys, &(!Map.has_key?(attrs, &1)))
-
-    if Enum.any?(missing_keys) do
-      {:error, {:missing_required_fields, missing_keys}}
-    else
-      with :ok <- validate_amount(attrs[:amount]),
-           :ok <- validate_currency(attrs[:currency]) do
-        filtered_attrs = Map.take(attrs, [:amount, :currency, :details])
-        {:ok, struct(__MODULE__, filtered_attrs)}
-      end
-    end
+    timestamps()
   end
 
-  def new(_), do: {:error, :invalid_attributes_type}
-
-  defp validate_amount(amount) when is_number(amount), do: :ok
-  defp validate_amount(_), do: {:error, :invalid_amount}
-
-  defp validate_currency(currency) when is_binary(currency) and currency != "", do: :ok
-  defp validate_currency(_), do: {:error, :invalid_currency}
+  @doc """
+  Builds a changeset for a CostEstimate.
+  """
+  def changeset(cost_estimate, attrs) do
+    cost_estimate
+    |> cast(attrs, [:amount, :currency, :details, :customer_id])
+    |> validate_required([:amount, :currency, :customer_id])
+    |> validate_number(:amount, greater_than: 0)
+    |> foreign_key_constraint(:customer_id)
+  end
 end

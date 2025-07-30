@@ -1,61 +1,69 @@
 defmodule CopilotApi.Core.Data.ProjectBriefTest do
-  use ExUnit.Case, async: true
+  use CopilotApi.DataCase, async: true
 
   alias CopilotApi.Core.Data.ProjectBrief
+  alias CopilotApi.Core.Data.Customer
+  alias CopilotApi.Repo
 
-  defp valid_attrs do
-    %{
-      id: "brief_123",
-      customer_id: "cust_456",
-      title: "New Website",
-      summary: "A brief summary of the project."
-    }
+  defp customer_fixture do
+    {:ok, customer} =
+      %Customer{}
+      |> Customer.changeset(%{name: %{company_name: "Test Co"}})
+      |> Repo.insert()
+
+    customer
   end
 
-  describe "new/1" do
-    test "creates a project brief with valid attributes" do
-      assert {:ok, %ProjectBrief{} = brief} = ProjectBrief.new(valid_attrs())
-      assert brief.id == "brief_123"
-      assert brief.customer_id == "cust_456"
-      assert brief.title == "New Website"
-      assert brief.summary == "A brief summary of the project."
-      assert brief.status == :new
-      assert brief.developer_id == nil
-      assert brief.ai_analysis == nil
-    end
+  describe "changeset/2" do
+    test "creates a valid changeset with valid attributes" do
+      customer = customer_fixture()
 
-    test "returns an error for missing required fields" do
-      attrs = Map.drop(valid_attrs(), [:title])
-      assert {:error, {:missing_required_fields, [:title]}} = ProjectBrief.new(attrs)
-    end
-
-    test "returns an error for invalid id" do
-      attrs = Map.put(valid_attrs(), :id, "")
-      assert {:error, :invalid_id_format} = ProjectBrief.new(attrs)
-    end
-
-    test "creates a project brief with an optional developer_id" do
-      attrs = Map.put(valid_attrs(), :developer_id, "dev_789")
-      assert {:ok, %ProjectBrief{} = brief} = ProjectBrief.new(attrs)
-      assert brief.developer_id == "dev_789"
-    end
-
-    test "returns an error for an invalid developer_id" do
-      attrs = Map.put(valid_attrs(), :developer_id, 123)
-      assert {:error, :invalid_developer_id_format} = ProjectBrief.new(attrs)
-    end
-
-    test "can be created with an AI analysis" do
-      ai_attrs = %{
-        cost_estimate: %{amount: 1000, currency: "USD"},
-        suggested_blocks: [%{name: "Auth"}],
-        clarifying_questions: [%{question: "What is the deadline?"}],
-        identified_ambiguities: ["Unclear scope"]
+      attrs = %{
+        title: "New Website",
+        summary: "A brief summary of the project.",
+        customer_id: customer.id
       }
-      attrs = Map.put(valid_attrs(), :ai_analysis, ai_attrs)
 
-      assert {:ok, %ProjectBrief{ai_analysis: %CopilotApi.Core.Data.AIAnalysis{}} = brief} = ProjectBrief.new(attrs)
-      assert brief.ai_analysis.cost_estimate.amount == 1000
+      changeset = ProjectBrief.changeset(%ProjectBrief{}, attrs)
+      assert changeset.valid?
+    end
+
+    test "is invalid without a title" do
+      customer = customer_fixture()
+      attrs = %{summary: "A brief summary.", customer_id: customer.id}
+      changeset = ProjectBrief.changeset(%ProjectBrief{}, attrs)
+      refute changeset.valid?
+      assert %{title: ["can't be blank"]} = errors_on(changeset)
+    end
+
+    test "creates a valid changeset with a nested AI analysis" do
+      customer = customer_fixture()
+
+      attrs = %{
+        title: "New Website",
+        summary: "A brief summary.",
+        customer_id: customer.id,
+        ai_analysis: %{
+          suggested_blocks: [%{name: "User Auth"}],
+          cost_estimate: %{
+            amount: Decimal.new("2500"),
+            currency: "EUR",
+            # The cost_estimate changeset requires a customer_id.
+            # cast_assoc will handle creating this correctly, but we need to provide it.
+            customer_id: customer.id
+          }
+        }
+      }
+
+      changeset = ProjectBrief.changeset(%ProjectBrief{}, attrs)
+      assert changeset.valid?
+
+      # Check the nested association
+      analysis_changeset = get_change(changeset, :ai_analysis)
+      assert analysis_changeset.valid?
+      cost_estimate_changeset = get_change(analysis_changeset, :cost_estimate)
+      assert cost_estimate_changeset.valid?
+      assert get_field(cost_estimate_changeset, :amount) == Decimal.new("2500")
     end
   end
 end

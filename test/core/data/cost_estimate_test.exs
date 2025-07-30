@@ -1,45 +1,63 @@
 defmodule CopilotApi.Core.Data.CostEstimateTest do
-  use ExUnit.Case, async: true
+  use CopilotApi.DataCase, async: true
 
   alias CopilotApi.Core.Data.CostEstimate
+  alias CopilotApi.Core.Data.Customer
+  alias CopilotApi.Repo
 
-  describe "new/1" do
-    test "creates a cost estimate with valid attributes" do
-      attrs = %{amount: 1500, currency: "USD", details: "Initial estimate"}
-      assert {:ok, %CostEstimate{} = estimate} = CostEstimate.new(attrs)
-      assert estimate.amount == 1500
-      assert estimate.currency == "USD"
-      assert estimate.details == "Initial estimate"
+  defp customer_fixture do
+    {:ok, customer} =
+      %Customer{}
+      |> Customer.changeset(%{name: %{company_name: "Test Co"}})
+      |> Repo.insert()
+
+    customer
+  end
+
+  describe "changeset/2" do
+    test "creates a valid changeset with valid attributes" do
+      customer = customer_fixture()
+
+      attrs = %{
+        amount: Decimal.new("1500.50"),
+        currency: "USD",
+        details: "Initial estimate",
+        customer_id: customer.id
+      }
+
+      changeset = CostEstimate.changeset(%CostEstimate{}, attrs)
+      assert changeset.valid?
     end
 
-    test "creates a cost estimate without optional details" do
-      attrs = %{amount: 200.50, currency: "EUR"}
-      assert {:ok, %CostEstimate{} = estimate} = CostEstimate.new(attrs)
-      assert estimate.amount == 200.50
-      assert estimate.currency == "EUR"
-      assert estimate.details == nil
+    test "creates a valid changeset without optional details" do
+      customer = customer_fixture()
+      attrs = %{amount: Decimal.new("200.50"), currency: "EUR", customer_id: customer.id}
+      changeset = CostEstimate.changeset(%CostEstimate{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :details) == nil
     end
 
-    test "returns an error for missing required fields" do
-      attrs = %{amount: 100}
-      assert {:error, {:missing_required_fields, [:currency]}} = CostEstimate.new(attrs)
+    test "is invalid for missing required fields" do
+      customer = customer_fixture()
+      attrs = %{amount: Decimal.new("100"), customer_id: customer.id}
+      changeset = CostEstimate.changeset(%CostEstimate{}, attrs)
+      refute changeset.valid?
+      assert %{currency: ["can't be blank"]} = errors_on(changeset)
     end
 
-    test "returns an error for invalid amount" do
-      attrs = %{amount: "not a number", currency: "USD"}
-      assert {:error, :invalid_amount} = CostEstimate.new(attrs)
+    test "is invalid for non-numeric amount" do
+      customer = customer_fixture()
+      attrs = %{amount: "not a number", currency: "USD", customer_id: customer.id}
+      changeset = CostEstimate.changeset(%CostEstimate{}, attrs)
+      refute changeset.valid?
+      assert %{amount: ["is invalid"]} = errors_on(changeset)
     end
 
-    test "returns an error for invalid currency" do
-      attrs = %{amount: 100, currency: ""}
-      assert {:error, :invalid_currency} = CostEstimate.new(attrs)
-
-      attrs = %{amount: 100, currency: 123}
-      assert {:error, :invalid_currency} = CostEstimate.new(attrs)
-    end
-
-    test "returns an error if attributes are not a map" do
-      assert {:error, :invalid_attributes_type} = CostEstimate.new("not a map")
+    test "is invalid for missing customer" do
+      attrs = %{amount: Decimal.new("100"), currency: "USD"}
+      changeset = CostEstimate.changeset(%CostEstimate{}, attrs)
+      refute changeset.valid?
+      assert %{customer_id: ["can't be blank"]} = errors_on(changeset)
     end
   end
 end

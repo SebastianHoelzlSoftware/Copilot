@@ -1,27 +1,39 @@
 defmodule CopilotApi.Core.Data.BuildingBlockTest do
-  use ExUnit.Case, async: true
+  use CopilotApi.DataCase, async: true
 
   alias CopilotApi.Core.Data.BuildingBlock
 
-  describe "new/1" do
-    test "creates a building block with valid attributes" do
-      attrs = %{name: "User Authentication", description: "OAuth2 integration"}
-      assert {:ok, %BuildingBlock{} = block} = BuildingBlock.new(attrs)
-      assert block.name == "User Authentication"
-      assert block.description == "OAuth2 integration"
+  describe "changeset/2" do
+    test "creates a valid changeset with valid attributes" do
+      attrs = %{name: "User Authentication", description: "Handles user login and registration."}
+      changeset = BuildingBlock.changeset(%BuildingBlock{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :name) == "User Authentication"
+      assert get_field(changeset, :description) == "Handles user login and registration."
     end
 
-    test "returns an error if name is missing" do
-      attrs = %{description: "A block without a name"}
-      assert {:error, :missing_or_invalid_name} = BuildingBlock.new(attrs)
+    test "creates a valid changeset without optional description" do
+      attrs = %{name: "User Authentication"}
+      changeset = BuildingBlock.changeset(%BuildingBlock{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :description) == nil
     end
 
-    test "returns an error if name is not a non-empty string" do
+    test "is invalid if name is missing" do
+      attrs = %{description: "A description without a name"}
+      changeset = BuildingBlock.changeset(%BuildingBlock{}, attrs)
+
+      refute changeset.valid?
+      assert %{name: ["can't be blank"]} = errors_on(changeset)
+    end
+
+    test "is invalid if name is a blank string" do
       attrs = %{name: ""}
-      assert {:error, :missing_or_invalid_name} = BuildingBlock.new(attrs)
-
-      attrs = %{name: 123}
-      assert {:error, :missing_or_invalid_name} = BuildingBlock.new(attrs)
+      changeset = BuildingBlock.changeset(%BuildingBlock{}, attrs)
+      refute changeset.valid?
+      assert %{name: ["can't be blank"]} = errors_on(changeset)
     end
   end
 end

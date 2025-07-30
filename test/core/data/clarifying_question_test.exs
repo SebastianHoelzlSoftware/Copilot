@@ -1,27 +1,39 @@
 defmodule CopilotApi.Core.Data.ClarifyingQuestionTest do
-  use ExUnit.Case, async: true
+  use CopilotApi.DataCase, async: true
 
   alias CopilotApi.Core.Data.ClarifyingQuestion
 
-  describe "new/1" do
-    test "creates a question with valid attributes" do
-      attrs = %{question: "What is the primary goal?", answer: "To increase user engagement."}
-      assert {:ok, %ClarifyingQuestion{} = q} = ClarifyingQuestion.new(attrs)
-      assert q.question == "What is the primary goal?"
-      assert q.answer == "To increase user engagement."
+  describe "changeset/2" do
+    test "creates a valid changeset with valid attributes" do
+      attrs = %{question: "What is the primary goal?", answer_type: "multiple_choice"}
+      changeset = ClarifyingQuestion.changeset(%ClarifyingQuestion{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :question) == "What is the primary goal?"
+      assert get_field(changeset, :answer_type) == "multiple_choice"
     end
 
-    test "returns an error if question is missing" do
-      attrs = %{answer: "An answer without a question"}
-      assert {:error, :missing_or_invalid_question} = ClarifyingQuestion.new(attrs)
+    test "creates a valid changeset with default answer_type" do
+      attrs = %{question: "What is the primary goal?"}
+      changeset = ClarifyingQuestion.changeset(%ClarifyingQuestion{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :answer_type) == "text"
     end
 
-    test "returns an error if question is not a non-empty string" do
+    test "is invalid if question is missing" do
+      attrs = %{answer_type: "text"}
+      changeset = ClarifyingQuestion.changeset(%ClarifyingQuestion{}, attrs)
+
+      refute changeset.valid?
+      assert %{question: ["can't be blank"]} = errors_on(changeset)
+    end
+
+    test "is invalid if question is a blank string" do
       attrs = %{question: ""}
-      assert {:error, :missing_or_invalid_question} = ClarifyingQuestion.new(attrs)
-
-      attrs = %{question: 123}
-      assert {:error, :missing_or_invalid_question} = ClarifyingQuestion.new(attrs)
+      changeset = ClarifyingQuestion.changeset(%ClarifyingQuestion{}, attrs)
+      refute changeset.valid?
+      assert %{question: ["can't be blank"]} = errors_on(changeset)
     end
   end
 end

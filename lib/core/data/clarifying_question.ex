@@ -1,21 +1,17 @@
 defmodule CopilotApi.Core.Data.ClarifyingQuestion do
-  @moduledoc "Represents a question to clarify project requirements."
+  @moduledoc "An embedded schema for a clarifying question."
+  use Ecto.Schema
+  import Ecto.Changeset
 
-  defstruct [:question, :answer]
-
-  @type t() :: %__MODULE__{
-          question: String.t(),
-          answer: String.t() | nil
-        }
-
-  def new(attrs) when is_map(attrs) do
-    if Map.get(attrs, :question) |> is_binary() and Map.get(attrs, :question) != "" do
-      filtered_attrs = Map.take(attrs, [:question, :answer])
-      {:ok, struct(__MODULE__, filtered_attrs)}
-    else
-      {:error, :missing_or_invalid_question}
-    end
+  @primary_key false
+  embedded_schema do
+    field :question, :string
+    field :answer_type, :string, default: "text"
   end
 
-  def new(_), do: {:error, :invalid_attributes_type}
+  def changeset(question, attrs) do
+    question
+    |> cast(attrs, [:question, :answer_type])
+    |> validate_required([:question])
+  end
 end

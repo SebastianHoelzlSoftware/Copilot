@@ -1,21 +1,17 @@
 defmodule CopilotApi.Core.Data.BuildingBlock do
-  @moduledoc "Represents a suggested software building block."
+  @moduledoc "An embedded schema for a suggested building block."
+  use Ecto.Schema
+  import Ecto.Changeset
 
-  defstruct [:name, :description]
-
-  @type t() :: %__MODULE__{
-          name: String.t(),
-          description: String.t() | nil
-        }
-
-  def new(attrs) when is_map(attrs) do
-    if Map.get(attrs, :name) |> is_binary() and Map.get(attrs, :name) != "" do
-      filtered_attrs = Map.take(attrs, [:name, :description])
-      {:ok, struct(__MODULE__, filtered_attrs)}
-    else
-      {:error, :missing_or_invalid_name}
-    end
+  @primary_key false
+  embedded_schema do
+    field :name, :string
+    field :description, :string
   end
 
-  def new(_), do: {:error, :invalid_attributes_type}
+  def changeset(block, attrs) do
+    block
+    |> cast(attrs, [:name, :description])
+    |> validate_required([:name])
+  end
 end

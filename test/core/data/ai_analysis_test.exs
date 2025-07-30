@@ -1,42 +1,50 @@
 defmodule CopilotApi.Core.Data.AIAnalysisTest do
-  use ExUnit.Case, async: true
+  use CopilotApi.DataCase, async: true
 
   alias CopilotApi.Core.Data.AIAnalysis
+  alias CopilotApi.Core.Data.CostEstimate
+  alias CopilotApi.Core.Data.Customer
+  alias CopilotApi.Repo
 
-  defp valid_attrs do
-    %{
-      suggested_blocks: [%{name: "User Auth", description: "Handles login"}],
-      clarifying_questions: [%{question: "What is the target audience?"}],
-      cost_estimate: %{amount: 5000, currency: "USD"},
-      identified_ambiguities: ["The payment flow is not detailed."]
-    }
+  defp cost_estimate_fixture do
+    customer =
+      %Customer{}
+      |> Customer.changeset(%{name: %{company_name: "Test Co"}})
+      |> Repo.insert!()
+
+    {:ok, cost_estimate} =
+      %CostEstimate{}
+      |> CostEstimate.changeset(%{
+        amount: Decimal.new("1000"),
+        currency: "USD",
+        customer_id: customer.id
+      })
+      |> Repo.insert()
+
+    cost_estimate
   end
 
-  describe "new/1" do
-    test "creates an AI analysis with all attributes" do
-      assert {:ok, %AIAnalysis{} = analysis} = AIAnalysis.new(valid_attrs())
-      assert length(analysis.suggested_blocks) == 1
-      assert length(analysis.clarifying_questions) == 1
-      assert analysis.cost_estimate.amount == 5000
-      assert analysis.identified_ambiguities == ["The payment flow is not detailed."]
-    end
+  describe "changeset/2" do
+    test "creates a valid changeset with valid attributes" do
+      cost_estimate = cost_estimate_fixture()
 
-    test "creates with an empty map, using defaults" do
-      assert {:ok, %AIAnalysis{} = analysis} = AIAnalysis.new(%{})
-      assert analysis.suggested_blocks == []
-      assert analysis.clarifying_questions == []
-      assert analysis.cost_estimate == nil
-      assert analysis.identified_ambiguities == []
-    end
+      attrs = %{
+        suggested_blocks: [
+          %{name: "User Auth", description: "Handle user login and registration."}
+        ],
+        clarifying_questions: [
+          %{question: "What is the target audience?"}
+        ],
+        identified_ambiguities: ["The payment gateway is not specified."],
+        cost_estimate_id: cost_estimate.id
+      }
 
-    test "propagates errors from nested structs" do
-      # Invalid cost estimate
-      attrs = Map.put(valid_attrs(), :cost_estimate, %{amount: "invalid", currency: "USD"})
-      assert {:error, :invalid_amount} = AIAnalysis.new(attrs)
+      changeset = AIAnalysis.changeset(%AIAnalysis{}, attrs)
+      assert changeset.valid?
 
-      # Invalid building block
-      attrs = Map.put(valid_attrs(), :suggested_blocks, [%{description: "missing name"}])
-      assert {:error, :missing_or_invalid_name} = AIAnalysis.new(attrs)
+      # Check nested embeds
+      block_changeset = hd(changeset.changes.suggested_blocks)
+      assert get_field(block_changeset, :name) == "User Auth"
     end
   end
 end
