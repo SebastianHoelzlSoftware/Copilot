@@ -3,13 +3,14 @@ defmodule CopilotApi.Core.Data.ProjectBrief do
 
   alias CopilotApi.Core.Data.AIAnalysis
 
-  defstruct [:id, :customer_id, :title, :summary, :status, :ai_analysis]
+  defstruct [:id, :customer_id, :developer_id, :title, :summary, :status, :ai_analysis]
 
   @enforce_keys [:id, :customer_id, :title, :summary]
 
   @type t() :: %__MODULE__{
           id: String.t(),
           customer_id: String.t(),
+          developer_id: String.t() | nil,
           title: String.t(),
           summary: String.t(),
           status: :new | :under_review | :accepted | :declined,
@@ -24,6 +25,7 @@ defmodule CopilotApi.Core.Data.ProjectBrief do
     else
       with :ok <- validate_id(attrs[:id]),
            :ok <- validate_customer_id(attrs[:customer_id]),
+           :ok <- validate_developer_id(Map.get(attrs, :developer_id)),
            :ok <- validate_title(attrs[:title]),
            :ok <- validate_summary(attrs[:summary]),
            {:ok, ai_analysis} <- new_ai_analysis(Map.get(attrs, :ai_analysis)) do
@@ -46,6 +48,10 @@ defmodule CopilotApi.Core.Data.ProjectBrief do
 
   defp validate_customer_id(id) when is_binary(id) and id != "", do: :ok
   defp validate_customer_id(_), do: {:error, :invalid_customer_id_format}
+
+  defp validate_developer_id(nil), do: :ok
+  defp validate_developer_id(id) when is_binary(id) and id != "", do: :ok
+  defp validate_developer_id(_), do: {:error, :invalid_developer_id_format}
 
   defp validate_title(title) when is_binary(title) and title != "", do: :ok
   defp validate_title(_), do: {:error, :invalid_title}

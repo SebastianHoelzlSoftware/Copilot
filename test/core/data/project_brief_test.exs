@@ -20,6 +20,7 @@ defmodule CopilotApi.Core.Data.ProjectBriefTest do
       assert brief.title == "New Website"
       assert brief.summary == "A brief summary of the project."
       assert brief.status == :new
+      assert brief.developer_id == nil
       assert brief.ai_analysis == nil
     end
 
@@ -33,6 +34,17 @@ defmodule CopilotApi.Core.Data.ProjectBriefTest do
       assert {:error, :invalid_id_format} = ProjectBrief.new(attrs)
     end
 
+    test "creates a project brief with an optional developer_id" do
+      attrs = Map.put(valid_attrs(), :developer_id, "dev_789")
+      assert {:ok, %ProjectBrief{} = brief} = ProjectBrief.new(attrs)
+      assert brief.developer_id == "dev_789"
+    end
+
+    test "returns an error for an invalid developer_id" do
+      attrs = Map.put(valid_attrs(), :developer_id, 123)
+      assert {:error, :invalid_developer_id_format} = ProjectBrief.new(attrs)
+    end
+
     test "can be created with an AI analysis" do
       ai_attrs = %{
         cost_estimate: %{amount: 1000, currency: "USD"},
@@ -40,12 +52,9 @@ defmodule CopilotApi.Core.Data.ProjectBriefTest do
         clarifying_questions: [%{question: "What is the deadline?"}],
         identified_ambiguities: ["Unclear scope"]
       }
-
       attrs = Map.put(valid_attrs(), :ai_analysis, ai_attrs)
 
-      assert {:ok, %ProjectBrief{ai_analysis: %CopilotApi.Core.Data.AIAnalysis{}} = brief} =
-               ProjectBrief.new(attrs)
-
+      assert {:ok, %ProjectBrief{ai_analysis: %CopilotApi.Core.Data.AIAnalysis{}} = brief} = ProjectBrief.new(attrs)
       assert brief.ai_analysis.cost_estimate.amount == 1000
     end
   end
