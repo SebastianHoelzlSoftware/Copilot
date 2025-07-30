@@ -17,19 +17,34 @@ defmodule CopilotApi.Core.Data.NameTest do
       assert name.last_name == "Doe"
     end
 
-    test "creates a name with partial attributes" do
-      attrs = %{first_name: "Jane"}
+    test "creates a name with only first_name and last_name" do
+      attrs = %{first_name: "Jane", last_name: "Doe"}
       assert {:ok, %Name{} = name} = Name.new(attrs)
       assert name.first_name == "Jane"
-      assert name.last_name == nil
+      assert name.last_name == "Doe"
       assert name.company_name == nil
     end
 
-    test "creates a name with an empty map" do
-      assert {:ok, %Name{} = name} = Name.new(%{})
+    test "creates a name with only company_name" do
+      attrs = %{company_name: "ACME Inc."}
+      assert {:ok, %Name{} = name} = Name.new(attrs)
       assert name.first_name == nil
       assert name.last_name == nil
-      assert name.company_name == nil
+      assert name.company_name == "ACME Inc."
+    end
+
+    test "creates a name with an empty map" do
+      assert {:error, :missing_name_or_company} = Name.new(%{})
+    end
+
+    test "returns an error if only first_name is provided" do
+      attrs = %{first_name: "John"}
+      assert {:error, :missing_name_or_company} = Name.new(attrs)
+    end
+
+    test "returns an error if only last_name is provided" do
+      attrs = %{last_name: "Doe"}
+      assert {:error, :missing_name_or_company} = Name.new(attrs)
     end
 
     test "returns an error for invalid attribute type" do
@@ -42,7 +57,7 @@ defmodule CopilotApi.Core.Data.NameTest do
     end
 
     test "filters out unknown attributes" do
-      attrs = %{first_name: "John", middle_name: "Danger"}
+      attrs = %{first_name: "John", last_name: "Doe", middle_name: "Danger"}
       assert {:ok, %Name{} = name} = Name.new(attrs)
       assert name.first_name == "John"
       refute Map.has_key?(name, :middle_name)

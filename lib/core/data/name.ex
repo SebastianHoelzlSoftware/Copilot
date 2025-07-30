@@ -31,11 +31,27 @@ defmodule CopilotApi.Core.Data.Name do
 
     # Basic type validation for provided attributes
     with :ok <- validate_attribute_types(filtered_attrs) do
-      {:ok, struct(__MODULE__, filtered_attrs)}
+      name_struct = struct(__MODULE__, filtered_attrs)
+      validate_name_fields(name_struct)
     end
   end
 
   def new(_), do: {:error, :invalid_attributes_type}
+
+  defp validate_name_fields(%__MODULE__{} = name_struct) do
+    first = name_struct.first_name
+    last = name_struct.last_name
+    company = name_struct.company_name
+
+    has_person_name = is_binary(first) and first != "" and is_binary(last) and last != ""
+    has_company_name = is_binary(company) and company != ""
+
+    if has_person_name or has_company_name do
+      {:ok, name_struct}
+    else
+      {:error, :missing_name_or_company}
+    end
+  end
 
   defp validate_attribute_types(attrs) do
     Enum.reduce_while(attrs, :ok, fn {key, value}, _acc ->
