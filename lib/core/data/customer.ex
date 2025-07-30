@@ -10,11 +10,11 @@ defmodule CopilotApi.Core.Data.Customer do
   @enforce_keys [:id, :name, :contact, :address]
 
   @type t() :: %__MODULE__{
-    id: String.t(),
-    name: Name.t(),
-    contact: Contact.t(),
-    address: Address.t()
-  }
+          id: String.t(),
+          name: Name.t(),
+          contact: Contact.t(),
+          address: Address.t()
+        }
 
   def new(attrs) when is_map(attrs) do
     missing_keys = Enum.filter(@enforce_keys, &(!Map.has_key?(attrs, &1)))

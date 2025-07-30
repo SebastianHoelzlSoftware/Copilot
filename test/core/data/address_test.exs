@@ -1,4 +1,3 @@
-
 defmodule CopilotApi.AddressTest do
   use ExUnit.Case, async: true
   alias CopilotApi.Core.Data.Address
@@ -48,13 +47,27 @@ defmodule CopilotApi.AddressTest do
 
   describe "format/1" do
     test "formats the address correctly with additional info" do
-      address = %Address{street: "123 Main St", street_additional: "Apt 4B", city: "Anytown", postal_code: "12345", country: "USA"}
+      address = %Address{
+        street: "123 Main St",
+        street_additional: "Apt 4B",
+        city: "Anytown",
+        postal_code: "12345",
+        country: "USA"
+      }
+
       expected = "123 Main St\nApt 4B\nAnytown\n12345\nUSA"
       assert Address.format(address) == expected
     end
 
     test "formats the address correctly without additional info" do
-      address = %Address{street: "123 Main St", street_additional: nil, city: "Anytown", postal_code: "12345", country: "USA"}
+      address = %Address{
+        street: "123 Main St",
+        street_additional: nil,
+        city: "Anytown",
+        postal_code: "12345",
+        country: "USA"
+      }
+
       expected = "123 Main St\nAnytown\n12345\nUSA"
       assert Address.format(address) == expected
     end

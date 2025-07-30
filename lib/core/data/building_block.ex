@@ -4,9 +4,9 @@ defmodule CopilotApi.Core.Data.BuildingBlock do
   defstruct [:name, :description]
 
   @type t() :: %__MODULE__{
-    name: String.t(),
-    description: String.t() | nil
-  }
+          name: String.t(),
+          description: String.t() | nil
+        }
 
   def new(attrs) when is_map(attrs) do
     if Map.get(attrs, :name) |> is_binary() and Map.get(attrs, :name) != "" do

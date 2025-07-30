@@ -23,5 +23,4 @@ defmodule CopilotApi.Core.Data.Email do
 
   @doc "Returns the email address as a string."
   def to_string(%__MODULE__{address: address}), do: address
-
 end

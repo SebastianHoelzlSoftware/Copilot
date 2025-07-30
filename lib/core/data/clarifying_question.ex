@@ -4,9 +4,9 @@ defmodule CopilotApi.Core.Data.ClarifyingQuestion do
   defstruct [:question, :answer]
 
   @type t() :: %__MODULE__{
-    question: String.t(),
-    answer: String.t() | nil
-  }
+          question: String.t(),
+          answer: String.t() | nil
+        }
 
   def new(attrs) when is_map(attrs) do
     if Map.get(attrs, :question) |> is_binary() and Map.get(attrs, :question) != "" do

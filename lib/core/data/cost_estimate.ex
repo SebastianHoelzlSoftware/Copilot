@@ -6,10 +6,10 @@ defmodule CopilotApi.Core.Data.CostEstimate do
   @enforce_keys [:amount, :currency]
 
   @type t() :: %__MODULE__{
-    amount: number(),
-    currency: String.t(),
-    details: String.t() | nil
-  }
+          amount: number(),
+          currency: String.t(),
+          details: String.t() | nil
+        }
 
   def new(attrs) when is_map(attrs) do
     missing_keys = Enum.filter(@enforce_keys, &(!Map.has_key?(attrs, &1)))

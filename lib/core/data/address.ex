@@ -49,10 +49,10 @@ defmodule CopilotApi.Core.Data.Address do
   end
 
   @type t() :: %__MODULE__{
-    street: String.t(),
-    street_additional: String.t() | nil,
-    city: String.t(),
-    postal_code: String.t(),
-    country: String.t()
-  }
+          street: String.t(),
+          street_additional: String.t() | nil,
+          city: String.t(),
+          postal_code: String.t(),
+          country: String.t()
+        }
 end

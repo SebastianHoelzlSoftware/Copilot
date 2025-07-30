@@ -4,9 +4,12 @@ defmodule CopilotApi.Core.Data.Name do
   """
 
   defstruct [
-    company_name: nil, # Default to nil
-    first_name: nil,   # Default to nil
-    last_name: nil     # Default to nil
+    # Default to nil
+    company_name: nil,
+    # Default to nil
+    first_name: nil,
+    # Default to nil
+    last_name: nil
   ]
 
   # Assuming name fields are optional. If any are required, add them to @enforce_keys.
@@ -46,8 +49,8 @@ defmodule CopilotApi.Core.Data.Name do
   end
 
   @type t() :: %__MODULE__{
-    company_name: String.t() | nil,
-    first_name: String.t() | nil,
-    last_name: String.t() | nil
-  }
+          company_name: String.t() | nil,
+          first_name: String.t() | nil,
+          last_name: String.t() | nil
+        }
 end

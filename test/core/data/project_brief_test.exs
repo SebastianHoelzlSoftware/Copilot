@@ -40,9 +40,12 @@ defmodule CopilotApi.Core.Data.ProjectBriefTest do
         clarifying_questions: [%{question: "What is the deadline?"}],
         identified_ambiguities: ["Unclear scope"]
       }
+
       attrs = Map.put(valid_attrs(), :ai_analysis, ai_attrs)
 
-      assert {:ok, %ProjectBrief{ai_analysis: %CopilotApi.Core.Data.AIAnalysis{}} = brief} = ProjectBrief.new(attrs)
+      assert {:ok, %ProjectBrief{ai_analysis: %CopilotApi.Core.Data.AIAnalysis{}} = brief} =
+               ProjectBrief.new(attrs)
+
       assert brief.ai_analysis.cost_estimate.amount == 1000
     end
   end

@@ -6,18 +6,25 @@ defmodule CopilotApi.Core.Data.AIAnalysis do
   defstruct [:suggested_blocks, :clarifying_questions, :cost_estimate, :identified_ambiguities]
 
   @type t() :: %__MODULE__{
-    suggested_blocks: [BuildingBlock.t()],
-    clarifying_questions: [ClarifyingQuestion.t()],
-    cost_estimate: CostEstimate.t() | nil,
-    identified_ambiguities: [String.t()]
-  }
+          suggested_blocks: [BuildingBlock.t()],
+          clarifying_questions: [ClarifyingQuestion.t()],
+          cost_estimate: CostEstimate.t() | nil,
+          identified_ambiguities: [String.t()]
+        }
 
   def new(attrs) when is_map(attrs) do
-    defaults = %{suggested_blocks: [], clarifying_questions: [], cost_estimate: nil, identified_ambiguities: []}
+    defaults = %{
+      suggested_blocks: [],
+      clarifying_questions: [],
+      cost_estimate: nil,
+      identified_ambiguities: []
+    }
+
     attrs_with_defaults = Map.merge(defaults, attrs)
 
     with {:ok, blocks} <- new_list(attrs_with_defaults[:suggested_blocks], &BuildingBlock.new/1),
-         {:ok, questions} <- new_list(attrs_with_defaults[:clarifying_questions], &ClarifyingQuestion.new/1),
+         {:ok, questions} <-
+           new_list(attrs_with_defaults[:clarifying_questions], &ClarifyingQuestion.new/1),
          {:ok, estimate} <- new_cost_estimate(attrs_with_defaults[:cost_estimate]) do
       final_attrs = %{
         suggested_blocks: blocks,

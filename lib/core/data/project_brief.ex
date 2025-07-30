@@ -8,13 +8,13 @@ defmodule CopilotApi.Core.Data.ProjectBrief do
   @enforce_keys [:id, :customer_id, :title, :summary]
 
   @type t() :: %__MODULE__{
-    id: String.t(),
-    customer_id: String.t(),
-    title: String.t(),
-    summary: String.t(),
-    status: :new | :under_review | :accepted | :declined,
-    ai_analysis: AIAnalysis.t() | nil
-  }
+          id: String.t(),
+          customer_id: String.t(),
+          title: String.t(),
+          summary: String.t(),
+          status: :new | :under_review | :accepted | :declined,
+          ai_analysis: AIAnalysis.t() | nil
+        }
 
   def new(attrs) when is_map(attrs) do
     missing_keys = Enum.filter(@enforce_keys, &(!Map.has_key?(attrs, &1)))

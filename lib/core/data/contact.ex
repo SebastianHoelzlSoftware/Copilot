@@ -7,11 +7,9 @@ defmodule CopilotApi.Core.Data.Contact do
   alias CopilotApi.Core.Data.Email
   alias CopilotApi.Core.Data.Address
 
-  defstruct [
-    name: %Name{},
-    email: %Email{},
-    address: %Address{}
-  ]
+  defstruct name: %Name{},
+            email: %Email{},
+            address: %Address{}
 
   @enforce_keys [:name, :email, :address]
 
@@ -37,8 +35,8 @@ defmodule CopilotApi.Core.Data.Contact do
   def new(_), do: {:error, :invalid_attributes_type}
 
   @type t() :: %__MODULE__{
-    name: Name.t(),
-    email: Email.t(),
-    address: Address.t()
-  }
+          name: Name.t(),
+          email: Email.t(),
+          address: Address.t()
+        }
 end
