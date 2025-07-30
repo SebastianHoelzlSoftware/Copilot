@@ -1,30 +1,47 @@
 defmodule CopilotApi.Core.Data.EmailTest do
-  use ExUnit.Case, async: true
+  use CopilotApi.DataCase, async: true
 
   alias CopilotApi.Core.Data.Email
+  import Ecto.Changeset
 
-  describe "new/1" do
-    test "creates an email with a valid string" do
-      assert {:ok, %Email{address: "test@example.com"}} = Email.new("test@example.com")
+  describe "changeset/2" do
+    test "creates a valid changeset for a valid email" do
+      attrs = %{address: "test@example.com"}
+      changeset = Email.changeset(%Email{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :address) == "test@example.com"
     end
 
     test "returns an error for an invalid email format" do
-      assert {:error, :invalid_email_format} = Email.new("test@example")
-      assert {:error, :invalid_email_format} = Email.new("test.example.com")
-      assert {:error, :invalid_email_format} = Email.new("test@.com")
+      attrs = %{address: "invalid-email"}
+      changeset = Email.changeset(%Email{}, attrs)
+
+      refute changeset.valid?
+      assert %{address: ["must have the @ sign and no spaces"]} = errors_on(changeset)
     end
 
-    test "returns an error for a non-binary input" do
-      assert {:error, :invalid_email_type} = Email.new(nil)
-      assert {:error, :invalid_email_type} = Email.new(123)
-      assert {:error, :invalid_email_type} = Email.new(%{})
+    test "returns an error for a missing address" do
+      attrs = %{}
+      changeset = Email.changeset(%Email{}, attrs)
+
+      refute changeset.valid?
+      assert %{address: ["can't be blank"]} = errors_on(changeset)
+    end
+
+    test "returns an error for a blank address" do
+      attrs = %{address: ""}
+      changeset = Email.changeset(%Email{}, attrs)
+
+      refute changeset.valid?
+      assert %{address: ["can't be blank"]} = errors_on(changeset)
     end
   end
 
   describe "to_string/1" do
-    test "returns the email address as a string" do
-      {:ok, email_struct} = Email.new("test@example.com")
-      assert Email.to_string(email_struct) == "test@example.com"
+    test "returns the address string" do
+      email = %Email{address: "test@example.com"}
+      assert Email.to_string(email) == "test@example.com"
     end
   end
 end

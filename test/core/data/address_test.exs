@@ -1,9 +1,11 @@
-defmodule CopilotApi.AddressTest do
-  use ExUnit.Case, async: true
-  alias CopilotApi.Core.Data.Address
+defmodule CopilotApi.Core.Data.AddressTest do
+  use CopilotApi.DataCase, async: true
 
-  describe "new/1" do
-    test "creates an address with valid attributes" do
+  alias CopilotApi.Core.Data.Address
+  import Ecto.Changeset
+
+  describe "changeset/2" do
+    test "creates a valid changeset with all attributes" do
       attrs = %{
         street: "123 Main St",
         city: "Anytown",
@@ -12,23 +14,17 @@ defmodule CopilotApi.AddressTest do
         street_additional: "Apt 4B"
       }
 
-      assert {:ok, %Address{} = address} = Address.new(attrs)
-      assert address.street == "123 Main St"
-      assert address.street_additional == "Apt 4B"
-      assert address.city == "Anytown"
-      assert address.postal_code == "12345"
-      assert address.country == "USA"
+      changeset = Address.changeset(%Address{}, attrs)
+      assert changeset.valid?
+      assert get_field(changeset, :street) == "123 Main St"
+      assert get_field(changeset, :street_additional) == "Apt 4B"
     end
 
     test "returns an error for missing required fields" do
       attrs = %{street: "123 Main St", city: "Anytown"}
-      expected_missing = [:postal_code, :country]
-      assert {:error, {:missing_required_fields, missing}} = Address.new(attrs)
-      assert Enum.sort(missing) == Enum.sort(expected_missing)
-    end
-
-    test "returns an error if attributes are not a map" do
-      assert {:error, :invalid_attributes_type} = Address.new("not a map")
+      changeset = Address.changeset(%Address{}, attrs)
+      refute changeset.valid?
+      assert Enum.sort(Map.keys(errors_on(changeset))) == [:country, :postal_code]
     end
 
     test "filters out unknown attributes" do
@@ -40,8 +36,11 @@ defmodule CopilotApi.AddressTest do
         unknown_field: "should be ignored"
       }
 
-      assert {:ok, %Address{} = address} = Address.new(attrs)
-      refute Map.has_key?(address, :unknown_field)
+      changeset = Address.changeset(%Address{}, attrs)
+      assert changeset.valid?
+      # Ecto.Changeset.cast/3 filters out unknown fields, so we just need to check
+      # that the changeset is valid and doesn't contain an error for the unknown field.
+      refute Map.has_key?(changeset.changes, :unknown_field)
     end
   end
 

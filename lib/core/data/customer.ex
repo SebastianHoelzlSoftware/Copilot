@@ -1,38 +1,29 @@
 defmodule CopilotApi.Core.Data.Customer do
-  @moduledoc """
-  A struct representing a customer, which includes an ID, name, contact, and address.
-  """
+  @moduledoc "Represents a customer account."
+  use Ecto.Schema
+  import Ecto.Changeset
 
   alias CopilotApi.Core.Data.{Address, Contact, Name}
 
-  defstruct [:id, :name, :contact, :address]
+  @primary_key {:id, :binary_id, autogenerate: true}
+  @foreign_key_type :binary_id
+  schema "customers" do
+    embeds_one :name, Name, on_replace: :delete
+    embeds_one :address, Address, on_replace: :delete
 
-  @enforce_keys [:id, :name, :contact, :address]
+    has_many :contacts, Contact
 
-  @type t() :: %__MODULE__{
-          id: String.t(),
-          name: Name.t(),
-          contact: Contact.t(),
-          address: Address.t()
-        }
-
-  def new(attrs) when is_map(attrs) do
-    missing_keys = Enum.filter(@enforce_keys, &(!Map.has_key?(attrs, &1)))
-
-    if Enum.any?(missing_keys) do
-      {:error, {:missing_required_fields, missing_keys}}
-    else
-      with :ok <- validate_id(attrs[:id]),
-           {:ok, name} <- Name.new(attrs[:name]),
-           {:ok, contact} <- Contact.new(attrs[:contact]),
-           {:ok, address} <- Address.new(attrs[:address]) do
-        {:ok, struct(__MODULE__, id: attrs[:id], name: name, contact: contact, address: address)}
-      end
-    end
+    timestamps()
   end
 
-  def new(_), do: {:error, :invalid_attributes_type}
-
-  defp validate_id(id) when is_binary(id) and id != "", do: :ok
-  defp validate_id(_), do: {:error, :invalid_id_format}
+  @doc """
+  Builds a changeset for a Customer.
+  """
+  def changeset(customer, attrs) do
+    customer
+    |> cast(attrs, [])
+    |> cast_embed(:name, required: true)
+    |> cast_embed(:address)
+    |> cast_assoc(:contacts)
+  end
 end

@@ -1,66 +1,52 @@
 defmodule CopilotApi.Core.Data.NameTest do
-  use ExUnit.Case, async: true
+  use CopilotApi.DataCase, async: true
 
   alias CopilotApi.Core.Data.Name
+  import Ecto.Changeset
 
-  describe "new/1" do
-    test "creates a name with all attributes" do
-      attrs = %{
-        company_name: "ACME Inc.",
-        first_name: "John",
-        last_name: "Doe"
-      }
+  describe "changeset/2" do
+    test "creates a valid changeset for a person's name" do
+      attrs = %{first_name: "John", last_name: "Doe"}
+      changeset = Name.changeset(%Name{}, attrs)
 
-      assert {:ok, %Name{} = name} = Name.new(attrs)
-      assert name.company_name == "ACME Inc."
-      assert name.first_name == "John"
-      assert name.last_name == "Doe"
+      assert changeset.valid?
+      assert get_field(changeset, :first_name) == "John"
+      assert get_field(changeset, :last_name) == "Doe"
     end
 
-    test "creates a name with only first_name and last_name" do
-      attrs = %{first_name: "Jane", last_name: "Doe"}
-      assert {:ok, %Name{} = name} = Name.new(attrs)
-      assert name.first_name == "Jane"
-      assert name.last_name == "Doe"
-      assert name.company_name == nil
-    end
-
-    test "creates a name with only company_name" do
+    test "creates a valid changeset for a company name" do
       attrs = %{company_name: "ACME Inc."}
-      assert {:ok, %Name{} = name} = Name.new(attrs)
-      assert name.first_name == nil
-      assert name.last_name == nil
-      assert name.company_name == "ACME Inc."
+      changeset = Name.changeset(%Name{}, attrs)
+
+      assert changeset.valid?
+      assert get_field(changeset, :company_name) == "ACME Inc."
     end
 
-    test "creates a name with an empty map" do
-      assert {:error, :missing_name_or_company} = Name.new(%{})
+    test "creates a valid changeset for both person and company name" do
+      attrs = %{first_name: "Jane", last_name: "Doe", company_name: "Stark Industries"}
+      changeset = Name.changeset(%Name{}, attrs)
+      assert changeset.valid?
     end
 
-    test "returns an error if only first_name is provided" do
+    test "returns an error for missing name or company" do
+      attrs = %{}
+      changeset = Name.changeset(%Name{}, attrs)
+      refute changeset.valid?
+      assert %{base: ["must provide either a company name or a person's full name"]} = errors_on(changeset)
+    end
+
+    test "returns an error for only a first name" do
       attrs = %{first_name: "John"}
-      assert {:error, :missing_name_or_company} = Name.new(attrs)
+      changeset = Name.changeset(%Name{}, attrs)
+      refute changeset.valid?
+      assert %{base: ["must provide both first and last name for a person"]} = errors_on(changeset)
     end
 
-    test "returns an error if only last_name is provided" do
+    test "returns an error for only a last name" do
       attrs = %{last_name: "Doe"}
-      assert {:error, :missing_name_or_company} = Name.new(attrs)
-    end
-
-    test "returns an error for invalid attribute type" do
-      attrs = %{first_name: 123}
-      assert {:error, {:invalid_first_name_type, 123}} = Name.new(attrs)
-    end
-
-    test "returns an error if attributes are not a map" do
-      assert {:error, :invalid_attributes_type} = Name.new("not a map")
-    end
-
-    test "filters out unknown attributes" do
-      attrs = %{first_name: "John", last_name: "Doe", middle_name: "Danger"}
-      assert {:ok, %Name{} = name} = Name.new(attrs)
-      assert name.first_name == "John"
-      refute Map.has_key?(name, :middle_name)
+      changeset = Name.changeset(%Name{}, attrs)
+      refute changeset.valid?
+      assert %{base: ["must provide both first and last name for a person"]} = errors_on(changeset)
     end
   end
 end
