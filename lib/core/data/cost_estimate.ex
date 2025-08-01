@@ -3,7 +3,8 @@ defmodule CopilotApi.Core.Data.CostEstimate do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias CopilotApi.Core.Data.Customer
+  alias CopilotApi.Core.Data.{AIAnalysis, Customer}
+
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -14,6 +15,8 @@ defmodule CopilotApi.Core.Data.CostEstimate do
 
     # Assuming a cost estimate belongs to a customer
     belongs_to :customer, Customer
+
+    has_one :ai_analysis, AIAnalysis
 
     timestamps()
   end
