@@ -1,7 +1,7 @@
 defmodule CopilotApiWeb.Plugs.DevAuth do
   @moduledoc """
   A plug to mock the API Gateway's authentication for local development.
-
+  
   This plug injects a fake `x-apigateway-api-userinfo` header into the
   request, simulating a successfully authenticated user. It should only
   be used in the `:dev` environment.
@@ -19,7 +19,8 @@ defmodule CopilotApiWeb.Plugs.DevAuth do
       "email" => "dev@example.com",
       "name" => "Dev User",
       "issuer" => "https://securetoken.google.com/mock-project-id",
-      "role" => "developer" # Add a mock role for authorization testing
+      # Add a mock role for authorization testing
+      "role" => "developer"
     }
 
     # Encode the payload to JSON, then Base64, and put it in the header.

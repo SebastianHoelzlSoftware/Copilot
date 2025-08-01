@@ -8,7 +8,9 @@ defmodule CopilotApi.Repo.Migrations.CreateAiAnalyses do
       add :clarifying_questions, :map
       add :identified_ambiguities, {:array, :string}
       add :cost_estimate_id, references(:cost_estimates, on_delete: :nothing, type: :binary_id)
-      add :project_brief_id, references(:project_briefs, on_delete: :nothing, type: :binary_id), null: false
+
+      add :project_brief_id, references(:project_briefs, on_delete: :nothing, type: :binary_id),
+        null: false
 
       timestamps()
     end

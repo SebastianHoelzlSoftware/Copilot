@@ -25,7 +25,6 @@ config :copilot_api, CopilotApiWeb.Endpoint,
 # TODO: use "mix phx.gen.secret 64" and load it from an evironment
 config :copilot_api, :session_signing_salt, "alksjdhuöwjnbrjasdfkjj#p+aweufp9o8327z489uihwea8s"
 
-
 # Configures the mailer
 #
 # By default it uses the "Local" adapter which stores the emails

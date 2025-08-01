@@ -13,12 +13,12 @@ defmodule CopilotApi.Core.Data.AIAnalysisTest do
       |> Repo.insert!()
 
     %ProjectBrief{}
-      |> ProjectBrief.changeset(%{
-        title: "Test Brief",
-        summary: "A test project brief.",
-        customer_id: customer.id
-      })
-      |> Repo.insert!()
+    |> ProjectBrief.changeset(%{
+      title: "Test Brief",
+      summary: "A test project brief.",
+      customer_id: customer.id
+    })
+    |> Repo.insert!()
   end
 
   describe "changeset/2" do

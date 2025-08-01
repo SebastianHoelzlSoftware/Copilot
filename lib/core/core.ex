@@ -9,16 +9,16 @@ defmodule CopilotApi.Core do
 
   @doc """
   Gets a user by their provider ID, creating them if they don't exist.
-
+  
   This function is idempotent. If a user with the given `provider_id`
   already exists, it will be returned. Otherwise, a new user will be
   created with the provided attributes.
-
+  
   ## Examples
-
+  
       iex> get_or_create_user(%{"user_id" => "123", "email" => "test@example.com"})
       {:ok, %User{}}
-
+  
   """
   def get_or_create_user(attrs) do
     # The "user_id" from the JWT corresponds to our "provider_id"
