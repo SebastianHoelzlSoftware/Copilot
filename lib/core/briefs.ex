@@ -22,6 +22,16 @@ defmodule CopilotApi.Core.Briefs do
   end
 
   @doc """
+  Returns the list of project_briefs for a given customer.
+  """
+  def list_project_briefs_for_customer(customer) do
+    ProjectBrief
+    |> where([p], p.customer_id == ^customer.id)
+    |> Repo.all()
+    |> Repo.preload(:customer)
+  end
+
+  @doc """
   Gets a single project_brief.
 
   Raises `Ecto.NoResultsError` if the Project brief does not exist.

@@ -45,6 +45,8 @@ defmodule CopilotApiWeb.Router do
     #   # Add admin-only routes here, for example:
     #   # get "/dashboard", AdminDashboardController, :show
     # end
+
+    resources "/briefs", BriefController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

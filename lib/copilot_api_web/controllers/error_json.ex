@@ -1,21 +1,29 @@
 defmodule CopilotApiWeb.ErrorJSON do
   @moduledoc """
-  This module is invoked by your endpoint in case of errors on JSON requests.
-
-  See config/config.exs.
+  The default error view for JSON API responses.
+  By default, it will handle 404 and 500 errors.
   """
 
-  # If you want to customize a particular status code,
-  # you may add your own clauses, such as:
-  #
-  # def render("500.json", _assigns) do
-  #   %{errors: %{detail: "Internal Server Error"}}
-  # end
-
-  # By default, Phoenix returns the status message from
-  # the template name. For example, "404.json" becomes
-  # "Not Found".
-  def render(template, _assigns) do
-    %{errors: %{detail: Phoenix.Controller.status_message_from_template(template)}}
+  def render("404.json", _assigns) do
+    %{errors: %{detail: "Not Found"}}
   end
+
+  def render("500.json", _assigns) do
+    %{errors: %{detail: "Internal Server Error"}}
+  end
+
+  # Renders changeset errors.
+  def render("error.json", %{result: %Ecto.Changeset{} = changeset}) do
+    # When the changeset has action :insert or :update, we have a map of errors.
+    # When the changeset has action :delete, the error is a string.
+    %{errors: Ecto.Changeset.traverse_errors(changeset, &translate_error/1)}
+  end
+
+  defp translate_error({msg, opts}) do
+    Enum.reduce(opts, msg, fn {key, value}, acc ->
+      String.replace(acc, "%{#{key}}", to_string(value))
+    end)
+  end
+
+  defp translate_error(msg), do: msg
 end
