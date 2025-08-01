@@ -23,11 +23,12 @@ defmodule CopilotApi.Core.Data.Contact do
   """
   def changeset(contact, attrs) do
     contact
-    |> cast(attrs, [])
+    |> cast(attrs, [:customer_id])
+    |> validate_required([:customer_id])
     |> cast_embed(:name, required: true)
     |> cast_embed(:email, required: true)
     |> cast_embed(:address)
     |> cast_embed(:phone_number)
-    |> cast_assoc(:customer)
+    |> foreign_key_constraint(:customer_id)
   end
 end

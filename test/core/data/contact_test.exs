@@ -6,6 +6,7 @@ defmodule CopilotApi.Core.Data.ContactTest do
   describe "changeset/2" do
     test "creates a valid changeset with valid nested attributes" do
       attrs = %{
+        customer_id: Ecto.UUID.generate(),
         name: %{first_name: "John", last_name: "Doe"},
         email: %{address: "john.doe@example.com"},
         address: %{
@@ -27,12 +28,15 @@ defmodule CopilotApi.Core.Data.ContactTest do
 
     test "is invalid if a required embedded schema is missing" do
       attrs = %{
-        name: %{first_name: "John", last_name: "Doe"}
+        name: %{first_name: "John", last_name: "Doe"},
+        # Missing customer_id and email
       }
 
       changeset = Contact.changeset(%Contact{}, attrs)
       refute changeset.valid?
-      assert %{email: ["can't be blank"]} = errors_on(changeset)
+      errors = errors_on(changeset)
+      assert errors.email == ["can't be blank"]
+      assert errors.customer_id == ["can't be blank"]
     end
 
     test "is invalid if a nested changeset is invalid" do

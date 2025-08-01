@@ -6,6 +6,7 @@ defmodule CopilotApi.Core.Fixtures do
 
   alias CopilotApi.Repo
   alias CopilotApi.Core.Data.Customer
+  alias CopilotApi.Core.Contacts
   alias CopilotApi.Core.Briefs
   alias CopilotApi.Core.AIAnalyses
   alias CopilotApi.Core.Data.CostEstimate
@@ -18,8 +19,7 @@ defmodule CopilotApi.Core.Fixtures do
     %Customer{}
     |> Customer.changeset(
       Enum.into(attrs, %{
-        name: %{company_name: "Beautiful Comp"},
-        email: "user-#{System.unique_integer([:positive])}@example.com"
+        name: %{company_name: "Beautiful Comp"}
       })
     )
     |> Repo.insert!()
@@ -73,5 +73,25 @@ defmodule CopilotApi.Core.Fixtures do
       |> AIAnalyses.create_ai_analysis()
 
     ai_analysis
+  end
+
+  @doc """
+  Generate a contact.
+  """
+  def contact_fixture(attrs \\ %{}) do
+    customer = Map.get(attrs, :customer) || customer_fixture()
+
+    valid_attrs = %{
+      customer_id: customer.id,
+      name: %{first_name: "John", last_name: "Doe"},
+      email: %{address: "john.doe-#{System.unique_integer([:positive])}@example.com"}
+    }
+
+    {:ok, contact} =
+      attrs
+      |> Enum.into(valid_attrs)
+      |> Contacts.create_contact()
+
+    contact
   end
 end
