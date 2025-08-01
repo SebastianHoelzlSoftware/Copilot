@@ -29,10 +29,22 @@ defmodule CopilotApiWeb.Router do
       plug CopilotApiWeb.Plugs.Authorization, "developer"
     end
 
+    # Example of a route that requires a user with the "admin" role
+    pipeline :admin_only do
+      plug CopilotApiWeb.Plugs.EnsureAuthenticated
+      plug CopilotApiWeb.Plugs.Authorization, "admin"
+    end
+
     scope "/me" do
       pipe_through :developer_only
       get "/", UserController, :show
     end
+
+    # scope "/admin", CopilotApiWeb do
+    #   pipe_through :admin_only
+    #   # Add admin-only routes here, for example:
+    #   # get "/dashboard", AdminDashboardController, :show
+    # end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
