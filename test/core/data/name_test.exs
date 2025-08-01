@@ -28,7 +28,7 @@ defmodule CopilotApi.Core.Data.NameTest do
       assert changeset.valid?
     end
 
-    test "returns an error for missing name or company" do
+    test "returns an error for missing both name and company" do
       attrs = %{}
       changeset = Name.changeset(%Name{}, attrs)
       refute changeset.valid?
