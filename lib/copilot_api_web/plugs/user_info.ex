@@ -16,7 +16,7 @@ defmodule CopilotApiWeb.Plugs.UserInfo do
       [encoded_user_info | _] ->
         with {:ok, decoded_binary} <- Base.decode64(encoded_user_info, padding: false),
              {:ok, jwt_claims} <- Jason.decode(decoded_binary),
-             {:ok, user} <- Core.get_or_create_user(jwt_claims) do
+             {:ok, user} <- Core.upsert_user(jwt_claims) do
           # Attach the full User struct to the connection's assigns
           assign(conn, :current_user, user)
         else
