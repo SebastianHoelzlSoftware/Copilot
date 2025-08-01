@@ -24,7 +24,6 @@ defmodule CopilotApi.Core.Data.AIAnalysis do
   def changeset(analysis, attrs) do
     analysis
     |> cast(attrs, [:identified_ambiguities, :cost_estimate_id, :project_brief_id])
-    |> validate_required([:project_brief_id])
     |> foreign_key_constraint(:project_brief_id)
     |> cast_embed(:suggested_blocks)
     |> cast_embed(:clarifying_questions)

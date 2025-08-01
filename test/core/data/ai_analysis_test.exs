@@ -2,31 +2,28 @@ defmodule CopilotApi.Core.Data.AIAnalysisTest do
   use CopilotApi.DataCase, async: true
 
   alias CopilotApi.Core.Data.AIAnalysis
-  alias CopilotApi.Core.Data.CostEstimate
+  alias CopilotApi.Core.Data.ProjectBrief
   alias CopilotApi.Core.Data.Customer
   alias CopilotApi.Repo
 
-  defp cost_estimate_fixture do
+  defp project_brief_fixture do
     customer =
       %Customer{}
       |> Customer.changeset(%{name: %{company_name: "Test Co"}})
       |> Repo.insert!()
 
-    {:ok, cost_estimate} =
-      %CostEstimate{}
-      |> CostEstimate.changeset(%{
-        amount: Decimal.new("1000"),
-        currency: "USD",
+    %ProjectBrief{}
+      |> ProjectBrief.changeset(%{
+        title: "Test Brief",
+        summary: "A test project brief.",
         customer_id: customer.id
       })
-      |> Repo.insert()
-
-    cost_estimate
+      |> Repo.insert!()
   end
 
   describe "changeset/2" do
     test "creates a valid changeset with valid attributes" do
-      cost_estimate = cost_estimate_fixture()
+      project_brief = project_brief_fixture()
 
       attrs = %{
         suggested_blocks: [
@@ -36,7 +33,7 @@ defmodule CopilotApi.Core.Data.AIAnalysisTest do
           %{question: "What is the target audience?"}
         ],
         identified_ambiguities: ["The payment gateway is not specified."],
-        cost_estimate_id: cost_estimate.id
+        project_brief_id: project_brief.id
       }
 
       changeset = AIAnalysis.changeset(%AIAnalysis{}, attrs)
