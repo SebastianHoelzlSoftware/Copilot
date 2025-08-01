@@ -7,7 +7,7 @@ defmodule CopilotApiWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_copilot_api_key",
-    signing_salt: Application.fetch_env!(:copilot_api, :session_signing_salt),
+    signing_salt: Application.compile_env!(:copilot_api, :session_signing_salt),
     same_site: "Lax"
   ]
 

@@ -3,7 +3,7 @@ defmodule CopilotApi.Core.Data.AIAnalysis do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias CopilotApi.Core.Data.{BuildingBlock, ClarifyingQuestion, CostEstimate}
+  alias CopilotApi.Core.Data.{BuildingBlock, ClarifyingQuestion, CostEstimate, ProjectBrief}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -12,6 +12,7 @@ defmodule CopilotApi.Core.Data.AIAnalysis do
     embeds_many :clarifying_questions, ClarifyingQuestion
     field :identified_ambiguities, {:array, :string}, default: []
 
+    belongs_to :project_brief, ProjectBrief
     belongs_to :cost_estimate, CostEstimate
 
     timestamps()
@@ -22,7 +23,9 @@ defmodule CopilotApi.Core.Data.AIAnalysis do
   """
   def changeset(analysis, attrs) do
     analysis
-    |> cast(attrs, [:identified_ambiguities, :cost_estimate_id])
+    |> cast(attrs, [:identified_ambiguities, :cost_estimate_id, :project_brief_id])
+    |> validate_required([:project_brief_id])
+    |> foreign_key_constraint(:project_brief_id)
     |> cast_embed(:suggested_blocks)
     |> cast_embed(:clarifying_questions)
     |> cast_assoc(:cost_estimate)
@@ -34,6 +37,8 @@ defmodule CopilotApi.Core.Data.AIAnalysis do
           clarifying_questions: [ClarifyingQuestion.t()] | nil,
           identified_ambiguities: [String.t()] | nil,
           cost_estimate: CostEstimate.t() | nil,
+          project_brief: ProjectBrief.t() | nil,
+          project_brief_id: Ecto.UUID.t() | nil,
           cost_estimate_id: Ecto.UUID.t() | nil,
           inserted_at: NaiveDateTime.t() | nil,
           updated_at: NaiveDateTime.t() | nil

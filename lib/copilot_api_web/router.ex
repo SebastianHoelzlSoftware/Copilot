@@ -3,10 +3,36 @@ defmodule CopilotApiWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+
+    # In development, this plug will mock the authentication header
+    # that would normally be injected by the API Gateway.
+    if Application.compile_env(:copilot_api, :dev_routes) do
+      plug CopilotApiWeb.Plugs.DevAuth
+    end
+
+    # This plug extracts the user info from the header (real or mocked)
+    # and puts it in conn.assigns.
+    plug CopilotApiWeb.Plugs.UserInfo
   end
 
   scope "/api", CopilotApiWeb do
     pipe_through :api
+
+    # Example of a protected route that requires any authenticated user
+    pipeline :protected do
+      plug CopilotApiWeb.Plugs.EnsureAuthenticated
+    end
+
+    # Example of a route that requires a user with the "developer" role
+    pipeline :developer_only do
+      plug CopilotApiWeb.Plugs.EnsureAuthenticated
+      plug CopilotApiWeb.Plugs.Authorization, "developer"
+    end
+
+    scope "/me" do
+      pipe_through :developer_only
+      get "/", UserController, :show
+    end
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

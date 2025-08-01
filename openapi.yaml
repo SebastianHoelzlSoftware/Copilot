@@ -1,0 +1,30 @@
+# openapi.yaml
+swagger: "2.0"
+info:
+  title: Copilot API
+  description: API for copilot services
+  version: 1.0.0
+host: YOUR_SERVICE_HOSTNAME # e.g., your-project-id.appspot.com or a custom domain
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+# Security definitions for Firebase Authentication
+securityDefinitions:
+  firebase:
+    authorizationUrl: ""
+    flow: "implicit"
+    type: "oauth2"
+    # This is the audience for your Firebase project's ID tokens.
+    # Replace 'YOUR_PROJECT_ID' with your actual Firebase Project ID.
+    x-google-issuer: "https://securetoken.google.com/YOUR_PROJECT_ID"
+    x-google-jwks_uri: "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+    # Optional: Specify the audience. If not specified, the API will accept any valid token for the issuer.
+    # If you want to restrict to your project ID as audience, uncomment and replace.
+    # x-google-audiences: "YOUR_PROJECT_ID"
+
+paths:
+
