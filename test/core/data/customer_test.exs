@@ -41,7 +41,8 @@ defmodule CopilotApi.Core.Data.CustomerTest do
     test "is invalid if a nested changeset is invalid" do
       attrs = %{
         name: %{company_name: "Stark Industries"},
-        address: %{street: "10880 Malibu Point"} # Invalid: missing city, postal_code, country
+        # Invalid: missing city, postal_code, country
+        address: %{street: "10880 Malibu Point"}
       }
 
       changeset = Customer.changeset(%Customer{}, attrs)

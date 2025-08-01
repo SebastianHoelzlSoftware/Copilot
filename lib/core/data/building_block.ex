@@ -14,4 +14,9 @@ defmodule CopilotApi.Core.Data.BuildingBlock do
     |> cast(attrs, [:name, :description])
     |> validate_required([:name])
   end
+
+  @type t() :: %__MODULE__{
+          name: String.t() | nil,
+          description: String.t() | nil
+        }
 end

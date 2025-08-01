@@ -14,4 +14,9 @@ defmodule CopilotApi.Core.Data.ClarifyingQuestion do
     |> cast(attrs, [:question, :answer_type])
     |> validate_required([:question])
   end
+
+  @type t() :: %__MODULE__{
+          question: String.t() | nil,
+          answer_type: String.t() | nil
+        }
 end

@@ -37,7 +37,8 @@ defmodule CopilotApi.Core.Data.ContactTest do
 
     test "is invalid if a nested changeset is invalid" do
       attrs = %{
-        name: %{first_name: "John"}, # Invalid: missing last name
+        # Invalid: missing last name
+        name: %{first_name: "John"},
         email: %{address: "john.doe@example.com"}
       }
 
@@ -47,7 +48,9 @@ defmodule CopilotApi.Core.Data.ContactTest do
       # Check for the specific nested error
       name_changeset = changeset.changes.name
       refute name_changeset.valid?
-      assert %{base: ["must provide both first and last name for a person"]} = errors_on(name_changeset)
+
+      assert %{base: ["must provide both first and last name for a person"]} =
+               errors_on(name_changeset)
     end
   end
 end

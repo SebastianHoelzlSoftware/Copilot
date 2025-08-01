@@ -27,4 +27,15 @@ defmodule CopilotApi.Core.Data.AIAnalysis do
     |> cast_embed(:clarifying_questions)
     |> cast_assoc(:cost_estimate)
   end
+
+  @type t() :: %__MODULE__{
+          id: Ecto.UUID.t() | nil,
+          suggested_blocks: [BuildingBlock.t()] | nil,
+          clarifying_questions: [ClarifyingQuestion.t()] | nil,
+          identified_ambiguities: [String.t()] | nil,
+          cost_estimate: CostEstimate.t() | nil,
+          cost_estimate_id: Ecto.UUID.t() | nil,
+          inserted_at: NaiveDateTime.t() | nil,
+          updated_at: NaiveDateTime.t() | nil
+        }
 end

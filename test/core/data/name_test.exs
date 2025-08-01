@@ -32,21 +32,27 @@ defmodule CopilotApi.Core.Data.NameTest do
       attrs = %{}
       changeset = Name.changeset(%Name{}, attrs)
       refute changeset.valid?
-      assert %{base: ["must provide either a company name or a person's full name"]} = errors_on(changeset)
+
+      assert %{base: ["must provide either a company name or a person's full name"]} =
+               errors_on(changeset)
     end
 
     test "returns an error for only a first name" do
       attrs = %{first_name: "John"}
       changeset = Name.changeset(%Name{}, attrs)
       refute changeset.valid?
-      assert %{base: ["must provide both first and last name for a person"]} = errors_on(changeset)
+
+      assert %{base: ["must provide both first and last name for a person"]} =
+               errors_on(changeset)
     end
 
     test "returns an error for only a last name" do
       attrs = %{last_name: "Doe"}
       changeset = Name.changeset(%Name{}, attrs)
       refute changeset.valid?
-      assert %{base: ["must provide both first and last name for a person"]} = errors_on(changeset)
+
+      assert %{base: ["must provide both first and last name for a person"]} =
+               errors_on(changeset)
     end
   end
 end
