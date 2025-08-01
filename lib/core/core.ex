@@ -24,13 +24,12 @@ defmodule CopilotApi.Core do
   def upsert_user(attrs) do
     # The "user_id" from the JWT corresponds to our "provider_id"
     provider_id = attrs["user_id"]
+    # The changeset expects a :provider_id field, but the JWT gives "user_id".
+    # We transform the attributes here to be used in both insert and update cases.
+    user_attrs = Map.put(attrs, "provider_id", provider_id)
 
     case Repo.get_by(User, provider_id: provider_id) do
       nil ->
-        # The changeset expects a :provider_id field, but the JWT gives "user_id".
-        # We need to transform the attributes before creating the user.
-        user_attrs = Map.put(attrs, "provider_id", provider_id)
-
         %User{}
         |> User.changeset(user_attrs)
         |> Repo.insert()
@@ -39,7 +38,7 @@ defmodule CopilotApi.Core do
         # User exists, so we update their details from the JWT claims
         # in case their name or role has changed.
         user
-        |> User.changeset(attrs)
+        |> User.changeset(user_attrs)
         |> Repo.update()
     end
   end
