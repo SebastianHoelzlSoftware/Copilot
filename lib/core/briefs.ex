@@ -18,7 +18,7 @@ defmodule CopilotApi.Core.Briefs do
 
   """
   def list_project_briefs do
-    Repo.all(ProjectBrief)
+    Repo.all(from p in ProjectBrief, preload: [:customer])
   end
 
   @doc """

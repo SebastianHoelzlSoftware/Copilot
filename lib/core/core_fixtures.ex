@@ -7,6 +7,9 @@ defmodule CopilotApi.Core.Fixtures do
   alias CopilotApi.Repo
   alias CopilotApi.Core.Data.Customer
   alias CopilotApi.Core.Briefs
+  alias CopilotApi.Core.AIAnalyses
+  alias CopilotApi.Core.Data.CostEstimate
+
 
   @doc """
   Generate a customer.
@@ -38,5 +41,37 @@ defmodule CopilotApi.Core.Fixtures do
       |> Briefs.create_project_brief()
 
     project_brief
+    |> Repo.preload(:customer)
+  end
+
+    @doc """
+  Generate a cost_estimate.
+  """
+  def cost_estimate_fixture(attrs \\ %{}) do
+    customer = Map.get(attrs, :customer) || customer_fixture()
+
+    %CostEstimate{}
+    |> CostEstimate.changeset(
+      Enum.into(attrs, %{
+        amount: "120.5",
+        currency: "USD",
+        customer_id: customer.id
+      })
+    )
+    |> Repo.insert!()
+  end
+
+  @doc """
+  Generate an ai_analysis.
+  """
+  def ai_analysis_fixture(attrs \\ %{}) do
+    project_brief = Map.get(attrs, :project_brief) || project_brief_fixture()
+
+    {:ok, ai_analysis} =
+      attrs
+      |> Enum.into(%{project_brief_id: project_brief.id, summary: "some summary"})
+      |> AIAnalyses.create_ai_analysis()
+
+    ai_analysis
   end
 end

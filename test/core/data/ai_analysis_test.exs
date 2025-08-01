@@ -26,6 +26,7 @@ defmodule CopilotApi.Core.Data.AIAnalysisTest do
       project_brief = project_brief_fixture()
 
       attrs = %{
+        summary: "some summary",
         suggested_blocks: [
           %{name: "User Auth", description: "Handle user login and registration."}
         ],

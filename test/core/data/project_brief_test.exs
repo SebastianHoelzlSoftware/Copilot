@@ -44,6 +44,7 @@ defmodule CopilotApi.Core.Data.ProjectBriefTest do
         summary: "A brief summary.",
         customer_id: customer.id,
         ai_analysis: %{
+          summary: "some summary",
           suggested_blocks: [%{name: "User Auth"}],
           cost_estimate: %{
             amount: Decimal.new("2500"),

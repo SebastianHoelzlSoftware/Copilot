@@ -4,6 +4,7 @@ defmodule CopilotApi.Repo.Migrations.CreateAiAnalyses do
   def change do
     create table(:ai_analyses, primary_key: false) do
       add :id, :binary_id, primary_key: true
+      add :summary, :string, null: false
       add :suggested_blocks, :map
       add :clarifying_questions, :map
       add :identified_ambiguities, {:array, :string}
@@ -16,6 +17,6 @@ defmodule CopilotApi.Repo.Migrations.CreateAiAnalyses do
     end
 
     create index(:ai_analyses, [:cost_estimate_id])
-    create index(:ai_analyses, [:project_brief_id])
+    create unique_index(:ai_analyses, [:project_brief_id])
   end
 end
