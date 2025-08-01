@@ -55,13 +55,13 @@ defmodule CopilotApi.Core.ContactsTest do
   describe "update_contact/2" do
     test "with valid data updates the contact" do
       contact = contact_fixture()
-      update_attrs = %{name: %{first_name: "Janet", last_name: "Doe"}}
+      update_attrs = %{name: %{first_name: "Janet", last_name: contact.name.last_name}}
 
       assert {:ok, %Contact{} = updated_contact} =
                Contacts.update_contact(contact, update_attrs)
 
       assert updated_contact.name.first_name == "Janet"
-      assert updated_contact.name.last_name == "Doe"
+      assert updated_contact.name.last_name == contact.name.last_name
     end
 
     test "with invalid data returns an error changeset" do
@@ -70,7 +70,7 @@ defmodule CopilotApi.Core.ContactsTest do
       assert {:error, %Ecto.Changeset{}} =
                Contacts.update_contact(contact, @invalid_attrs)
 
-      assert Contacts.get_contact!(contact.id).name.first_name == "John"
+      assert Contacts.get_contact!(contact.id).name.first_name == contact.name.first_name
     end
   end
 
