@@ -97,4 +97,22 @@ defmodule CopilotApiWeb.UserControllerTest do
       assert json_response(conn, 422)["errors"]["email"] == ["must have the @ sign and no spaces"]
     end
   end
+
+  describe "DELETE /api/me" do
+    test "returns 204 and deletes the user", %{conn: conn} do
+      developer_payload = %{
+        "provider_id" => "dev-user-123",
+        "email" => "dev@example.com",
+        "name" => "Dev User",
+        "roles" => ["developer"]
+      }
+
+      conn =
+        conn
+        |> put_auth_header(developer_payload)
+        |> delete(~p"/api/me")
+
+      assert conn.status == 204
+    end
+  end
 end

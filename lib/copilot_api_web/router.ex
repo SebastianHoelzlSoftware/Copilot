@@ -39,6 +39,7 @@ defmodule CopilotApiWeb.Router do
       pipe_through :protected
       get "/", UserController, :show
       put "/", UserController, :update
+      delete "/", UserController, :delete
     end
 
     # scope "/admin", CopilotApiWeb do

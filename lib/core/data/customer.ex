@@ -3,7 +3,14 @@ defmodule CopilotApi.Core.Data.Customer do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias CopilotApi.Core.Data.{Address, Contact, Name}
+  alias CopilotApi.Core.Data.{
+    Address,
+    Contact,
+    CostEstimate,
+    Name,
+    ProjectBrief,
+    User
+  }
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
@@ -11,7 +18,10 @@ defmodule CopilotApi.Core.Data.Customer do
     embeds_one :name, Name, on_replace: :delete
     embeds_one :address, Address, on_replace: :delete
 
-    has_many :contacts, Contact
+    has_many :contacts, Contact, on_delete: :delete_all
+    has_many :project_briefs, ProjectBrief, on_delete: :delete_all
+    has_many :cost_estimates, CostEstimate, on_delete: :delete_all
+    has_many :users, User, on_delete: :delete_all
 
     timestamps()
   end
@@ -25,5 +35,8 @@ defmodule CopilotApi.Core.Data.Customer do
     |> cast_embed(:name, required: true)
     |> cast_embed(:address)
     |> cast_assoc(:contacts)
+    |> cast_assoc(:project_briefs)
+    |> cast_assoc(:cost_estimates)
+    |> cast_assoc(:users)
   end
 end

@@ -23,4 +23,11 @@ defmodule CopilotApiWeb.UserController do
         |> render(:error, changeset: changeset)
     end
   end
+
+  def delete(conn, _params) do
+    current_user = conn.assigns.current_user
+
+    {:ok, _user} = Users.delete_user(current_user)
+    send_resp(conn, :no_content, "")
+  end
 end
