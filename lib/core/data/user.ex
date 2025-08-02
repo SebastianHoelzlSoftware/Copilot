@@ -8,7 +8,9 @@ defmodule CopilotApi.Core.Data.User do
     field :provider_id, :string
     field :email, :string
     field :name, :string
-    field :role, :string
+    field :roles, {:array, :string}, default: []
+
+    belongs_to :customer, CopilotApi.Core.Data.Customer
 
     timestamps()
   end
@@ -16,8 +18,8 @@ defmodule CopilotApi.Core.Data.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:provider_id, :email, :name, :role])
-    |> validate_required([:provider_id, :email, :role])
+    |> cast(attrs, [:provider_id, :email, :name, :roles, :customer_id])
+    |> validate_required([:provider_id, :email])
     |> unique_constraint(:provider_id)
     |> unique_constraint(:email)
   end
