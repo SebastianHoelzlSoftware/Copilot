@@ -50,6 +50,7 @@ defmodule CopilotApiWeb.Router do
     resources "/contacts", ContactController, except: [:new, :edit]
     resources "/customers", CustomerController, except: [:new, :edit]
     resources "/ai_analyses", AIAnalysisController, except: [:new, :edit]
+    resources "/cost_estimates", CostEstimateController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

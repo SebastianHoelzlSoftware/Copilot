@@ -60,6 +60,7 @@ defmodule CopilotApi.Core.Fixtures do
       })
     )
     |> Repo.insert!()
+    |> Repo.preload(:customer)
   end
 
   @doc """

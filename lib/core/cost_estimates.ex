@@ -18,7 +18,7 @@ defmodule CopilotApi.Core.CostEstimates do
 
   """
   def list_cost_estimates do
-    Repo.all(CostEstimate)
+    Repo.all(from ce in CostEstimate, preload: [:customer])
   end
 
   @doc """
