@@ -1,6 +1,8 @@
 defmodule CopilotApiWeb.UserControllerTest do
   use CopilotApiWeb.ConnCase, async: true
 
+  alias CopilotApi.Core.Users
+
   # Helper function to create the auth header, mimicking the DevAuth plug.
   defp put_auth_header(conn, user_payload) do
     encoded_user_info = Jason.encode!(user_payload)
@@ -89,7 +91,12 @@ defmodule CopilotApiWeb.UserControllerTest do
     end
 
     test "returns 422 for invalid data", %{conn: conn} do
-      developer_payload = %{"provider_id" => "dev-user-123", "email" => "dev@example.com", "roles" => ["developer"]}
+      developer_payload = %{
+        "provider_id" => "dev-user-123",
+        "email" => "dev@example.com",
+        "name" => "Dev User",
+        "roles" => ["developer"]
+      }
       invalid_params = %{"email" => "invalid-email"}
 
       conn = put_auth_header(conn, developer_payload) |> put(~p"/api/me", invalid_params)
@@ -113,6 +120,54 @@ defmodule CopilotApiWeb.UserControllerTest do
         |> delete(~p"/api/me")
 
       assert conn.status == 204
+    end
+  end
+
+  describe "PUT /api/users/:id/role" do
+    setup do
+      # Create a user that we can target for updates.
+      {:ok, user_to_update} =
+        Users.create_user(%{
+          "provider_id" => "target-user-789",
+          "email" => "target@example.com",
+          "name" => "Target User",
+          "roles" => ["customer"]
+        })
+
+      {:ok, user_to_update: user_to_update}
+    end
+
+    test "allows a developer to update a user's role", %{conn: conn, user_to_update: user} do
+      developer_payload = %{
+        "provider_id" => "dev-user-123",
+        "email" => "dev@example.com",
+        "name" => "Dev User",
+        "roles" => ["developer"]
+      }
+
+      conn =
+        conn
+        |> put_auth_header(developer_payload)
+        |> put(~p"/api/users/#{user.id}/role", %{"roles" => ["customer", "admin"]})
+
+      assert json_response(conn, 200)["data"]["roles"] == ["customer", "admin"]
+    end
+
+    test "is forbidden for a non-developer", %{conn: conn, user_to_update: user} do
+      customer_payload = %{
+        "provider_id" => "customer-456",
+        "email" => "customer@example.com",
+        "name" => "Customer User",
+        "roles" => ["customer"]
+      }
+
+      conn =
+        conn
+        |> put_auth_header(customer_payload)
+        |> put(~p"/api/users/#{user.id}/role", %{"roles" => ["admin"]})
+
+      assert conn.status == 403
+      assert json_response(conn, 403)["error"]["message"] == "You do not have the required permissions."
     end
   end
 end

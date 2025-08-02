@@ -56,6 +56,7 @@ defmodule CopilotApiWeb.Router do
     scope "/" do
       pipe_through :developer_only
       resources "/customers", CustomerController, except: [:new, :edit]
+      put "/users/:id/role", UserController, :update_role
     end
   end
 

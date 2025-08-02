@@ -30,4 +30,21 @@ defmodule CopilotApiWeb.UserController do
     {:ok, _user} = Users.delete_user(current_user)
     send_resp(conn, :no_content, "")
   end
+
+  def update_role(conn, %{"id" => id, "roles" => roles}) do
+    # This action is protected by the :developer_only pipeline,
+    # so we don't need to do additional authorization checks here.
+    user = Users.get_user!(id)
+
+    case Users.update_user(user, %{"roles" => roles}) do
+      {:ok, updated_user} ->
+        render(conn, :show, user: updated_user)
+      {:error, changeset} ->
+        # Reuse the existing changeset error view
+        conn
+        |> put_status(:unprocessable_entity)
+        |> put_view(json: CopilotApiWeb.ChangesetJSON)
+        |> render(:error, changeset: changeset)
+    end
+  end
 end

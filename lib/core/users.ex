@@ -5,6 +5,7 @@ defmodule CopilotApi.Core.Users do
 
   import Ecto.Query, warn: false
   alias CopilotApi.Repo
+  alias CopilotApi.Core.Customers
 
   alias CopilotApi.Core.Data.User
 
@@ -99,8 +100,24 @@ defmodule CopilotApi.Core.Users do
     if provider_id do
       case get_user_by(provider_id: provider_id) do
         nil ->
-          attrs_with_defaults = Map.update(attrs, "roles", ["user"], &(&1))
-          create_user(attrs_with_defaults)
+          # This is a new user. Check their roles to see if a Customer should be created.
+          roles = Map.get(attrs, "roles", ["customer", "user"])
+
+          if "customer" in roles do
+            # This is a customer user. Create a Customer for them.
+            with {:ok, customer} <- Customers.create_customer(%{name: %{company_name: attrs["name"]}}) do
+              attrs
+              |> Map.put("customer_id", customer.id)
+              |> Map.put("roles", roles)
+              |> create_user()
+            end
+          else
+            # This is a non-customer user (e.g., a developer).
+            # Create them without a customer record.
+            attrs
+            |> Map.put("roles", roles)
+            |> create_user()
+          end
 
         user ->
           {:ok, user}
@@ -108,8 +125,7 @@ defmodule CopilotApi.Core.Users do
     else
       # If provider_id is nil, we can't find a user.
       # Go straight to creation, which will fail validation as expected.
-      attrs_with_defaults = Map.update(attrs, "roles", ["user"], &(&1))
-      create_user(attrs_with_defaults)
+      create_user(Map.put_new(attrs, "roles", ["customer", "user"]))
     end
   end
 
