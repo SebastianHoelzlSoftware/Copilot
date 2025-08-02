@@ -28,7 +28,7 @@ defmodule CopilotApi.Core.Data.ContactTest do
 
     test "is invalid if a required embedded schema is missing" do
       attrs = %{
-        name: %{first_name: "John", last_name: "Doe"},
+        name: %{first_name: "John", last_name: "Doe"}
         # Missing customer_id and email
       }
 

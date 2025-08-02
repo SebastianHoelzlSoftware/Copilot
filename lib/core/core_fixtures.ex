@@ -11,7 +11,6 @@ defmodule CopilotApi.Core.Fixtures do
   alias CopilotApi.Core.AIAnalyses
   alias CopilotApi.Core.Data.CostEstimate
 
-
   @doc """
   Generate a customer.
   """
@@ -45,7 +44,7 @@ defmodule CopilotApi.Core.Fixtures do
     |> Repo.preload(:customer)
   end
 
-    @doc """
+  @doc """
   Generate a cost_estimate.
   """
   def cost_estimate_fixture(attrs \\ %{}) do

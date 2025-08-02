@@ -25,13 +25,19 @@ defmodule CopilotApiWeb.CostEstimateControllerTest do
 
     conn = as_customer(conn, owner_customer)
 
-    {:ok, conn: conn, cost_estimate: cost_estimate, owner_customer: owner_customer, other_customer: other_customer}
+    {:ok,
+     conn: conn,
+     cost_estimate: cost_estimate,
+     owner_customer: owner_customer,
+     other_customer: other_customer}
   end
 
   describe "index" do
     test "is forbidden for a customer", %{conn: conn} do
       conn = get(conn, ~p"/api/cost_estimates")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
 
     test "lists all cost estimates for a developer", %{conn: conn, cost_estimate: cost_estimate} do
@@ -46,7 +52,9 @@ defmodule CopilotApiWeb.CostEstimateControllerTest do
     test "is forbidden for a customer", %{conn: conn, owner_customer: owner_customer} do
       create_attrs = Map.put(@create_attrs, "customer_id", owner_customer.id)
       conn = post(conn, ~p"/api/cost_estimates", %{"cost_estimate" => create_attrs})
-      assert json_response(conn, 403)["error"]["message"] == "Only developers can create a cost estimate"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "Only developers can create a cost estimate"
     end
 
     test "creates a cost estimate for a developer", %{conn: conn, owner_customer: owner_customer} do
@@ -79,22 +87,34 @@ defmodule CopilotApiWeb.CostEstimateControllerTest do
       assert json_response(conn, 200)["data"]["id"] == cost_estimate.id
     end
 
-    test "is forbidden for other customer", %{conn: conn, cost_estimate: cost_estimate, other_customer: other_customer} do
+    test "is forbidden for other customer", %{
+      conn: conn,
+      cost_estimate: cost_estimate,
+      other_customer: other_customer
+    } do
       conn = as_customer(conn, other_customer)
       conn = get(conn, ~p"/api/cost_estimates/#{cost_estimate}")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
   end
 
   describe "update" do
     test "is forbidden for owner", %{conn: conn, cost_estimate: cost_estimate} do
-      conn = put(conn, ~p"/api/cost_estimates/#{cost_estimate}", %{"cost_estimate" => @update_attrs})
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+      conn =
+        put(conn, ~p"/api/cost_estimates/#{cost_estimate}", %{"cost_estimate" => @update_attrs})
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
 
     test "updates cost estimate for developer", %{conn: conn, cost_estimate: cost_estimate} do
       conn = as_developer(conn)
-      conn = put(conn, ~p"/api/cost_estimates/#{cost_estimate}", %{"cost_estimate" => @update_attrs})
+
+      conn =
+        put(conn, ~p"/api/cost_estimates/#{cost_estimate}", %{"cost_estimate" => @update_attrs})
+
       assert json_response(conn, 200)["data"]["amount"] == "2000.00"
     end
   end
@@ -102,14 +122,19 @@ defmodule CopilotApiWeb.CostEstimateControllerTest do
   describe "delete" do
     test "is forbidden for owner", %{conn: conn, cost_estimate: cost_estimate} do
       conn = delete(conn, ~p"/api/cost_estimates/#{cost_estimate}")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
 
     test "deletes cost estimate for developer", %{conn: conn, cost_estimate: cost_estimate} do
       conn = as_developer(conn)
       conn = delete(conn, ~p"/api/cost_estimates/#{cost_estimate}")
       assert response(conn, 204)
-      assert_raise Ecto.NoResultsError, fn -> CopilotApi.Core.CostEstimates.get_cost_estimate!(cost_estimate.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        CopilotApi.Core.CostEstimates.get_cost_estimate!(cost_estimate.id)
+      end
     end
   end
 end

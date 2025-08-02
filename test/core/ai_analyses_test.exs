@@ -26,7 +26,9 @@ defmodule CopilotApi.Core.AIAnalysesTest do
     end
 
     test "raises if the AI analysis does not exist" do
-      assert_raise Ecto.NoResultsError, fn -> AIAnalyses.get_ai_analysis!(Ecto.UUID.generate()) end
+      assert_raise Ecto.NoResultsError, fn ->
+        AIAnalyses.get_ai_analysis!(Ecto.UUID.generate())
+      end
     end
   end
 

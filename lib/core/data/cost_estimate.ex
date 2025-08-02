@@ -5,7 +5,6 @@ defmodule CopilotApi.Core.Data.CostEstimate do
 
   alias CopilotApi.Core.Data.{AIAnalysis, Customer}
 
-
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "cost_estimates" do

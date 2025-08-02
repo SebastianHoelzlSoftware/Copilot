@@ -36,7 +36,8 @@ defmodule CopilotApi.Core.UsersTest do
     test "find_or_create_user/1 creates a user if they don't exist" do
       assert {:ok, %User{} = user} = Users.find_or_create_user(@valid_attrs)
       assert user.provider_id == "test-provider-123"
-      assert user.roles == ["customer", "user"] # Default roles
+      # Default roles
+      assert user.roles == ["customer", "user"]
     end
 
     test "find_or_create_user/1 finds an existing user" do

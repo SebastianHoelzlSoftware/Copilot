@@ -32,7 +32,9 @@ defmodule CopilotApiWeb.AIAnalysisControllerTest do
   describe "index" do
     test "is forbidden for a customer", %{conn: conn} do
       conn = get(conn, ~p"/api/ai_analyses")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
 
     test "lists all analyses for a developer", %{conn: conn, analysis: analysis} do
@@ -47,7 +49,9 @@ defmodule CopilotApiWeb.AIAnalysisControllerTest do
     test "is forbidden for a customer", %{conn: conn, brief: brief} do
       create_attrs = Map.put(@create_attrs, "project_brief_id", brief.id)
       conn = post(conn, ~p"/api/ai_analyses", %{"ai_analysis" => create_attrs})
-      assert json_response(conn, 403)["error"]["message"] == "Only developers can create an AI analysis"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "Only developers can create an AI analysis"
     end
 
     test "creates an analysis for a developer", %{conn: conn} do
@@ -82,17 +86,25 @@ defmodule CopilotApiWeb.AIAnalysisControllerTest do
       assert json_response(conn, 200)["data"]["id"] == analysis.id
     end
 
-    test "is forbidden for other customer", %{conn: conn, analysis: analysis, other_customer: other_customer} do
+    test "is forbidden for other customer", %{
+      conn: conn,
+      analysis: analysis,
+      other_customer: other_customer
+    } do
       conn = as_customer(conn, other_customer)
       conn = get(conn, ~p"/api/ai_analyses/#{analysis}")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
   end
 
   describe "update" do
     test "is forbidden for owner", %{conn: conn, analysis: analysis} do
       conn = put(conn, ~p"/api/ai_analyses/#{analysis}", %{"ai_analysis" => @update_attrs})
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
 
     test "updates analysis for developer", %{conn: conn, analysis: analysis} do
@@ -105,14 +117,19 @@ defmodule CopilotApiWeb.AIAnalysisControllerTest do
   describe "delete" do
     test "is forbidden for owner", %{conn: conn, analysis: analysis} do
       conn = delete(conn, ~p"/api/ai_analyses/#{analysis}")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
 
     test "deletes analysis for developer", %{conn: conn, analysis: analysis} do
       conn = as_developer(conn)
       conn = delete(conn, ~p"/api/ai_analyses/#{analysis}")
       assert response(conn, 204)
-      assert_raise Ecto.NoResultsError, fn -> CopilotApi.Core.AIAnalyses.get_ai_analysis!(analysis.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        CopilotApi.Core.AIAnalyses.get_ai_analysis!(analysis.id)
+      end
     end
   end
 end

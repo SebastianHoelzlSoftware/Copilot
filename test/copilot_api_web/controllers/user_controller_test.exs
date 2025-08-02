@@ -51,7 +51,8 @@ defmodule CopilotApiWeb.UserControllerTest do
       # We don't call put_auth_header, so the request is unauthenticated.
       conn = get(conn, ~p"/api/me")
 
-      assert response(conn, 401) == "{\"error\":{\"code\":\"unauthorized\",\"message\":\"Authentication required\"}}"
+      assert response(conn, 401) ==
+               "{\"error\":{\"code\":\"unauthorized\",\"message\":\"Authentication required\"}}"
     end
   end
 
@@ -63,6 +64,7 @@ defmodule CopilotApiWeb.UserControllerTest do
         "name" => "Dev User",
         "roles" => ["developer"]
       }
+
       update_params = %{"name" => "A New Name"}
 
       conn =
@@ -80,6 +82,7 @@ defmodule CopilotApiWeb.UserControllerTest do
         "name" => "Customer User",
         "roles" => ["customer"]
       }
+
       update_params = %{"name" => "A New Customer Name"}
 
       conn =
@@ -97,6 +100,7 @@ defmodule CopilotApiWeb.UserControllerTest do
         "name" => "Dev User",
         "roles" => ["developer"]
       }
+
       invalid_params = %{"email" => "invalid-email"}
 
       conn = put_auth_header(conn, developer_payload) |> put(~p"/api/me", invalid_params)
@@ -167,7 +171,9 @@ defmodule CopilotApiWeb.UserControllerTest do
         |> put(~p"/api/users/#{user.id}/role", %{"roles" => ["admin"]})
 
       assert conn.status == 403
-      assert json_response(conn, 403)["error"]["message"] == "You do not have the required permissions."
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You do not have the required permissions."
     end
   end
 end

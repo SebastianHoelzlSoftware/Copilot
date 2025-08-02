@@ -10,12 +10,12 @@ defmodule CopilotApi.Core.Briefs do
 
   @doc """
   Returns the list of project_briefs.
-
+  
   ## Examples
-
+  
       iex> list_project_briefs()
       [%ProjectBrief{}, ...]
-
+  
   """
   def list_project_briefs do
     Repo.all(from p in ProjectBrief, preload: [:customer])
@@ -33,17 +33,17 @@ defmodule CopilotApi.Core.Briefs do
 
   @doc """
   Gets a single project_brief.
-
+  
   Raises `Ecto.NoResultsError` if the Project brief does not exist.
-
+  
   ## Examples
-
+  
       iex> get_project_brief!(123)
       %ProjectBrief{}
-
+  
       iex> get_project_brief!(456)
       ** (Ecto.NoResultsError)
-
+  
   """
   def get_project_brief!(id) do
     ProjectBrief
@@ -53,15 +53,15 @@ defmodule CopilotApi.Core.Briefs do
 
   @doc """
   Creates a project_brief.
-
+  
   ## Examples
-
+  
       iex> create_project_brief(%{field: value})
       {:ok, %ProjectBrief{}}
-
+  
       iex> create_project_brief(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def create_project_brief(attrs \\ %{}) do
     %ProjectBrief{}

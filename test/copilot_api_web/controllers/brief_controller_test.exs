@@ -37,7 +37,11 @@ defmodule CopilotApiWeb.BriefControllerTest do
       assert Enum.any?(data, &(&1["id"] == brief.id))
     end
 
-    test "lists only own briefs for a customer", %{conn: conn, brief: brief, other_customer: other_customer} do
+    test "lists only own briefs for a customer", %{
+      conn: conn,
+      brief: brief,
+      other_customer: other_customer
+    } do
       project_brief_fixture(%{customer: other_customer})
 
       conn = get(conn, ~p"/api/briefs")
@@ -80,10 +84,16 @@ defmodule CopilotApiWeb.BriefControllerTest do
       assert json_response(conn, 200)["data"]["id"] == brief.id
     end
 
-    test "returns forbidden for other customer", %{conn: conn, brief: brief, other_customer: other_customer} do
+    test "returns forbidden for other customer", %{
+      conn: conn,
+      brief: brief,
+      other_customer: other_customer
+    } do
       conn = as_customer(conn, other_customer)
       conn = get(conn, ~p"/api/briefs/#{brief}")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
   end
 
@@ -99,10 +109,16 @@ defmodule CopilotApiWeb.BriefControllerTest do
       assert json_response(conn, 200)["data"]["title"] == "updated title"
     end
 
-    test "returns forbidden for other customer", %{conn: conn, brief: brief, other_customer: other_customer} do
+    test "returns forbidden for other customer", %{
+      conn: conn,
+      brief: brief,
+      other_customer: other_customer
+    } do
       conn = as_customer(conn, other_customer)
       conn = put(conn, ~p"/api/briefs/#{brief}", %{"project_brief" => @update_attrs})
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
   end
 
@@ -110,19 +126,30 @@ defmodule CopilotApiWeb.BriefControllerTest do
     test "deletes brief for owner", %{conn: conn, brief: brief} do
       conn = delete(conn, ~p"/api/briefs/#{brief}")
       assert response(conn, 204)
-      assert_raise Ecto.NoResultsError, fn -> CopilotApi.Core.Briefs.get_project_brief!(brief.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        CopilotApi.Core.Briefs.get_project_brief!(brief.id)
+      end
     end
 
     test "returns forbidden for developer", %{conn: conn, brief: brief} do
       conn = as_developer(conn)
       conn = delete(conn, ~p"/api/briefs/#{brief}")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
 
-    test "returns forbidden for other customer", %{conn: conn, brief: brief, other_customer: other_customer} do
+    test "returns forbidden for other customer", %{
+      conn: conn,
+      brief: brief,
+      other_customer: other_customer
+    } do
       conn = as_customer(conn, other_customer)
       conn = delete(conn, ~p"/api/briefs/#{brief}")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
   end
 end

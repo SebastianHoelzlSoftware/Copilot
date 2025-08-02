@@ -119,7 +119,10 @@ defmodule CopilotApiWeb.CustomerControllerTest do
   end
 
   describe "delete" do
-    test "deletes a customer and all associated data for a developer", %{conn: conn, customer: customer} do
+    test "deletes a customer and all associated data for a developer", %{
+      conn: conn,
+      customer: customer
+    } do
       # Create associated data to ensure it's deleted via cascading.
       {:ok, user} =
         Users.create_user(%{

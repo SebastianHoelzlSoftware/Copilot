@@ -46,7 +46,8 @@ defmodule CopilotApiWeb.AIAnalysisController do
   def update(conn, %{"ai_analysis" => analysis_params}) do
     analysis = conn.assigns.ai_analysis
 
-    with {:ok, %AIAnalysis{} = analysis} <- AIAnalyses.update_ai_analysis(analysis, analysis_params) do
+    with {:ok, %AIAnalysis{} = analysis} <-
+           AIAnalyses.update_ai_analysis(analysis, analysis_params) do
       render(conn, :show, analysis: analysis)
     end
   end

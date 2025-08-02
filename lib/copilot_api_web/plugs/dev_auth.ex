@@ -1,7 +1,7 @@
 defmodule CopilotApiWeb.Plugs.DevAuth do
   @moduledoc """
   Mocks an authentication header in development.
-
+  
   In production, an API Gateway would validate a JWT and inject a similar
   header. This plug simulates that behavior for local development.
   """

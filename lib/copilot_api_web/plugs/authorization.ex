@@ -1,20 +1,20 @@
 defmodule CopilotApiWeb.Plugs.Authorization do
   @moduledoc """
   A plug to ensure a user has a specific role.
-
+  
   This plug checks the `roles` field within `conn.assigns.current_user`.
   It should be used after an authentication plug (like `EnsureAuthenticated`)
   has run.
-
+  
   ## Example Usage
-
+  
   In your `router.ex`:
-
+  
       pipeline :developer_only do
         plug CopilotApiWeb.Plugs.EnsureAuthenticated
         plug CopilotApiWeb.Plugs.Authorization, "developer"
       end
-
+  
       scope "/developer", CopilotApiWeb do
         pipe_through [:api, :developer_only]
         # ... developer-only routes

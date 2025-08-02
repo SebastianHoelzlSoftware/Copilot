@@ -39,6 +39,7 @@ defmodule CopilotApiWeb.UserController do
     case Users.update_user(user, %{"roles" => roles}) do
       {:ok, updated_user} ->
         render(conn, :show, user: updated_user)
+
       {:error, changeset} ->
         # Reuse the existing changeset error view
         conn

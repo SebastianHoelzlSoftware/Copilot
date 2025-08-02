@@ -39,7 +39,11 @@ defmodule CopilotApiWeb.ContactControllerTest do
       assert Enum.any?(data, &(&1["id"] == contact.id))
     end
 
-    test "lists only own contacts for a customer", %{conn: conn, contact: contact, other_customer: other_customer} do
+    test "lists only own contacts for a customer", %{
+      conn: conn,
+      contact: contact,
+      other_customer: other_customer
+    } do
       contact_fixture(%{customer: other_customer})
 
       conn = get(conn, ~p"/api/contacts")
@@ -82,10 +86,16 @@ defmodule CopilotApiWeb.ContactControllerTest do
       assert json_response(conn, 200)["data"]["id"] == contact.id
     end
 
-    test "returns forbidden for other customer", %{conn: conn, contact: contact, other_customer: other_customer} do
+    test "returns forbidden for other customer", %{
+      conn: conn,
+      contact: contact,
+      other_customer: other_customer
+    } do
       conn = as_customer(conn, other_customer)
       conn = get(conn, ~p"/api/contacts/#{contact}")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
   end
 
@@ -103,11 +113,17 @@ defmodule CopilotApiWeb.ContactControllerTest do
       assert json_response(conn, 200)["data"]["name"]["first_name"] == "Janet"
     end
 
-    test "returns forbidden for other customer", %{conn: conn, contact: contact, other_customer: other_customer} do
+    test "returns forbidden for other customer", %{
+      conn: conn,
+      contact: contact,
+      other_customer: other_customer
+    } do
       update_attrs = %{name: %{first_name: "Janet", last_name: contact.name.last_name}}
       conn = as_customer(conn, other_customer)
       conn = put(conn, ~p"/api/contacts/#{contact}", %{"contact" => update_attrs})
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
   end
 
@@ -115,20 +131,32 @@ defmodule CopilotApiWeb.ContactControllerTest do
     test "deletes contact for owner", %{conn: conn, contact: contact} do
       conn = delete(conn, ~p"/api/contacts/#{contact}")
       assert response(conn, 204)
-      assert_raise Ecto.NoResultsError, fn -> CopilotApi.Core.Contacts.get_contact!(contact.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        CopilotApi.Core.Contacts.get_contact!(contact.id)
+      end
     end
 
     test "deletes contact for developer", %{conn: conn, contact: contact} do
       conn = as_developer(conn)
       conn = delete(conn, ~p"/api/contacts/#{contact}")
       assert response(conn, 204)
-      assert_raise Ecto.NoResultsError, fn -> CopilotApi.Core.Contacts.get_contact!(contact.id) end
+
+      assert_raise Ecto.NoResultsError, fn ->
+        CopilotApi.Core.Contacts.get_contact!(contact.id)
+      end
     end
 
-    test "returns forbidden for other customer", %{conn: conn, contact: contact, other_customer: other_customer} do
+    test "returns forbidden for other customer", %{
+      conn: conn,
+      contact: contact,
+      other_customer: other_customer
+    } do
       conn = as_customer(conn, other_customer)
       conn = delete(conn, ~p"/api/contacts/#{contact}")
-      assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
+
+      assert json_response(conn, 403)["error"]["message"] ==
+               "You are not authorized to perform this action"
     end
   end
 end

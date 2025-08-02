@@ -19,7 +19,9 @@ defmodule CopilotApiWeb.Plugs.AuthorizeBrief do
         else
           conn
           |> put_status(:forbidden)
-          |> json(%{error: %{status: 403, message: "You are not authorized to perform this action"}})
+          |> json(%{
+            error: %{status: 403, message: "You are not authorized to perform this action"}
+          })
           |> halt()
         end
     end

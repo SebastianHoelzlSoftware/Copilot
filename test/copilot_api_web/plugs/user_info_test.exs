@@ -5,7 +5,9 @@ defmodule CopilotApiWeb.Plugs.UserInfoTest do
   alias CopilotApiWeb.Plugs.UserInfo
 
   describe "UserInfo plug" do
-    test "assigns current_user when header is valid and user can be found or created", %{conn: conn} do
+    test "assigns current_user when header is valid and user can be found or created", %{
+      conn: conn
+    } do
       user_attrs = %{
         "provider_id" => "test-user-123",
         "email" => "test@example.com",
