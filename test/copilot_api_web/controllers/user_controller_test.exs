@@ -29,7 +29,7 @@ defmodule CopilotApiWeb.UserControllerTest do
       assert json_response["data"]["roles"] == ["developer"]
     end
 
-    test "returns 403 Forbidden for a user without the developer role", %{conn: conn} do
+    test "returns 200 for an authenticated non-developer user", %{conn: conn} do
       customer_payload = %{
         "provider_id" => "customer-456",
         "email" => "customer@example.com",
@@ -42,8 +42,7 @@ defmodule CopilotApiWeb.UserControllerTest do
         |> put_auth_header(customer_payload)
         |> get(~p"/api/me")
 
-      assert conn.status == 403
-      assert json_response(conn, 403)["error"]["message"] == "You do not have the required permissions."
+      assert json_response(conn, 200)["data"]["email"] == "customer@example.com"
     end
 
     test "returns 401 Unauthorized for a request without authentication", %{conn: conn} do
@@ -70,6 +69,23 @@ defmodule CopilotApiWeb.UserControllerTest do
         |> put(~p"/api/me", update_params)
 
       assert json_response(conn, 200)["data"]["name"] == "A New Name"
+    end
+
+    test "returns 200 for a non-developer updating their own profile", %{conn: conn} do
+      customer_payload = %{
+        "provider_id" => "customer-456",
+        "email" => "customer@example.com",
+        "name" => "Customer User",
+        "roles" => ["customer"]
+      }
+      update_params = %{"name" => "A New Customer Name"}
+
+      conn =
+        conn
+        |> put_auth_header(customer_payload)
+        |> put(~p"/api/me", update_params)
+
+      assert json_response(conn, 200)["data"]["name"] == "A New Customer Name"
     end
 
     test "returns 422 for invalid data", %{conn: conn} do
