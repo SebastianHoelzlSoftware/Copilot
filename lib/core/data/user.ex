@@ -20,6 +20,7 @@ defmodule CopilotApi.Core.Data.User do
     user
     |> cast(attrs, [:provider_id, :email, :name, :roles, :customer_id])
     |> validate_required([:provider_id, :email])
+    |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
     |> unique_constraint(:provider_id)
     |> unique_constraint(:email)
   end
