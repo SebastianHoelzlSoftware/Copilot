@@ -23,6 +23,7 @@ defmodule CopilotApi.Core.Fixtures do
       })
     )
     |> Repo.insert!()
+    |> Repo.preload(:contacts)
   end
 
   @doc """

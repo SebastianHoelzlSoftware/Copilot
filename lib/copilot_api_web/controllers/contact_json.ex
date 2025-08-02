@@ -15,7 +15,7 @@ defmodule CopilotApiWeb.ContactJSON do
     %{data: data(contact)}
   end
 
-  defp data(%Contact{} = contact) do
+  def data(%Contact{} = contact) do
     %{
       id: contact.id,
       name: contact.name,

@@ -18,7 +18,7 @@ defmodule CopilotApi.Core.Customers do
 
   """
   def list_customers do
-    Repo.all(Customer)
+    Repo.all(from c in Customer, preload: [:contacts])
   end
 
   @doc """

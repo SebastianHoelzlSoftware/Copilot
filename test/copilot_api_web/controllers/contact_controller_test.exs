@@ -7,7 +7,6 @@ defmodule CopilotApiWeb.ContactControllerTest do
     name: %{first_name: "Jane", last_name: "Doe"},
     email: %{address: "jane.doe@example.com"}
   }
-  @update_attrs %{name: %{first_name: "Janet"}}
   @invalid_attrs %{name: nil}
 
   defp as_customer(conn, customer) do
@@ -105,8 +104,9 @@ defmodule CopilotApiWeb.ContactControllerTest do
     end
 
     test "returns forbidden for other customer", %{conn: conn, contact: contact, other_customer: other_customer} do
+      update_attrs = %{name: %{first_name: "Janet", last_name: contact.name.last_name}}
       conn = as_customer(conn, other_customer)
-      conn = put(conn, ~p"/api/contacts/#{contact}", %{"contact" => @update_attrs})
+      conn = put(conn, ~p"/api/contacts/#{contact}", %{"contact" => update_attrs})
       assert json_response(conn, 403)["error"]["message"] == "You are not authorized to perform this action"
     end
   end
