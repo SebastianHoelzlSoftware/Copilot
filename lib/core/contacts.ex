@@ -70,4 +70,14 @@ defmodule CopilotApi.Core.Contacts do
   def delete_contact(%Contact{} = contact) do
     Repo.delete(contact)
   end
+
+    @doc """
+  Returns the list of contacts for a given customer.
+  """
+  def list_contacts_for_customer(customer) do
+    Contact
+    |> where([c], c.customer_id == ^customer.id)
+    |> Repo.all()
+    |> Repo.preload(:customer)
+  end
 end

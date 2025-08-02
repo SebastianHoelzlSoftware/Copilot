@@ -47,6 +47,7 @@ defmodule CopilotApiWeb.Router do
     # end
 
     resources "/briefs", BriefController, except: [:new, :edit]
+    resources "/contacts", ContactController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
