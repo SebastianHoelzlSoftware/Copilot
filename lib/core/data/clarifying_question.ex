@@ -1,6 +1,7 @@
 defmodule CopilotApi.Core.Data.ClarifyingQuestion do
   @moduledoc "An embedded schema for a clarifying question."
   use Ecto.Schema
+  @derive {Jason.Encoder, only: [:question, :answer_type]}
   import Ecto.Changeset
 
   @primary_key false

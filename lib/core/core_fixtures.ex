@@ -74,6 +74,7 @@ defmodule CopilotApi.Core.Fixtures do
       |> AIAnalyses.create_ai_analysis()
 
     ai_analysis
+    |> Repo.preload(:project_brief)
   end
 
   @doc """

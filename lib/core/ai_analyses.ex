@@ -18,7 +18,7 @@ defmodule CopilotApi.Core.AIAnalyses do
 
   """
   def list_ai_analyses do
-    Repo.all(AIAnalysis)
+    Repo.all(from a in AIAnalysis, preload: [:project_brief])
   end
 
   @doc """
