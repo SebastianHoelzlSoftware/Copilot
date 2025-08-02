@@ -1,30 +1,24 @@
 defmodule CopilotApiWeb.Plugs.DevAuth do
   @moduledoc """
-  A plug to mock the API Gateway's authentication for local development.
-  
-  This plug injects a fake `x-apigateway-api-userinfo` header into the
-  request, simulating a successfully authenticated user. It should only
-  be used in the `:dev` environment.
+  Mocks an authentication header in development.
+
+  In production, an API Gateway would validate a JWT and inject a similar
+  header. This plug simulates that behavior for local development.
   """
   import Plug.Conn
 
-  @user_info_header "x-apigateway-api-userinfo"
+  alias Jason
 
   def init(opts), do: opts
 
   def call(conn, _opts) do
-    # Create a mock user payload, mimicking a decoded Firebase JWT.
-    mock_user = %{
-      "user_id" => "dev-user-123",
-      "email" => "dev@example.com",
+    user_info = %{
+      "provider_id" => "dev-user-123",
+      "email" => "developer@example.com",
       "name" => "Dev User",
-      "issuer" => "https://securetoken.google.com/mock-project-id",
-      # Add a mock role for authorization testing
-      "role" => "developer"
+      "roles" => ["developer", "user"]
     }
 
-    # Encode the payload to JSON, then Base64, and put it in the header.
-    encoded_user_info = mock_user |> Jason.encode!() |> Base.encode64(padding: false)
-    put_req_header(conn, @user_info_header, encoded_user_info)
+    put_req_header(conn, "x-user-info", Jason.encode!(user_info))
   end
 end

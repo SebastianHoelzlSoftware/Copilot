@@ -1,33 +1,25 @@
 defmodule CopilotApiWeb.Plugs.UserInfo do
   @moduledoc """
-  A plug to extract user information from request headers, typically injected by an API Gateway.
+  Extracts user information from a request header and loads the user.
   """
   import Plug.Conn
-  alias CopilotApi.Core
 
-  # This header is typically injected by Google Cloud Endpoints when using JWT authentication.
-  # The value is a base64-encoded JSON string containing user information.
-  @user_info_header "x-apigateway-api-userinfo"
+  alias CopilotApi.Core.Users
+  alias Jason
 
   def init(opts), do: opts
 
   def call(conn, _opts) do
-    case get_req_header(conn, @user_info_header) do
-      [encoded_user_info | _] ->
-        with {:ok, decoded_binary} <- Base.decode64(encoded_user_info, padding: false),
-             {:ok, jwt_claims} <- Jason.decode(decoded_binary),
-             {:ok, user} <- Core.upsert_user(jwt_claims) do
-          # Attach the full User struct to the connection's assigns
-          assign(conn, :current_user, user)
-        else
-          _ ->
-            # Handle decoding or parsing errors, or simply ignore if not critical
-            conn
-        end
-
-      _ ->
-        # No user info header found, continue without assigning user
-        conn
+    with [user_info_json] <- get_req_header(conn, "x-user-info"),
+         {:ok, user_attrs} <- Jason.decode(user_info_json),
+         {:ok, user} <- Users.find_or_create_user(user_attrs) do
+      assign(conn, :current_user, user)
+    else
+      _error ->
+        # If the header is missing, JSON is invalid, or the user
+        # can't be found/created, we assign nil.
+        # The EnsureAuthenticated plug will then reject the request.
+        assign(conn, :current_user, nil)
     end
   end
 end

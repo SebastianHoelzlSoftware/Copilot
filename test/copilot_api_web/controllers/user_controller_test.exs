@@ -3,18 +3,18 @@ defmodule CopilotApiWeb.UserControllerTest do
 
   # Helper function to create the auth header, mimicking the DevAuth plug.
   defp put_auth_header(conn, user_payload) do
-    encoded_user_info = user_payload |> Jason.encode!() |> Base.encode64(padding: false)
-    put_req_header(conn, "x-apigateway-api-userinfo", encoded_user_info)
+    encoded_user_info = Jason.encode!(user_payload)
+    put_req_header(conn, "x-user-info", encoded_user_info)
   end
 
   describe "GET /api/me" do
     test "returns 200 and current user data for an authenticated developer", %{conn: conn} do
       # This payload mimics what DevAuth or a real API gateway would provide.
       developer_payload = %{
-        "user_id" => "dev-user-123",
+        "provider_id" => "dev-user-123",
         "email" => "dev@example.com",
         "name" => "Dev User",
-        "role" => "developer"
+        "roles" => ["developer"]
       }
 
       conn =
@@ -26,15 +26,15 @@ defmodule CopilotApiWeb.UserControllerTest do
 
       json_response = json_response(conn, 200)
       assert json_response["data"]["email"] == "dev@example.com"
-      assert json_response["data"]["role"] == "developer"
+      assert json_response["data"]["roles"] == ["developer"]
     end
 
     test "returns 403 Forbidden for a user without the developer role", %{conn: conn} do
       customer_payload = %{
-        "user_id" => "customer-456",
+        "provider_id" => "customer-456",
         "email" => "customer@example.com",
         "name" => "Customer User",
-        "role" => "customer"
+        "roles" => ["customer"]
       }
 
       conn =
@@ -42,7 +42,8 @@ defmodule CopilotApiWeb.UserControllerTest do
         |> put_auth_header(customer_payload)
         |> get(~p"/api/me")
 
-      assert response(conn, 403) == "{\"error\":{\"code\":\"forbidden\",\"message\":\"You do not have the required permissions.\"}}"
+      assert conn.status == 403
+      assert json_response(conn, 403)["error"]["message"] == "You do not have the required permissions."
     end
 
     test "returns 401 Unauthorized for a request without authentication", %{conn: conn} do
