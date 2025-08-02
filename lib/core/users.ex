@@ -94,13 +94,22 @@ defmodule CopilotApi.Core.Users do
       {:ok, %User{}}
   """
   def find_or_create_user(attrs) do
-    case get_user_by(provider_id: attrs["provider_id"]) do
-      nil ->
-        attrs_with_defaults = Map.update(attrs, "roles", ["user"], &(&1))
-        create_user(attrs_with_defaults)
+    provider_id = attrs["provider_id"]
 
-      user ->
-        {:ok, user}
+    if provider_id do
+      case get_user_by(provider_id: provider_id) do
+        nil ->
+          attrs_with_defaults = Map.update(attrs, "roles", ["user"], &(&1))
+          create_user(attrs_with_defaults)
+
+        user ->
+          {:ok, user}
+      end
+    else
+      # If provider_id is nil, we can't find a user.
+      # Go straight to creation, which will fail validation as expected.
+      attrs_with_defaults = Map.update(attrs, "roles", ["user"], &(&1))
+      create_user(attrs_with_defaults)
     end
   end
 
