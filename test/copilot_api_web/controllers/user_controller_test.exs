@@ -53,4 +53,32 @@ defmodule CopilotApiWeb.UserControllerTest do
       assert response(conn, 401) == "{\"error\":{\"code\":\"unauthorized\",\"message\":\"Authentication required\"}}"
     end
   end
+
+  describe "PUT /api/me" do
+    test "returns 200 and updated user data for a valid update", %{conn: conn} do
+      developer_payload = %{
+        "provider_id" => "dev-user-123",
+        "email" => "dev@example.com",
+        "name" => "Dev User",
+        "roles" => ["developer"]
+      }
+      update_params = %{"name" => "A New Name"}
+
+      conn =
+        conn
+        |> put_auth_header(developer_payload)
+        |> put(~p"/api/me", update_params)
+
+      assert json_response(conn, 200)["data"]["name"] == "A New Name"
+    end
+
+    test "returns 422 for invalid data", %{conn: conn} do
+      developer_payload = %{"provider_id" => "dev-user-123", "email" => "dev@example.com", "roles" => ["developer"]}
+      invalid_params = %{"email" => "invalid-email"}
+
+      conn = put_auth_header(conn, developer_payload) |> put(~p"/api/me", invalid_params)
+
+      assert json_response(conn, 422)["errors"]["email"] == ["must have the @ sign and no spaces"]
+    end
+  end
 end

@@ -38,6 +38,7 @@ defmodule CopilotApiWeb.Router do
     scope "/me" do
       pipe_through :developer_only
       get "/", UserController, :show
+      put "/", UserController, :update
     end
 
     # scope "/admin", CopilotApiWeb do
