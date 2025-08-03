@@ -2,6 +2,7 @@ defmodule CopilotApi.Core.CostEstimatesTest do
   use CopilotApi.DataCase
 
   alias CopilotApi.Core.CostEstimates
+  alias CopilotApi.Core.AIAnalyses
   alias CopilotApi.Core.Data.CostEstimate
 
   import CopilotApi.Core.Fixtures
@@ -11,18 +12,31 @@ defmodule CopilotApi.Core.CostEstimatesTest do
   describe "list_cost_estimates/0" do
     test "returns all cost_estimates" do
       cost_estimate = cost_estimate_fixture()
-      assert CostEstimates.list_cost_estimates() == [cost_estimate]
+      [fetched_estimate] = CostEstimates.list_cost_estimates()
+
+      assert fetched_estimate.id == cost_estimate.id
+      assert fetched_estimate.customer
     end
   end
 
   describe "get_cost_estimate!/1" do
     test "returns the cost_estimate with given id" do
-      cost_estimate = cost_estimate_fixture()
+      customer = customer_fixture()
+      project_brief = project_brief_fixture(%{customer: customer})
+      cost_estimate = cost_estimate_fixture(%{customer: customer})
+
+      {:ok, ai_analysis} =
+        AIAnalyses.create_ai_analysis(%{
+          summary: "test analysis",
+          project_brief_id: project_brief.id,
+          cost_estimate_id: cost_estimate.id
+        })
+
       fetched_estimate = CostEstimates.get_cost_estimate!(cost_estimate.id)
 
       assert fetched_estimate.id == cost_estimate.id
       assert fetched_estimate.customer
-      assert fetched_estimate.ai_analysis == nil
+      assert fetched_estimate.ai_analysis.id == ai_analysis.id
     end
 
     test "raises if the Cost estimate does not exist" do
@@ -52,6 +66,11 @@ defmodule CopilotApi.Core.CostEstimatesTest do
 
     test "with invalid data returns an error changeset" do
       assert {:error, %Ecto.Changeset{}} = CostEstimates.create_cost_estimate(@invalid_attrs)
+    end
+
+    test "with no arguments returns an error changeset" do
+      # This test covers the default argument path of create_cost_estimate/1
+      assert {:error, %Ecto.Changeset{}} = CostEstimates.create_cost_estimate()
     end
   end
 
@@ -84,6 +103,13 @@ defmodule CopilotApi.Core.CostEstimatesTest do
       assert_raise Ecto.NoResultsError, fn ->
         CostEstimates.get_cost_estimate!(cost_estimate.id)
       end
+    end
+  end
+
+  describe "change_cost_estimate/2" do
+    test "returns a cost_estimate changeset" do
+      cost_estimate = cost_estimate_fixture()
+      assert %Ecto.Changeset{} = CostEstimates.change_cost_estimate(cost_estimate)
     end
   end
 end
