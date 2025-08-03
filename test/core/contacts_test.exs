@@ -50,6 +50,11 @@ defmodule CopilotApi.Core.ContactsTest do
     test "with invalid data returns an error changeset" do
       assert {:error, %Ecto.Changeset{}} = Contacts.create_contact(@invalid_attrs)
     end
+
+    test "with no arguments returns an error changeset" do
+      # This test covers the default argument path of create_contact/1
+      assert {:error, %Ecto.Changeset{}} = Contacts.create_contact()
+    end
   end
 
   describe "update_contact/2" do
@@ -79,6 +84,29 @@ defmodule CopilotApi.Core.ContactsTest do
       contact = contact_fixture()
       assert {:ok, %Contact{}} = Contacts.delete_contact(contact)
       assert_raise Ecto.NoResultsError, fn -> Contacts.get_contact!(contact.id) end
+    end
+  end
+
+  describe "change_contact/2" do
+    test "returns a contact changeset" do
+      contact = contact_fixture()
+      assert %Ecto.Changeset{} = Contacts.change_contact(contact)
+    end
+  end
+
+  describe "list_contacts_for_customer/1" do
+    test "returns all contacts for a given customer" do
+      customer = customer_fixture()
+      contact1 = contact_fixture(%{customer: customer})
+      contact2 = contact_fixture(%{customer: customer})
+      # Create another contact for a different customer to ensure it's not returned
+      contact_fixture()
+
+      contacts = Contacts.list_contacts_for_customer(customer)
+
+      assert length(contacts) == 2
+      assert Enum.map(contacts, & &1.id) |> Enum.sort() == [contact1.id, contact2.id] |> Enum.sort()
+      assert Enum.all?(contacts, &(&1.customer))
     end
   end
 end
