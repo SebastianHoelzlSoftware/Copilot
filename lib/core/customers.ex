@@ -10,12 +10,12 @@ defmodule CopilotApi.Core.Customers do
 
   @doc """
   Returns the list of customers.
-  
+
   ## Examples
-  
+
       iex> list_customers()
       [%Customer{}, ...]
-  
+
   """
   def list_customers do
     Repo.all(from c in Customer, preload: [:contacts])
@@ -23,17 +23,17 @@ defmodule CopilotApi.Core.Customers do
 
   @doc """
   Gets a single customer.
-  
+
   Raises `Ecto.NoResultsError` if the Customer does not exist.
-  
+
   ## Examples
-  
+
       iex> get_customer!(123)
       %Customer{}
-  
+
       iex> get_customer!(456)
       ** (Ecto.NoResultsError)
-  
+
   """
   def get_customer!(id) do
     Customer
@@ -43,15 +43,15 @@ defmodule CopilotApi.Core.Customers do
 
   @doc """
   Creates a customer.
-  
+
   ## Examples
-  
+
       iex> create_customer(%{field: value})
       {:ok, %Customer{}}
-  
+
       iex> create_customer(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
-  
+
   """
   def create_customer(attrs \\ %{}) do
     %Customer{}
@@ -73,5 +73,18 @@ defmodule CopilotApi.Core.Customers do
   """
   def delete_customer(%Customer{} = customer) do
     Repo.delete(customer)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking customer changes.
+
+  ## Examples
+
+      iex> change_customer(customer)
+      %Ecto.Changeset{data: %Customer{}}
+
+  """
+  def change_customer(%Customer{} = customer, attrs \\ %{}) do
+    Customer.changeset(customer, attrs)
   end
 end
