@@ -4,33 +4,27 @@ defmodule CopilotApi.Application do
   @moduledoc false
 
   use Application
+  require Logger
 
   @impl true
   def start(_type, _args) do
+    # Log application startup. This is a great place to put this log
+    # as it runs once when the application is booting.
+    Logger.info("COPILOT API STARTED", %{
+      event: "application_started",
+      application: :copilot_api,
+      env: Mix.env(),
+      version: Application.spec(:copilot_api, :vsn) |> to_string()
+    })
+
     children = [
-      CopilotApiWeb.Telemetry,
       CopilotApi.Repo,
-      {DNSCluster, query: Application.get_env(:copilot_api, :dns_cluster_query) || :ignore},
+      CopilotApiWeb.Telemetry,
       {Phoenix.PubSub, name: CopilotApi.PubSub},
-      # Start the Finch HTTP client for sending emails
-      {Finch, name: CopilotApi.Finch},
-      # Start a worker by calling: CopilotApi.Worker.start_link(arg)
-      # {CopilotApi.Worker, arg},
-      # Start to serve requests, typically the last entry
       CopilotApiWeb.Endpoint
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: CopilotApi.Supervisor]
     Supervisor.start_link(children, opts)
-  end
-
-  # Tell Phoenix to update the endpoint configuration
-  # whenever the application is updated.
-  @impl true
-  def config_change(changed, _new, removed) do
-    CopilotApiWeb.Endpoint.config_change(changed, removed)
-    :ok
   end
 end
