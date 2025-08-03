@@ -1,3 +1,4 @@
+
 /_build
 /cover
 /deps
@@ -35,3 +36,9 @@ erl_crash.dump
 # Ignore package tarball (built via "mix hex.build").
 copilot_api-*.tar
 
+
+#======================================================================
+# SUPER IMPORTANT: Do not check this file in as it holds credentials!!!
+#======================================================================
+.env
+#======================================================================

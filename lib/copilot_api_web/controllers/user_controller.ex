@@ -2,6 +2,7 @@ defmodule CopilotApiWeb.UserController do
   use CopilotApiWeb, :controller
 
   alias CopilotApi.Core.Users
+  require Logger
 
   def show(conn, _params) do
     # The current_user is already in conn.assigns thanks to the UserInfo plug
@@ -38,6 +39,14 @@ defmodule CopilotApiWeb.UserController do
 
     case Users.update_user(user, %{"roles" => roles}) do
       {:ok, updated_user} ->
+        # Log this important administrative action with structured metadata.
+        Logger.info("User role updated by admin", %{
+          event: "user_role_updated",
+          admin_user_id: conn.assigns.current_user.id,
+          target_user_id: updated_user.id,
+          new_roles: updated_user.roles
+        })
+
         render(conn, :show, user: updated_user)
 
       {:error, changeset} ->

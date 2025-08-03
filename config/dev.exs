@@ -64,3 +64,13 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# --- Logflare Development Configuration (For Manual Testing) ---
+# Add the Logflare backend to the list of loggers for development.
+config :logger, backends: [:console, LogflareLogger.HttpBackend]
+
+# Configure the Logflare backend itself.
+config :logflare_logger_backend,
+  api_key: System.get_env("LOGFLARE_DEV_API_KEY"),
+  source_id: System.get_env("LOGFLARE_DEV_SOURCE_ID"),
+  metadata: [drop: [:conn]]
