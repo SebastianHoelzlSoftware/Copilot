@@ -28,7 +28,13 @@ defmodule CopilotApiWeb.UserController do
   def delete(conn, _params) do
     current_user = conn.assigns.current_user
 
-    {:ok, _user} = Users.delete_user(current_user)
+    with {:ok, user} <- Users.delete_user(current_user) do
+      Logger.info("User deleted their own account", %{
+        event: "user_self_deleted",
+        user_id: user.id
+      })
+    end
+
     send_resp(conn, :no_content, "")
   end
 
