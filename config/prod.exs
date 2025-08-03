@@ -15,4 +15,4 @@ config :logger, level: :info, backends: [:console, LogflareLogger.HttpBackend]
 config :logflare_logger_backend,
   api_key: System.get_env("LOGFLARE_API_KEY"),
   source_id: System.get_env("LOGFLARE_SOURCE_ID"),
-  metadata: :all
+  metadata: [drop: [:conn]]
