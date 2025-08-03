@@ -33,7 +33,16 @@ defmodule CopilotApi.Core.UsersTest do
       assert {:error, %Ecto.Changeset{}} = Users.create_user(%{"email" => nil})
     end
 
+    test "create_user/1 with no arguments returns an error changeset" do
+      # This test covers the default argument path of create_user/1
+      assert {:error, %Ecto.Changeset{}} = Users.create_user()
+    end
+
     test "find_or_create_user/1 creates a user if they don't exist" do
+      # Temporarily set the log level to :info to ensure the logger metadata is evaluated
+      # for full test coverage.
+      Logger.configure(level: :info)
+
       assert {:ok, %User{} = user} = Users.find_or_create_user(@valid_attrs)
       assert user.provider_id == "test-provider-123"
       # Default roles
@@ -48,6 +57,10 @@ defmodule CopilotApi.Core.UsersTest do
     end
 
     test "find_or_create_user/1 does not create a customer for a new developer" do
+      # Temporarily set the log level to :info to ensure the logger metadata is evaluated
+      # for full test coverage.
+      Logger.configure(level: :info)
+
       initial_customer_count = Enum.count(Customers.list_customers())
 
       developer_attrs = %{
@@ -62,6 +75,16 @@ defmodule CopilotApi.Core.UsersTest do
       assert user.customer_id == nil
 
       assert Enum.count(Customers.list_customers()) == initial_customer_count
+    end
+
+    test "find_or_create_user/1 with no provider_id returns an error changeset" do
+      attrs_without_provider = %{
+        "email" => "no.provider@example.com",
+        "name" => "No Provider"
+      }
+
+      # This covers the `else` branch where provider_id is nil
+      assert {:error, %Ecto.Changeset{}} = Users.find_or_create_user(attrs_without_provider)
     end
 
     test "can create a user associated with a customer" do
@@ -119,7 +142,7 @@ defmodule CopilotApi.Core.UsersTest do
       assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
     end
 
-    test "change_user/1 returns a user changeset" do
+    test "change_user/2 returns a user changeset" do
       user = user_fixture()
       assert %Ecto.Changeset{} = Users.change_user(user)
     end
