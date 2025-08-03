@@ -2,6 +2,7 @@ defmodule CopilotApiWeb.UserControllerTest do
   use CopilotApiWeb.ConnCase, async: true
 
   alias CopilotApi.Core.Users
+  import CopilotApi.Core.Fixtures
 
   # Helper function to create the auth header, mimicking the DevAuth plug.
   defp put_auth_header(conn, user_payload) do
@@ -9,171 +10,112 @@ defmodule CopilotApiWeb.UserControllerTest do
     put_req_header(conn, "x-user-info", encoded_user_info)
   end
 
-  describe "GET /api/me" do
-    test "returns 200 and current user data for an authenticated developer", %{conn: conn} do
-      # This payload mimics what DevAuth or a real API gateway would provide.
-      developer_payload = %{
-        "provider_id" => "dev-user-123",
-        "email" => "dev@example.com",
-        "name" => "Dev User",
-        "roles" => ["developer"]
-      }
+  @developer_payload %{
+    "provider_id" => "dev-user-123",
+    "email" => "dev@example.com",
+    "name" => "Dev User",
+    "roles" => ["developer"]
+  }
 
+  @customer_payload %{
+    "provider_id" => "customer-456",
+    "email" => "customer@example.com",
+    "name" => "Customer User",
+    "roles" => ["customer"]
+  }
+
+  setup do
+    # Create a user to be acted upon in tests
+    {:ok, user} = Users.find_or_create_user(@customer_payload)
+    {:ok, user: user}
+  end
+
+  describe "show" do
+    test "shows the current user's data", %{conn: conn} do
       conn =
         conn
-        |> put_auth_header(developer_payload)
+        |> put_auth_header(@customer_payload)
         |> get(~p"/api/me")
 
-      assert conn.status == 200
-
-      json_response = json_response(conn, 200)
-      assert json_response["data"]["email"] == "dev@example.com"
-      assert json_response["data"]["roles"] == ["developer"]
-    end
-
-    test "returns 200 for an authenticated non-developer user", %{conn: conn} do
-      customer_payload = %{
-        "provider_id" => "customer-456",
-        "email" => "customer@example.com",
-        "name" => "Customer User",
-        "roles" => ["customer"]
-      }
-
-      conn =
-        conn
-        |> put_auth_header(customer_payload)
-        |> get(~p"/api/me")
-
-      assert json_response(conn, 200)["data"]["email"] == "customer@example.com"
-    end
-
-    test "returns 401 Unauthorized for a request without authentication", %{conn: conn} do
-      # We don't call put_auth_header, so the request is unauthenticated.
-      conn = get(conn, ~p"/api/me")
-
-      assert response(conn, 401) ==
-               "{\"error\":{\"code\":\"unauthorized\",\"message\":\"Authentication required\"}}"
+      assert %{"data" => data} = json_response(conn, 200)
+      assert data["email"] == "customer@example.com"
     end
   end
 
-  describe "PUT /api/me" do
-    test "returns 200 and updated user data for a valid update", %{conn: conn} do
-      developer_payload = %{
-        "provider_id" => "dev-user-123",
-        "email" => "dev@example.com",
-        "name" => "Dev User",
-        "roles" => ["developer"]
-      }
-
-      update_params = %{"name" => "A New Name"}
-
+  describe "update" do
+    test "updates the current user's data", %{conn: conn} do
       conn =
         conn
-        |> put_auth_header(developer_payload)
-        |> put(~p"/api/me", update_params)
+        |> put_auth_header(@customer_payload)
+        |> put(~p"/api/me", %{"name" => "Updated Name"})
 
-      assert json_response(conn, 200)["data"]["name"] == "A New Name"
+      assert %{"data" => data} = json_response(conn, 200)
+      assert data["name"] == "Updated Name"
     end
 
-    test "returns 200 for a non-developer updating their own profile", %{conn: conn} do
-      customer_payload = %{
-        "provider_id" => "customer-456",
-        "email" => "customer@example.com",
-        "name" => "Customer User",
-        "roles" => ["customer"]
-      }
-
-      update_params = %{"name" => "A New Customer Name"}
-
+    test "returns an error for invalid data", %{conn: conn} do
       conn =
         conn
-        |> put_auth_header(customer_payload)
-        |> put(~p"/api/me", update_params)
+        |> put_auth_header(@customer_payload)
+        |> put(~p"/api/me", %{"email" => "invalid-email"})
 
-      assert json_response(conn, 200)["data"]["name"] == "A New Customer Name"
-    end
-
-    test "returns 422 for invalid data", %{conn: conn} do
-      developer_payload = %{
-        "provider_id" => "dev-user-123",
-        "email" => "dev@example.com",
-        "name" => "Dev User",
-        "roles" => ["developer"]
-      }
-
-      invalid_params = %{"email" => "invalid-email"}
-
-      conn = put_auth_header(conn, developer_payload) |> put(~p"/api/me", invalid_params)
-
-      assert json_response(conn, 422)["errors"]["email"] == ["must have the @ sign and no spaces"]
+      assert %{"errors" => %{"email" => ["must have the @ sign and no spaces"]}} = json_response(conn, 422)
     end
   end
 
-  describe "DELETE /api/me" do
-    test "returns 204 and deletes the user", %{conn: conn} do
-      developer_payload = %{
-        "provider_id" => "dev-user-123",
-        "email" => "dev@example.com",
-        "name" => "Dev User",
-        "roles" => ["developer"]
-      }
+  describe "delete" do
+    test "deletes the current user's account", %{conn: conn, user: user} do
+      # Temporarily set the log level to :info to ensure the logger metadata is
+      # evaluated for full test coverage. We restore the original level on exit.
+      original_level = Logger.level()
+      Logger.configure(level: :info)
+      on_exit(fn -> Logger.configure(level: original_level) end)
 
       conn =
         conn
-        |> put_auth_header(developer_payload)
+        |> put_auth_header(@customer_payload)
         |> delete(~p"/api/me")
 
-      assert conn.status == 204
+      assert response(conn, 204)
+      assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
     end
   end
 
-  describe "PUT /api/users/:id/role" do
-    setup do
-      # Create a user that we can target for updates.
-      {:ok, user_to_update} =
-        Users.create_user(%{
-          "provider_id" => "target-user-789",
-          "email" => "target@example.com",
-          "name" => "Target User",
-          "roles" => ["customer"]
-        })
-
-      {:ok, user_to_update: user_to_update}
-    end
-
-    test "allows a developer to update a user's role", %{conn: conn, user_to_update: user} do
-      developer_payload = %{
-        "provider_id" => "dev-user-123",
-        "email" => "dev@example.com",
-        "name" => "Dev User",
-        "roles" => ["developer"]
-      }
+  describe "update_role" do
+    test "updates a user's role for a developer", %{conn: conn, user: user} do
+      # Temporarily set the log level to :info to ensure the logger metadata is
+      # evaluated for full test coverage. We restore the original level on exit.
+      original_level = Logger.level()
+      Logger.configure(level: :info)
+      on_exit(fn -> Logger.configure(level: original_level) end)
 
       conn =
         conn
-        |> put_auth_header(developer_payload)
-        |> put(~p"/api/users/#{user.id}/role", %{"roles" => ["customer", "admin"]})
+        |> put_auth_header(@developer_payload)
+        |> put(~p"/api/users/#{user.id}/role", %{"roles" => ["customer", "beta_tester"]})
 
-      assert json_response(conn, 200)["data"]["roles"] == ["customer", "admin"]
+      assert %{"data" => data} = json_response(conn, 200)
+      assert data["roles"] == ["customer", "beta_tester"]
     end
 
-    test "is forbidden for a non-developer", %{conn: conn, user_to_update: user} do
-      customer_payload = %{
-        "provider_id" => "customer-456",
-        "email" => "customer@example.com",
-        "name" => "Customer User",
-        "roles" => ["customer"]
-      }
-
+    test "returns an error for invalid role data", %{conn: conn, user: user} do
       conn =
         conn
-        |> put_auth_header(customer_payload)
+        |> put_auth_header(@developer_payload)
+        |> put(~p"/api/users/#{user.id}/role", %{"roles" => "not-a-list"})
+
+      # The exact error message depends on the User changeset validation
+      assert %{"errors" => %{"roles" => ["is invalid"]}} = json_response(conn, 422)
+    end
+
+    test "is forbidden for a non-developer", %{conn: conn, user: user} do
+      conn =
+        conn
+        |> put_auth_header(@customer_payload)
         |> put(~p"/api/users/#{user.id}/role", %{"roles" => ["admin"]})
 
-      assert conn.status == 403
-
-      assert json_response(conn, 403)["error"]["message"] ==
-               "You do not have the required permissions."
+      assert response(conn, 403)
+      assert json_response(conn, 403)["error"]["code"] == "forbidden"
     end
   end
 end

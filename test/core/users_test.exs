@@ -39,9 +39,11 @@ defmodule CopilotApi.Core.UsersTest do
     end
 
     test "find_or_create_user/1 creates a user if they don't exist" do
-      # Temporarily set the log level to :info to ensure the logger metadata is evaluated
-      # for full test coverage.
+      # Temporarily set the log level to :info to ensure the logger metadata is
+      # evaluated for full test coverage. We restore the original level on exit.
+      original_level = Logger.level()
       Logger.configure(level: :info)
+      on_exit(fn -> Logger.configure(level: original_level) end)
 
       assert {:ok, %User{} = user} = Users.find_or_create_user(@valid_attrs)
       assert user.provider_id == "test-provider-123"
@@ -57,9 +59,11 @@ defmodule CopilotApi.Core.UsersTest do
     end
 
     test "find_or_create_user/1 does not create a customer for a new developer" do
-      # Temporarily set the log level to :info to ensure the logger metadata is evaluated
-      # for full test coverage.
+      # Temporarily set the log level to :info to ensure the logger metadata is
+      # evaluated for full test coverage. We restore the original level on exit.
+      original_level = Logger.level()
       Logger.configure(level: :info)
+      on_exit(fn -> Logger.configure(level: original_level) end)
 
       initial_customer_count = Enum.count(Customers.list_customers())
 

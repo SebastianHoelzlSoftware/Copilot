@@ -28,12 +28,14 @@ defmodule CopilotApiWeb.UserController do
   def delete(conn, _params) do
     current_user = conn.assigns.current_user
 
-    with {:ok, user} <- Users.delete_user(current_user) do
-      Logger.info("User deleted their own account", %{
-        event: "user_self_deleted",
-        user_id: user.id
-      })
-    end
+    # We expect this to always succeed. If it fails, the MatchError will correctly
+    # result in a 500 server error.
+    {:ok, user} = Users.delete_user(current_user)
+
+    Logger.info("User deleted their own account", %{
+      event: "user_self_deleted",
+      user_id: user.id
+    })
 
     send_resp(conn, :no_content, "")
   end

@@ -2,7 +2,6 @@ defmodule CopilotApi.Core.BriefsTest do
   use CopilotApi.DataCase
 
   alias CopilotApi.Core.Briefs
-  alias CopilotApi.Core.AIAnalyses
   alias CopilotApi.Core.Data.ProjectBrief
 
   import CopilotApi.Core.Fixtures
