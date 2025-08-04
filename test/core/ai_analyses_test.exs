@@ -25,6 +25,17 @@ defmodule CopilotApi.Core.AIAnalysesTest do
       assert fetched_analysis.cost_estimate == nil
     end
 
+    test "returns the ai_analysis with preloaded cost_estimate" do
+      project_brief = project_brief_fixture()
+      cost_estimate = cost_estimate_fixture(%{customer: project_brief.customer})
+
+      ai_analysis =
+        ai_analysis_fixture(%{project_brief: project_brief, cost_estimate_id: cost_estimate.id})
+
+      fetched_analysis = AIAnalyses.get_ai_analysis!(ai_analysis.id)
+      assert fetched_analysis.cost_estimate.id == cost_estimate.id
+    end
+
     test "raises if the AI analysis does not exist" do
       assert_raise Ecto.NoResultsError, fn ->
         AIAnalyses.get_ai_analysis!(Ecto.UUID.generate())
@@ -51,6 +62,10 @@ defmodule CopilotApi.Core.AIAnalysesTest do
 
     test "with invalid data returns an error changeset" do
       assert {:error, %Ecto.Changeset{}} = AIAnalyses.create_ai_analysis(@invalid_attrs)
+    end
+
+    test "with no arguments returns an error changeset" do
+      assert {:error, %Ecto.Changeset{}} = AIAnalyses.create_ai_analysis()
     end
   end
 
