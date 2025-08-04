@@ -3,11 +3,12 @@ defmodule CopilotApiWeb.CostEstimateController do
 
   alias CopilotApi.Core.CostEstimates
   alias CopilotApi.Core.Data.CostEstimate
-  alias CopilotApiWeb.Plugs.{Auth, AuthorizeCostEstimate}
+  alias CopilotApiWeb.Plugs.{Auth, AuthorizeCostEstimate, EnsureParams}
 
   action_fallback CopilotApiWeb.FallbackController
 
   plug :put_view, json: CopilotApiWeb.CostEstimateJSON
+  plug EnsureParams, "cost_estimate" when action in [:create, :update]
   plug Auth
   plug AuthorizeCostEstimate, :show when action == :show
   plug AuthorizeCostEstimate, :update when action == :update
@@ -24,20 +25,14 @@ defmodule CopilotApiWeb.CostEstimateController do
     end
   end
 
-  def create(conn, params) do
+  def create(conn, %{"cost_estimate" => cost_estimate_params}) do
     if "developer" in conn.assigns.current_user.roles do
-      case params do
-        %{"cost_estimate" => cost_estimate_params} ->
-          with {:ok, %CostEstimate{} = cost_estimate} <-
-                 CostEstimates.create_cost_estimate(cost_estimate_params) do
-            conn
-            |> put_status(:created)
-            |> put_resp_header("location", ~p"/api/cost_estimates/#{cost_estimate}")
-            |> render(:show, cost_estimate: cost_estimate)
-          end
-
-        _ ->
-          {:error, :bad_request}
+      with {:ok, %CostEstimate{} = cost_estimate} <-
+             CostEstimates.create_cost_estimate(cost_estimate_params) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/cost_estimates/#{cost_estimate}")
+        |> render(:show, cost_estimate: cost_estimate)
       end
     else
       conn
@@ -50,18 +45,12 @@ defmodule CopilotApiWeb.CostEstimateController do
     render(conn, :show, cost_estimate: conn.assigns.cost_estimate)
   end
 
-  def update(conn, params) do
+  def update(conn, %{"cost_estimate" => cost_estimate_params}) do
     cost_estimate = conn.assigns.cost_estimate
 
-    case params do
-      %{"cost_estimate" => cost_estimate_params} ->
-        with {:ok, %CostEstimate{} = cost_estimate} <-
-               CostEstimates.update_cost_estimate(cost_estimate, cost_estimate_params) do
-          render(conn, :show, cost_estimate: cost_estimate)
-        end
-
-      _ ->
-        {:error, :bad_request}
+    with {:ok, %CostEstimate{} = cost_estimate} <-
+           CostEstimates.update_cost_estimate(cost_estimate, cost_estimate_params) do
+      render(conn, :show, cost_estimate: cost_estimate)
     end
   end
 

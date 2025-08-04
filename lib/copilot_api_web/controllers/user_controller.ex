@@ -2,9 +2,11 @@ defmodule CopilotApiWeb.UserController do
   use CopilotApiWeb, :controller
 
   alias CopilotApi.Core.Users
+  alias CopilotApiWeb.Plugs.EnsureParams
   require Logger
 
   action_fallback CopilotApiWeb.FallbackController
+  plug EnsureParams, "roles" when action in [:update_role]
 
   def show(conn, _params) do
     # The current_user is already in conn.assigns thanks to the UserInfo plug
@@ -42,35 +44,29 @@ defmodule CopilotApiWeb.UserController do
     send_resp(conn, :no_content, "")
   end
 
-  def update_role(conn, %{"id" => id} = params) do
+  def update_role(conn, %{"id" => id, "roles" => roles}) do
     # This action is protected by the :developer_only pipeline,
     # so we don't need to do additional authorization checks here.
     user = Users.get_user!(id)
 
-    case params do
-      %{"roles" => roles} ->
-        case Users.update_user(user, %{"roles" => roles}) do
-          {:ok, updated_user} ->
-            # Log this important administrative action with structured metadata.
-            Logger.info("User role updated by admin", %{
-              event: "user_role_updated",
-              admin_user_id: conn.assigns.current_user.id,
-              target_user_id: updated_user.id,
-              new_roles: updated_user.roles
-            })
+    case Users.update_user(user, %{"roles" => roles}) do
+      {:ok, updated_user} ->
+        # Log this important administrative action with structured metadata.
+        Logger.info("User role updated by admin", %{
+          event: "user_role_updated",
+          admin_user_id: conn.assigns.current_user.id,
+          target_user_id: updated_user.id,
+          new_roles: updated_user.roles
+        })
 
-            render(conn, :show, user: updated_user)
+        render(conn, :show, user: updated_user)
 
-          {:error, changeset} ->
-            # Reuse the existing changeset error view
-            conn
-            |> put_status(:unprocessable_entity)
-            |> put_view(json: CopilotApiWeb.ChangesetJSON)
-            |> render(:error, changeset: changeset)
-        end
-
-      _ ->
-        {:error, :bad_request}
+      {:error, changeset} ->
+        # Reuse the existing changeset error view
+        conn
+        |> put_status(:unprocessable_entity)
+        |> put_view(json: CopilotApiWeb.ChangesetJSON)
+        |> render(:error, changeset: changeset)
     end
   end
 end

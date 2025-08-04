@@ -3,10 +3,12 @@ defmodule CopilotApiWeb.CustomerController do
 
   alias CopilotApi.Core.Customers
   alias CopilotApi.Core.Data.Customer
+  alias CopilotApiWeb.Plugs.EnsureParams
 
   action_fallback CopilotApiWeb.FallbackController
 
   plug :put_view, json: CopilotApiWeb.CustomerJSON
+  plug EnsureParams, "customer" when action in [:create, :update]
 
   def index(conn, _params) do
     # Authorization is handled by the :developer_only pipeline in the router
@@ -14,19 +16,13 @@ defmodule CopilotApiWeb.CustomerController do
     render(conn, :index, customers: customers)
   end
 
-  def create(conn, params) do
+  def create(conn, %{"customer" => customer_params}) do
     # Authorization is handled by the :developer_only pipeline in the router
-    case params do
-      %{"customer" => customer_params} ->
-        with {:ok, %Customer{} = customer} <- Customers.create_customer(customer_params) do
-          conn
-          |> put_status(:created)
-          |> put_resp_header("location", ~p"/api/customers/#{customer}")
-          |> render(:show, customer: customer)
-        end
-
-      _ ->
-        {:error, :bad_request}
+    with {:ok, %Customer{} = customer} <- Customers.create_customer(customer_params) do
+      conn
+      |> put_status(:created)
+      |> put_resp_header("location", ~p"/api/customers/#{customer}")
+      |> render(:show, customer: customer)
     end
   end
 
@@ -36,18 +32,12 @@ defmodule CopilotApiWeb.CustomerController do
     render(conn, :show, customer: customer)
   end
 
-  def update(conn, %{"id" => id} = params) do
+  def update(conn, %{"id" => id, "customer" => customer_params}) do
     # Authorization is handled by the :developer_only pipeline in the router
     customer = Customers.get_customer!(id)
 
-    case params do
-      %{"customer" => customer_params} ->
-        with {:ok, %Customer{} = customer} <- Customers.update_customer(customer, customer_params) do
-          render(conn, :show, customer: customer)
-        end
-
-      _ ->
-        {:error, :bad_request}
+    with {:ok, %Customer{} = customer} <- Customers.update_customer(customer, customer_params) do
+      render(conn, :show, customer: customer)
     end
   end
 

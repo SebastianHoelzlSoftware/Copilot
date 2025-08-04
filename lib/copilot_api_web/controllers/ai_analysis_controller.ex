@@ -3,11 +3,12 @@ defmodule CopilotApiWeb.AIAnalysisController do
 
   alias CopilotApi.Core.AIAnalyses
   alias CopilotApi.Core.Data.AIAnalysis
-  alias CopilotApiWeb.Plugs.{Auth, AuthorizeAIAnalysis}
+  alias CopilotApiWeb.Plugs.{Auth, AuthorizeAIAnalysis, EnsureParams}
 
   action_fallback CopilotApiWeb.FallbackController
 
   plug :put_view, json: CopilotApiWeb.AIAnalysisJSON
+  plug EnsureParams, "ai_analysis" when action in [:create, :update]
   plug Auth
   plug AuthorizeAIAnalysis, :show when action == :show
   plug AuthorizeAIAnalysis, :update when action == :update
@@ -24,19 +25,13 @@ defmodule CopilotApiWeb.AIAnalysisController do
     end
   end
 
-  def create(conn, params) do
+  def create(conn, %{"ai_analysis" => analysis_params}) do
     if "developer" in conn.assigns.current_user.roles do
-      case params do
-        %{"ai_analysis" => analysis_params} ->
-          with {:ok, %AIAnalysis{} = analysis} <- AIAnalyses.create_ai_analysis(analysis_params) do
-            conn
-            |> put_status(:created)
-            |> put_resp_header("location", ~p"/api/ai_analyses/#{analysis}")
-            |> render(:show, analysis: analysis)
-          end
-
-        _ ->
-          {:error, :bad_request}
+      with {:ok, %AIAnalysis{} = analysis} <- AIAnalyses.create_ai_analysis(analysis_params) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/ai_analyses/#{analysis}")
+        |> render(:show, analysis: analysis)
       end
     else
       conn
@@ -49,18 +44,12 @@ defmodule CopilotApiWeb.AIAnalysisController do
     render(conn, :show, analysis: conn.assigns.ai_analysis)
   end
 
-  def update(conn, params) do
+  def update(conn, %{"ai_analysis" => analysis_params}) do
     analysis = conn.assigns.ai_analysis
 
-    case params do
-      %{"ai_analysis" => analysis_params} ->
-        with {:ok, %AIAnalysis{} = analysis} <-
-               AIAnalyses.update_ai_analysis(analysis, analysis_params) do
-          render(conn, :show, analysis: analysis)
-        end
-
-      _ ->
-        {:error, :bad_request}
+    with {:ok, %AIAnalysis{} = analysis} <-
+           AIAnalyses.update_ai_analysis(analysis, analysis_params) do
+      render(conn, :show, analysis: analysis)
     end
   end
 

@@ -3,11 +3,12 @@ defmodule CopilotApiWeb.BriefController do
 
   alias CopilotApi.Core.Briefs
   alias CopilotApi.Core.Data.ProjectBrief
-  alias CopilotApiWeb.Plugs.{Auth, AuthorizeBrief}
+  alias CopilotApiWeb.Plugs.{Auth, AuthorizeBrief, EnsureParams}
 
   action_fallback CopilotApiWeb.FallbackController
 
   plug :put_view, json: CopilotApiWeb.BriefJSON
+  plug EnsureParams, "project_brief" when action in [:create, :update]
   plug Auth
   plug AuthorizeBrief, :show when action in [:show]
   plug AuthorizeBrief, :update when action in [:update]
@@ -27,23 +28,17 @@ defmodule CopilotApiWeb.BriefController do
     render(conn, :index, briefs: briefs)
   end
 
-  def create(conn, params) do
+  def create(conn, %{"project_brief" => brief_params}) do
     current_user = conn.assigns.current_user
 
     if "customer" in current_user.roles do
-      case params do
-        %{"project_brief" => brief_params} ->
-          params_with_customer = Map.put(brief_params, "customer_id", current_user.customer_id)
+      params_with_customer = Map.put(brief_params, "customer_id", current_user.customer_id)
 
-          with {:ok, %ProjectBrief{} = brief} <- Briefs.create_project_brief(params_with_customer) do
-            conn
-            |> put_status(:created)
-            |> put_resp_header("location", ~p"/api/briefs/#{brief}")
-            |> render(:show, brief: brief)
-          end
-
-        _ ->
-          {:error, :bad_request}
+      with {:ok, %ProjectBrief{} = brief} <- Briefs.create_project_brief(params_with_customer) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/briefs/#{brief}")
+        |> render(:show, brief: brief)
       end
     else
       conn
@@ -56,17 +51,11 @@ defmodule CopilotApiWeb.BriefController do
     render(conn, :show, brief: conn.assigns.brief)
   end
 
-  def update(conn, params) do
+  def update(conn, %{"project_brief" => brief_params}) do
     brief = conn.assigns.brief
 
-    case params do
-      %{"project_brief" => brief_params} ->
-        with {:ok, %ProjectBrief{} = brief} <- Briefs.update_project_brief(brief, brief_params) do
-          render(conn, :show, brief: brief)
-        end
-
-      _ ->
-        {:error, :bad_request}
+    with {:ok, %ProjectBrief{} = brief} <- Briefs.update_project_brief(brief, brief_params) do
+      render(conn, :show, brief: brief)
     end
   end
 

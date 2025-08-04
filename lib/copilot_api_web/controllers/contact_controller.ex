@@ -3,11 +3,12 @@ defmodule CopilotApiWeb.ContactController do
 
   alias CopilotApi.Core.Contacts
   alias CopilotApi.Core.Data.Contact
-  alias CopilotApiWeb.Plugs.{Auth, AuthorizeContact}
+  alias CopilotApiWeb.Plugs.{Auth, AuthorizeContact, EnsureParams}
 
   action_fallback CopilotApiWeb.FallbackController
 
   plug :put_view, json: CopilotApiWeb.ContactJSON
+  plug EnsureParams, "contact" when action in [:create, :update]
   plug Auth
   plug AuthorizeContact when action in [:show, :update, :delete]
 
@@ -24,23 +25,17 @@ defmodule CopilotApiWeb.ContactController do
     render(conn, :index, contacts: contacts)
   end
 
-  def create(conn, params) do
+  def create(conn, %{"contact" => contact_params}) do
     current_user = conn.assigns.current_user
 
     if "customer" in current_user.roles do
-      case params do
-        %{"contact" => contact_params} ->
-          params_with_customer = Map.put(contact_params, "customer_id", current_user.customer_id)
+      params_with_customer = Map.put(contact_params, "customer_id", current_user.customer_id)
 
-          with {:ok, %Contact{} = contact} <- Contacts.create_contact(params_with_customer) do
-            conn
-            |> put_status(:created)
-            |> put_resp_header("location", ~p"/api/contacts/#{contact}")
-            |> render(:show, contact: contact)
-          end
-
-        _ ->
-          {:error, :bad_request}
+      with {:ok, %Contact{} = contact} <- Contacts.create_contact(params_with_customer) do
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/contacts/#{contact}")
+        |> render(:show, contact: contact)
       end
     else
       conn
@@ -53,17 +48,11 @@ defmodule CopilotApiWeb.ContactController do
     render(conn, :show, contact: conn.assigns.contact)
   end
 
-  def update(conn, params) do
+  def update(conn, %{"contact" => contact_params}) do
     contact = conn.assigns.contact
 
-    case params do
-      %{"contact" => contact_params} ->
-        with {:ok, %Contact{} = contact} <- Contacts.update_contact(contact, contact_params) do
-          render(conn, :show, contact: contact)
-        end
-
-      _ ->
-        {:error, :bad_request}
+    with {:ok, %Contact{} = contact} <- Contacts.update_contact(contact, contact_params) do
+      render(conn, :show, contact: contact)
     end
   end
 
