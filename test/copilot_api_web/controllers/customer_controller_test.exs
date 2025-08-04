@@ -76,6 +76,15 @@ defmodule CopilotApiWeb.CustomerControllerTest do
 
       assert conn.status == 403
     end
+
+    test "returns 400 when customer params are missing", %{conn: conn} do
+      conn =
+        conn
+        |> put_auth_header(@developer_payload)
+        |> post(~p"/api/customers", %{"customer" => %{}})
+
+      assert json_response(conn, 422)
+    end
   end
 
   describe "show" do
@@ -115,6 +124,15 @@ defmodule CopilotApiWeb.CustomerControllerTest do
         |> put(~p"/api/customers/#{customer}", %{"customer" => @update_attrs})
 
       assert conn.status == 403
+    end
+
+    test "returns 400 when customer params are missing", %{conn: conn, customer: customer} do
+      conn =
+        conn
+        |> put_auth_header(@developer_payload)
+        |> put(~p"/api/customers/#{customer}", %{})
+
+      assert json_response(conn, 400)
     end
   end
 

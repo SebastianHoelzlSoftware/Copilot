@@ -14,13 +14,19 @@ defmodule CopilotApiWeb.CustomerController do
     render(conn, :index, customers: customers)
   end
 
-  def create(conn, %{"customer" => customer_params}) do
+  def create(conn, params) do
     # Authorization is handled by the :developer_only pipeline in the router
-    with {:ok, %Customer{} = customer} <- Customers.create_customer(customer_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/customers/#{customer}")
-      |> render(:show, customer: customer)
+    case params do
+      %{"customer" => customer_params} ->
+        with {:ok, %Customer{} = customer} <- Customers.create_customer(customer_params) do
+          conn
+          |> put_status(:created)
+          |> put_resp_header("location", ~p"/api/customers/#{customer}")
+          |> render(:show, customer: customer)
+        end
+
+      _ ->
+        {:error, :bad_request}
     end
   end
 
@@ -30,12 +36,18 @@ defmodule CopilotApiWeb.CustomerController do
     render(conn, :show, customer: customer)
   end
 
-  def update(conn, %{"id" => id, "customer" => customer_params}) do
+  def update(conn, %{"id" => id} = params) do
     # Authorization is handled by the :developer_only pipeline in the router
     customer = Customers.get_customer!(id)
 
-    with {:ok, %Customer{} = customer} <- Customers.update_customer(customer, customer_params) do
-      render(conn, :show, customer: customer)
+    case params do
+      %{"customer" => customer_params} ->
+        with {:ok, %Customer{} = customer} <- Customers.update_customer(customer, customer_params) do
+          render(conn, :show, customer: customer)
+        end
+
+      _ ->
+        {:error, :bad_request}
     end
   end
 
