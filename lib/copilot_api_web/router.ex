@@ -76,4 +76,10 @@ defmodule CopilotApiWeb.Router do
       forward "/mailbox", Plug.Swoosh.MailboxPreview
     end
   end
+
+    # Now the catch all must always be at the bottom, add this snippet
+  scope "/", CopilotApiWeb do
+    pipe_through :api
+    match :*, "/*path", CatchAllController, :match_invalid_routes
+  end
 end
