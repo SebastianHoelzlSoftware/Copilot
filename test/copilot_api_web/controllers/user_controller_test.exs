@@ -46,7 +46,7 @@ defmodule CopilotApiWeb.UserControllerTest do
       conn =
         conn
         |> put_auth_header(@customer_payload)
-        |> put(~p"/api/me", %{"name" => "Updated Name"})
+        |> put(~p"/api/me", %{"user" => %{"name" => "Updated Name"}})
 
       assert %{"data" => data} = json_response(conn, 200)
       assert data["name"] == "Updated Name"
@@ -56,9 +56,10 @@ defmodule CopilotApiWeb.UserControllerTest do
       conn =
         conn
         |> put_auth_header(@customer_payload)
-        |> put(~p"/api/me", %{"email" => "invalid-email"})
+        |> put(~p"/api/me", %{"user" => %{"email" => "invalid-email"}})
 
-      assert %{"errors" => %{"email" => ["must have the @ sign and no spaces"]}} = json_response(conn, 422)
+      assert %{"errors" => %{"email" => ["must have the @ sign and no spaces"]}} =
+               json_response(conn, 422)
     end
   end
 

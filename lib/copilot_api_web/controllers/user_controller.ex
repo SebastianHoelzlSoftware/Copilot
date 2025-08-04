@@ -14,10 +14,10 @@ defmodule CopilotApiWeb.UserController do
     render(conn, :show, user: current_user)
   end
 
-  def update(conn, params) do
+  def update(conn, %{"user" => user_params}) do
     current_user = conn.assigns.current_user
 
-    case Users.update_user(current_user, params) do
+    case Users.update_user(current_user, user_params) do
       {:ok, user} ->
         render(conn, :show, user: user)
 
