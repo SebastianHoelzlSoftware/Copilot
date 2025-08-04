@@ -116,5 +116,14 @@ defmodule CopilotApiWeb.UserControllerTest do
       assert response(conn, 403)
       assert json_response(conn, 403)["error"]["code"] == "forbidden"
     end
+
+    test "returns 400 when roles are missing", %{conn: conn, user: user} do
+      conn =
+        conn
+        |> put_auth_header(@developer_payload)
+        |> put(~p"/api/users/#{user.id}/role", %{})
+
+      assert json_response(conn, 400)
+    end
   end
 end
