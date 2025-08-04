@@ -24,14 +24,20 @@ defmodule CopilotApiWeb.CostEstimateController do
     end
   end
 
-  def create(conn, %{"cost_estimate" => cost_estimate_params}) do
+  def create(conn, params) do
     if "developer" in conn.assigns.current_user.roles do
-      with {:ok, %CostEstimate{} = cost_estimate} <-
-             CostEstimates.create_cost_estimate(cost_estimate_params) do
-        conn
-        |> put_status(:created)
-        |> put_resp_header("location", ~p"/api/cost_estimates/#{cost_estimate}")
-        |> render(:show, cost_estimate: cost_estimate)
+      case params do
+        %{"cost_estimate" => cost_estimate_params} ->
+          with {:ok, %CostEstimate{} = cost_estimate} <-
+                 CostEstimates.create_cost_estimate(cost_estimate_params) do
+            conn
+            |> put_status(:created)
+            |> put_resp_header("location", ~p"/api/cost_estimates/#{cost_estimate}")
+            |> render(:show, cost_estimate: cost_estimate)
+          end
+
+        _ ->
+          {:error, :bad_request}
       end
     else
       conn
@@ -44,12 +50,18 @@ defmodule CopilotApiWeb.CostEstimateController do
     render(conn, :show, cost_estimate: conn.assigns.cost_estimate)
   end
 
-  def update(conn, %{"cost_estimate" => cost_estimate_params}) do
+  def update(conn, params) do
     cost_estimate = conn.assigns.cost_estimate
 
-    with {:ok, %CostEstimate{} = cost_estimate} <-
-           CostEstimates.update_cost_estimate(cost_estimate, cost_estimate_params) do
-      render(conn, :show, cost_estimate: cost_estimate)
+    case params do
+      %{"cost_estimate" => cost_estimate_params} ->
+        with {:ok, %CostEstimate{} = cost_estimate} <-
+               CostEstimates.update_cost_estimate(cost_estimate, cost_estimate_params) do
+          render(conn, :show, cost_estimate: cost_estimate)
+        end
+
+      _ ->
+        {:error, :bad_request}
     end
   end
 

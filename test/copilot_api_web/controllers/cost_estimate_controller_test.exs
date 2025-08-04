@@ -73,6 +73,13 @@ defmodule CopilotApiWeb.CostEstimateControllerTest do
       conn = post(conn, ~p"/api/cost_estimates", %{"cost_estimate" => @invalid_attrs})
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "returns 400 when cost_estimate params are missing", %{conn: conn} do
+      conn = as_developer(conn)
+      conn = post(conn, ~p"/api/cost_estimates", %{})
+
+      assert json_response(conn, 400)
+    end
   end
 
   describe "show" do
@@ -116,6 +123,15 @@ defmodule CopilotApiWeb.CostEstimateControllerTest do
         put(conn, ~p"/api/cost_estimates/#{cost_estimate}", %{"cost_estimate" => @update_attrs})
 
       assert json_response(conn, 200)["data"]["amount"] == "2000.00"
+    end
+
+    test "returns 400 when cost_estimate params are missing", %{
+      conn: conn,
+      cost_estimate: cost_estimate
+    } do
+      conn = as_developer(conn)
+      conn = put(conn, ~p"/api/cost_estimates/#{cost_estimate}", %{})
+      assert json_response(conn, 400)
     end
   end
 
