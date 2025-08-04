@@ -24,13 +24,19 @@ defmodule CopilotApiWeb.AIAnalysisController do
     end
   end
 
-  def create(conn, %{"ai_analysis" => analysis_params}) do
+  def create(conn, params) do
     if "developer" in conn.assigns.current_user.roles do
-      with {:ok, %AIAnalysis{} = analysis} <- AIAnalyses.create_ai_analysis(analysis_params) do
-        conn
-        |> put_status(:created)
-        |> put_resp_header("location", ~p"/api/ai_analyses/#{analysis}")
-        |> render(:show, analysis: analysis)
+      case params do
+        %{"ai_analysis" => analysis_params} ->
+          with {:ok, %AIAnalysis{} = analysis} <- AIAnalyses.create_ai_analysis(analysis_params) do
+            conn
+            |> put_status(:created)
+            |> put_resp_header("location", ~p"/api/ai_analyses/#{analysis}")
+            |> render(:show, analysis: analysis)
+          end
+
+        _ ->
+          {:error, :bad_request}
       end
     else
       conn
@@ -43,12 +49,18 @@ defmodule CopilotApiWeb.AIAnalysisController do
     render(conn, :show, analysis: conn.assigns.ai_analysis)
   end
 
-  def update(conn, %{"ai_analysis" => analysis_params}) do
+  def update(conn, params) do
     analysis = conn.assigns.ai_analysis
 
-    with {:ok, %AIAnalysis{} = analysis} <-
-           AIAnalyses.update_ai_analysis(analysis, analysis_params) do
-      render(conn, :show, analysis: analysis)
+    case params do
+      %{"ai_analysis" => analysis_params} ->
+        with {:ok, %AIAnalysis{} = analysis} <-
+               AIAnalyses.update_ai_analysis(analysis, analysis_params) do
+          render(conn, :show, analysis: analysis)
+        end
+
+      _ ->
+        {:error, :bad_request}
     end
   end
 

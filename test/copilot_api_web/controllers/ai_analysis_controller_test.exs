@@ -72,6 +72,13 @@ defmodule CopilotApiWeb.AIAnalysisControllerTest do
       conn = post(conn, ~p"/api/ai_analyses", %{"ai_analysis" => @invalid_attrs})
       assert json_response(conn, 422)["errors"] != %{}
     end
+
+    test "returns 400 when ai_analysis params are missing", %{conn: conn} do
+      conn = as_developer(conn)
+      conn = post(conn, ~p"/api/ai_analyses", %{})
+
+      assert json_response(conn, 400)
+    end
   end
 
   describe "show" do
@@ -111,6 +118,13 @@ defmodule CopilotApiWeb.AIAnalysisControllerTest do
       conn = as_developer(conn)
       conn = put(conn, ~p"/api/ai_analyses/#{analysis}", %{"ai_analysis" => @update_attrs})
       assert json_response(conn, 200)["data"]["summary"] == "updated analysis summary"
+    end
+
+    test "returns 400 when ai_analysis params are missing", %{conn: conn, analysis: analysis} do
+      conn = as_developer(conn)
+      conn = put(conn, ~p"/api/ai_analyses/#{analysis}", %{})
+
+      assert json_response(conn, 400)
     end
   end
 
