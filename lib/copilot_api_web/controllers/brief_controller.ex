@@ -27,17 +27,23 @@ defmodule CopilotApiWeb.BriefController do
     render(conn, :index, briefs: briefs)
   end
 
-  def create(conn, %{"project_brief" => brief_params}) do
+  def create(conn, params) do
     current_user = conn.assigns.current_user
 
     if "customer" in current_user.roles do
-      params = Map.put(brief_params, "customer_id", current_user.customer_id)
+      case params do
+        %{"project_brief" => brief_params} ->
+          params_with_customer = Map.put(brief_params, "customer_id", current_user.customer_id)
 
-      with {:ok, %ProjectBrief{} = brief} <- Briefs.create_project_brief(params) do
-        conn
-        |> put_status(:created)
-        |> put_resp_header("location", ~p"/api/briefs/#{brief}")
-        |> render(:show, brief: brief)
+          with {:ok, %ProjectBrief{} = brief} <- Briefs.create_project_brief(params_with_customer) do
+            conn
+            |> put_status(:created)
+            |> put_resp_header("location", ~p"/api/briefs/#{brief}")
+            |> render(:show, brief: brief)
+          end
+
+        _ ->
+          {:error, :bad_request}
       end
     else
       conn
@@ -50,11 +56,17 @@ defmodule CopilotApiWeb.BriefController do
     render(conn, :show, brief: conn.assigns.brief)
   end
 
-  def update(conn, %{"project_brief" => brief_params}) do
+  def update(conn, params) do
     brief = conn.assigns.brief
 
-    with {:ok, %ProjectBrief{} = brief} <- Briefs.update_project_brief(brief, brief_params) do
-      render(conn, :show, brief: brief)
+    case params do
+      %{"project_brief" => brief_params} ->
+        with {:ok, %ProjectBrief{} = brief} <- Briefs.update_project_brief(brief, brief_params) do
+          render(conn, :show, brief: brief)
+        end
+
+      _ ->
+        {:error, :bad_request}
     end
   end
 

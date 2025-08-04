@@ -70,6 +70,12 @@ defmodule CopilotApiWeb.BriefControllerTest do
       conn = post(conn, ~p"/api/briefs", %{"project_brief" => @create_attrs})
       assert json_response(conn, 403)["error"]["message"] == "Only customers can create briefs"
     end
+
+    test "returns 400 when project_brief params are missing", %{conn: conn} do
+      conn = post(conn, ~p"/api/briefs", %{})
+
+      assert json_response(conn, 400)
+    end
   end
 
   describe "show" do
@@ -119,6 +125,12 @@ defmodule CopilotApiWeb.BriefControllerTest do
 
       assert json_response(conn, 403)["error"]["message"] ==
                "You are not authorized to perform this action"
+    end
+
+    test "returns 400 when project_brief params are missing", %{conn: conn, brief: brief} do
+      conn = put(conn, ~p"/api/briefs/#{brief}", %{})
+
+      assert json_response(conn, 400)
     end
   end
 
