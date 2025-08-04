@@ -12,6 +12,14 @@ defmodule CopilotApiWeb.ErrorJSON do
     %{errors: %{detail: "Internal Server Error"}}
   end
 
+  def render("401.json", _assigns) do
+    %{errors: %{detail: "Unauthorized"}}
+  end
+
+  def render("403.json", _assigns) do
+    %{errors: %{detail: "Forbidden"}}
+  end
+
   # Renders changeset errors.
   def render("error.json", %{result: %Ecto.Changeset{} = changeset}) do
     # When the changeset has action :insert or :update, we have a map of errors.

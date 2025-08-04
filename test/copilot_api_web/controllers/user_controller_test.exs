@@ -2,7 +2,6 @@ defmodule CopilotApiWeb.UserControllerTest do
   use CopilotApiWeb.ConnCase, async: true
 
   alias CopilotApi.Core.Users
-  import CopilotApi.Core.Fixtures
 
   # Helper function to create the auth header, mimicking the DevAuth plug.
   defp put_auth_header(conn, user_payload) do
