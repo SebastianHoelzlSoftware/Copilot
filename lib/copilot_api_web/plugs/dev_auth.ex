@@ -19,7 +19,7 @@ defmodule CopilotApiWeb.Plugs.DevAuth do
     # -H 'x-dev-auth-override: {"provider_id":"new-customer-123","email":"new.customer@example.com",
     # "name":"New Customer","roles":["customer","user"]}'
 
-    # the x-dev-auth-override header will get overridden by the default developer payload.
+    # If the x-dev-auth-override header is not present, the default developer payload will be used.
 
     case get_req_header(conn, "x-dev-auth-override") do
       [override_json] ->
