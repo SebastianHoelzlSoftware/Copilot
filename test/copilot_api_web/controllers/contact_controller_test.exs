@@ -125,6 +125,12 @@ defmodule CopilotApiWeb.ContactControllerTest do
       assert json_response(conn, 403)["error"]["message"] ==
                "You are not authorized to perform this action"
     end
+
+    test "returns 400 when contact params are missing", %{conn: conn, contact: contact} do
+      conn = put(conn, ~p"/api/contacts/#{contact}", %{})
+
+      assert json_response(conn, 400)
+    end
   end
 
   describe "delete" do
