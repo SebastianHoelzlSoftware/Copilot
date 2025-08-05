@@ -16,8 +16,8 @@ config :copilot, CopilotWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [json: CopilotWeb.ErrorJSON],
-    layout: false
+    formats: [json: CopilotWeb.ErrorJSON, html: CopilotWeb.ErrorHTML],
+    layout: {CopilotWeb.Layouts, :app}
   ],
   pubsub_server: Copilot.PubSub,
   live_view: [signing_salt: "ijjI4v2j"]
@@ -41,6 +41,28 @@ config :logger, :console,
 
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
+
+# Configure esbuild
+config :esbuild,
+  version: "0.17.11",
+  default: [
+    args:
+      ~w(js/app.js --bundle --target=es2017 --outdir=../priv/static/assets --external:/fonts/* --external:/images/*),
+    cd: Path.expand("../assets", __DIR__),
+    env: %{"NODE_PATH" => Path.expand("../deps", __DIR__)}
+  ]
+
+# Configure tailwind
+config :tailwind,
+  version: "3.4.0",
+  default: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -24,7 +24,10 @@ config :copilot, CopilotWeb.Endpoint,
   code_reloader: true,
   debug_errors: true,
   secret_key_base: "cQbSLmPyk20fdeYxNHerjf8nYc3Oy7M7y1jCT4YPcZ7wL0ylu07cm8Clyoi0VeEF",
-  watchers: []
+  watchers: [
+    esbuild: {Esbuild, :install_and_run, [:default, ~w(--sourcemap=inline --watch)]},
+    tailwind: {Tailwind, :install_and_run, [:default, ~w(--watch)]}
+  ]
 
 # ## SSL Support
 #
@@ -64,6 +67,14 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# Enable live reloading for development
+config :phoenix, :live_reload,
+  patterns: [
+    ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
+    ~r"priv/gettext/.*(po)$",
+    ~r"lib/copilot_web/(controllers|live|components)/.*(ex|heex)$"
+  ]
 
 # --- Logflare Development Configuration (For Manual Testing) ---
 # Add the Logflare backend to the list of loggers for development.

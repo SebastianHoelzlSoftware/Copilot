@@ -1,6 +1,16 @@
 defmodule CopilotWeb.Router do
   use CopilotWeb, :router
 
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug CopilotWeb.Plugs.UserInfo
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {CopilotWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   pipeline :api do
     plug :accepts, ["json"]
 
@@ -13,6 +23,12 @@ defmodule CopilotWeb.Router do
     # This plug extracts the user info from the header (real or mocked)
     # and puts it in conn.assigns.
     plug CopilotWeb.Plugs.UserInfo
+  end
+
+  scope "/", CopilotWeb do
+    pipe_through :browser
+
+    live "/", PageLive, :index
   end
 
   scope "/api", CopilotWeb do

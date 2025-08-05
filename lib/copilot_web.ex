@@ -26,6 +26,7 @@ defmodule CopilotWeb do
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 
@@ -43,7 +44,50 @@ defmodule CopilotWeb do
 
       import Plug.Conn
       import CopilotWeb.Gettext
+      import Phoenix.Controller
 
+      unquote(verified_routes())
+    end
+  end
+
+  def live_view do
+    quote do
+      use Phoenix.LiveView, layout: {CopilotWeb.Layouts, :app}
+
+      unquote(html_helpers())
+    end
+  end
+
+  def live_component do
+    quote do
+      use Phoenix.LiveComponent
+
+      unquote(html_helpers())
+    end
+  end
+
+  def html do
+    quote do
+      use Phoenix.Component
+
+      # Import convenience functions from controllers
+      import Phoenix.Controller, only: [get_csrf_token: 0, view_module: 1, view_template: 1]
+
+      # Include general helpers for rendering HTML
+      unquote(html_helpers())
+    end
+  end
+
+  defp html_helpers do
+    quote do
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components for building responsive pages
+      import CopilotWeb.Components.CoreComponents
+      # Import LiveView helpers (render, live_render, live_component, etc.)
+      import Phoenix.LiveView.Helpers
+
+      import CopilotWeb.Gettext
       unquote(verified_routes())
     end
   end

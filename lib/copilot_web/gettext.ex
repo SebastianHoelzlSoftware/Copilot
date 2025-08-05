@@ -20,5 +20,5 @@ defmodule CopilotWeb.Gettext do
 
   See the [Gettext Docs](https://hexdocs.pm/gettext) for detailed usage.
   """
-  use Gettext.Backend, otp_app: :copilot
+  use Gettext.Backend, otp_app: :copilot, priv: "priv/gettext"
 end

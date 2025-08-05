@@ -23,12 +23,13 @@ defmodule CopilotWeb.Endpoint do
     at: "/",
     from: :copilot,
     gzip: false,
-    only: CopilotWeb.static_paths()
+    only: ~w(assets/app.css assets/app.js)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
     plug Phoenix.CodeReloader
+    plug Phoenix.LiveReloader
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :copilot
   end
 
