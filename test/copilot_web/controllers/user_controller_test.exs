@@ -61,6 +61,21 @@ defmodule CopilotWeb.UserControllerTest do
       assert %{"errors" => %{"email" => ["must have the @ sign and no spaces"]}} =
                json_response(conn, 422)
     end
+
+    test "does not allow users to update their own roles", %{conn: conn, user: user} do
+      conn =
+        conn
+        |> put_auth_header(@customer_payload)
+        |> put(~p"/api/me", %{"user" => %{"roles" => ["developer"]}})
+
+      # The roles should not have changed, even if the request was successful for other fields
+      assert %{"data" => data} = json_response(conn, 200)
+      assert data["roles"] == ["customer"]
+
+      # Verify directly from the database that the roles were not updated
+      updated_user = Users.get_user!(user.id)
+      assert updated_user.roles == ["customer"]
+    end
   end
 
   describe "delete" do

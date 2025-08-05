@@ -17,7 +17,10 @@ defmodule CopilotWeb.UserController do
   def update(conn, %{"user" => user_params}) do
     current_user = conn.assigns.current_user
 
-    case Users.update_user(current_user, user_params) do
+    # Prevent users from updating their own roles via /api/me
+    user_params_without_roles = Map.delete(user_params, "roles")
+
+    case Users.update_user(current_user, user_params_without_roles) do
       {:ok, user} ->
         render(conn, :show, user: user)
 
