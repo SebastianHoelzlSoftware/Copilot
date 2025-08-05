@@ -29,6 +29,7 @@ defmodule CopilotWeb.Router do
     pipe_through :browser
 
     live "/", PageLive, :index
+    live "/info", InfoLive, :index
   end
 
   scope "/api", CopilotWeb do
