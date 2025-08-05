@@ -7,6 +7,7 @@ defmodule Copilot.Core.Users do
   require Logger
   alias Copilot.Repo
   alias Copilot.Core.Customers
+  alias Copilot.Core.Contacts
 
   alias Copilot.Core.Data.User
 
@@ -186,5 +187,38 @@ defmodule Copilot.Core.Users do
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
+  end
+
+  @doc """
+  Creates a user, customer, and contact in a single transaction.
+  """
+  def create_user_with_customer_and_contact(user_attrs, customer_attrs, contact_attrs) do
+    Repo.transaction(fn ->
+      # Create customer
+      case Customers.create_customer(customer_attrs) do
+        {:ok, customer} ->
+          # Create contact associated with the customer
+          contact_attrs_with_customer = Map.put(contact_attrs, :customer_id, customer.id)
+          case Contacts.create_contact(contact_attrs_with_customer) do
+            {:ok, contact} ->
+              # Create user associated with the customer and default roles
+              user_attrs_with_customer_and_roles =
+                user_attrs
+                |> Map.put(:customer_id, customer.id)
+                |> Map.put_new(:roles, ["customer", "user"])
+
+              case create_user(user_attrs_with_customer_and_roles) do
+                {:ok, user} ->
+                  {:ok, user, customer, contact}
+                {:error, changeset} ->
+                  Repo.rollback({:error, :user, changeset})
+              end
+            {:error, changeset} ->
+              Repo.rollback({:error, :contact, changeset})
+          end
+        {:error, changeset} ->
+          Repo.rollback({:error, :customer, changeset})
+      end
+    end)
   end
 end

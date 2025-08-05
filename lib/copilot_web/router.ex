@@ -70,6 +70,8 @@ defmodule CopilotWeb.Router do
     resources "/ai_analyses", AIAnalysisController, except: [:new, :edit]
     resources "/cost_estimates", CostEstimateController, except: [:new, :edit]
 
+    post "/register", RegistrationController, :create
+
     scope "/" do
       pipe_through :developer_only
       resources "/customers", CustomerController, except: [:new, :edit]
