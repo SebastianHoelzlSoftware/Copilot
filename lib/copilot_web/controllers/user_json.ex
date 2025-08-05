@@ -13,7 +13,8 @@ defmodule CopilotWeb.UserJSON do
       id: user.id,
       email: user.email,
       name: user.name,
-      roles: user.roles
+      roles: user.roles,
+      customer_id: user.customer_id
     }
   end
 end

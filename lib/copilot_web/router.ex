@@ -25,11 +25,22 @@ defmodule CopilotWeb.Router do
     plug CopilotWeb.Plugs.UserInfo
   end
 
+  # A pipeline for public API endpoints that do not require authentication.
+  pipeline :public_api do
+    plug :accepts, ["json"]
+  end
+
   scope "/", CopilotWeb do
     pipe_through :browser
 
     live "/", PageLive, :index
     live "/info", InfoLive, :index
+  end
+
+  # Public API routes
+  scope "/api", CopilotWeb do
+    pipe_through :public_api
+    post "/register", RegistrationController, :create
   end
 
   scope "/api", CopilotWeb do
@@ -69,8 +80,6 @@ defmodule CopilotWeb.Router do
     resources "/contacts", ContactController, except: [:new, :edit]
     resources "/ai_analyses", AIAnalysisController, except: [:new, :edit]
     resources "/cost_estimates", CostEstimateController, except: [:new, :edit]
-
-    post "/register", RegistrationController, :create
 
     scope "/" do
       pipe_through :developer_only

@@ -143,6 +143,64 @@ defmodule Copilot.Core.Users do
   end
 
   @doc """
+  Registers a user by finding them by provider_id or creating a new one.
+
+  If the user is new and has the "customer" role, a corresponding Customer
+  record is also created. This entire operation is performed in a transaction.
+
+  Returns:
+  - `{:ok, {:created, user}}` if a new user was created.
+  - `{:ok, {:found, user}}` if an existing user was found.
+  - `{:error, changeset}` if there was a validation error.
+  """
+  def register_user(attrs) do
+    provider_id = attrs["provider_id"]
+
+    if is_nil(provider_id) do
+      # If provider_id is nil, we can't find a user.
+      # Go straight to creation, which will fail validation as expected.
+      create_user(attrs)
+      |> case do
+        # This path should not be hit with invalid data, but we handle it for completeness.
+        {:ok, user} -> {:ok, {:created, user}}
+        {:error, changeset} -> {:error, changeset}
+      end
+    else
+      case get_user_by(provider_id: provider_id) do
+        nil ->
+          # This is a new user. Create them within a transaction.
+          create_user_for_registration(attrs)
+
+        user ->
+          # User already exists, return them.
+          {:ok, {:found, user}}
+      end
+    end
+  end
+
+  defp create_user_for_registration(attrs) do
+    Repo.transaction(fn ->
+      user_attrs_with_customer =
+        if "customer" in Map.get(attrs, "roles", []) do
+          # Create a customer record first.
+          customer_attrs = %{name: %{company_name: attrs["name"]}}
+
+          case Customers.create_customer(customer_attrs) do
+            {:ok, customer} -> Map.put(attrs, "customer_id", customer.id)
+            {:error, changeset} -> Repo.rollback(changeset)
+          end
+        else
+          attrs
+        end
+
+      case create_user(user_attrs_with_customer) do
+        {:ok, user} -> {:created, user}
+        {:error, changeset} -> Repo.rollback(changeset)
+      end
+    end)
+  end
+
+  @doc """
   Updates a user.
 
   ## Examples

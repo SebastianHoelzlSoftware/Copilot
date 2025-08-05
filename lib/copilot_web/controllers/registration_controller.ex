@@ -2,36 +2,19 @@ defmodule CopilotWeb.RegistrationController do
   use CopilotWeb, :controller
 
   alias Copilot.Core.Users
-  alias CopilotWeb.RegistrationJSON
-  alias CopilotWeb.ChangesetJSON
+  alias CopilotWeb.UserJSON
 
   action_fallback CopilotWeb.FallbackController
 
-  def create(conn, %{"user" => user_params, "customer" => customer_params, "contact" => contact_params}) do
-    case Users.create_user_with_customer_and_contact(user_params, customer_params, contact_params) do
-      {:ok, user, customer, contact} ->
-        conn
-        |> put_status(:created)
-        |> put_view(json: RegistrationJSON)
-        |> render(:create, user: user, customer: customer, contact: contact)
-
-      {:error, :user, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> put_view(json: ChangesetJSON)
-        |> render(:error, changeset: changeset)
-
-      {:error, :customer, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> put_view(json: ChangesetJSON)
-        |> render(:error, changeset: changeset)
-
-      {:error, :contact, changeset} ->
-        conn
-        |> put_status(:unprocessable_entity)
-        |> put_view(json: ChangesetJSON)
-        |> render(:error, changeset: changeset)
+  def create(conn, %{"user" => user_params}) do
+    with {:ok, {status, user}} <- Users.register_user(user_params) do
+      conn
+      |> put_status(status_to_code(status))
+      |> put_view(json: UserJSON)
+      |> render(:show, user: user)
     end
   end
+
+  defp status_to_code(:created), do: :created
+  defp status_to_code(:found), do: :ok
 end
