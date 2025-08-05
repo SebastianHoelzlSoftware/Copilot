@@ -193,7 +193,7 @@ defmodule Copilot.Core.Users do
           attrs
         end
 
-      case create_user(user_attrs_with_customer) do
+      case %User{} |> User.registration_changeset(user_attrs_with_customer) |> Repo.insert() do
         {:ok, user} -> {:created, user}
         {:error, changeset} -> Repo.rollback(changeset)
       end

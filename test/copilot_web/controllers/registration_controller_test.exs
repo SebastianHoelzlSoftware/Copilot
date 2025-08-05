@@ -11,12 +11,7 @@ defmodule CopilotWeb.RegistrationControllerTest do
     "roles" => ["customer"]
   }
 
-  @new_developer_payload %{
-    "provider_id" => "new-dev-789",
-    "email" => "new.dev@example.com",
-    "name" => "New Dev",
-    "roles" => ["developer"]
-  }
+  
 
   @invalid_payload %{
     "email" => "invalid-email",
@@ -42,18 +37,7 @@ defmodule CopilotWeb.RegistrationControllerTest do
       assert customer.name.company_name == "New Customer Company"
     end
 
-    test "creates a new developer user without a customer record", %{conn: conn} do
-      conn = post(conn, ~p"/api/register", %{"user" => @new_developer_payload})
-
-      assert %{"data" => %{"id" => user_id, "customer_id" => nil}} = json_response(conn, 201)
-
-      # Verify user was created
-      user = Users.get_user!(user_id)
-      assert user.email == "new.dev@example.com"
-      assert user.name == "New Dev"
-      assert user.roles == ["developer"]
-      assert user.customer_id == nil
-    end
+    
 
     test "returns the existing user if they already exist", %{conn: conn} do
       # Pre-create the user to simulate a returning user
@@ -64,6 +48,18 @@ defmodule CopilotWeb.RegistrationControllerTest do
       # An idempotent registration endpoint should return 200 OK for an existing user
       assert %{"data" => %{"id" => id}} = json_response(conn, 200)
       assert id == existing_user.id
+    end
+
+    test "returns an error if attempting to register a developer user", %{conn: conn} do
+      developer_payload = %{
+        "provider_id" => "dev-register-123",
+        "email" => "dev.register@example.com",
+        "name" => "Developer User",
+        "roles" => ["developer"]
+      }
+
+      conn = post(conn, ~p"/api/register", %{"user" => developer_payload})
+      assert json_response(conn, 422)["errors"] != %{}
     end
 
     test "returns an error for invalid data", %{conn: conn} do
