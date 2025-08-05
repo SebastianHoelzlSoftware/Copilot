@@ -1,5 +1,4 @@
-# Project Vision: Business Copilot API
-
+# Project Vision: Business Copilot
 ## The Problem
 Small Software companies, especially those with just one single developer (who might also be the business operator) often struggle with the project management overhead. Especially Requirements- and Change Request Management are affected by this. Too little care in the Requirements Gathering phase of the project leads to more Change Requests later on. The latter usually leads to big delays in development. Customers can't rely on cost and time estimates anymore and there's overall frustration. Furthermore those small businesses due to the lack of menpower are the most prone to chaotic business management. They often fail to deliver on their promises, guiding companies away to the often more expensive but bigger competitors.
 
