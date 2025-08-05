@@ -22,8 +22,7 @@ defmodule CopilotWeb.Endpoint do
   plug Plug.Static,
     at: "/",
     from: :copilot,
-    gzip: false,
-    only: ~w(assets/app.css assets/app.js)
+    gzip: false
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
