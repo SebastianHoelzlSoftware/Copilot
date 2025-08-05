@@ -1,7 +1,7 @@
-defmodule CopilotApi.Core.Data.ClarifyingQuestionTest do
-  use CopilotApi.DataCase, async: true
+defmodule Copilot.Core.Data.ClarifyingQuestionTest do
+  use Copilot.DataCase, async: true
 
-  alias CopilotApi.Core.Data.ClarifyingQuestion
+  alias Copilot.Core.Data.ClarifyingQuestion
 
   describe "changeset/2" do
     test "creates a valid changeset with valid attributes" do

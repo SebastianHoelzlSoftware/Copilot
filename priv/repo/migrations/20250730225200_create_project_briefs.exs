@@ -1,4 +1,4 @@
-defmodule CopilotApi.Repo.Migrations.CreateProjectBriefs do
+defmodule Copilot.Repo.Migrations.CreateProjectBriefs do
   use Ecto.Migration
 
   def change do

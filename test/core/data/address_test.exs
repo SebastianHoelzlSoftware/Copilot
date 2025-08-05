@@ -1,7 +1,7 @@
-defmodule CopilotApi.Core.Data.AddressTest do
-  use CopilotApi.DataCase, async: true
+defmodule Copilot.Core.Data.AddressTest do
+  use Copilot.DataCase, async: true
 
-  alias CopilotApi.Core.Data.Address
+  alias Copilot.Core.Data.Address
   import Ecto.Changeset
 
   describe "changeset/2" do

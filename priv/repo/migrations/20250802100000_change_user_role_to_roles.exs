@@ -1,4 +1,4 @@
-defmodule CopilotApi.Repo.Migrations.ChangeUserRoleToRoles do
+defmodule Copilot.Repo.Migrations.ChangeUserRoleToRoles do
   use Ecto.Migration
 
   def change do

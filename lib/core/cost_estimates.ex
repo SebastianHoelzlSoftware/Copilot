@@ -1,12 +1,12 @@
-defmodule CopilotApi.Core.CostEstimates do
+defmodule Copilot.Core.CostEstimates do
   @moduledoc """
   The CostEstimates context.
   """
 
   import Ecto.Query, warn: false
-  alias CopilotApi.Repo
+  alias Copilot.Repo
 
-  alias CopilotApi.Core.Data.CostEstimate
+  alias Copilot.Core.Data.CostEstimate
 
   @doc """
   Returns the list of cost_estimates.

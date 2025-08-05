@@ -1,9 +1,9 @@
-defmodule CopilotApi.Core.Data.ProjectBrief do
+defmodule Copilot.Core.Data.ProjectBrief do
   @moduledoc "Represents a project brief submitted by a customer."
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias CopilotApi.Core.Data.{AIAnalysis, Customer}
+  alias Copilot.Core.Data.{AIAnalysis, Customer}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

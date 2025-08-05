@@ -1,10 +1,10 @@
-defmodule CopilotApi.Core.UsersTest do
-  use CopilotApi.DataCase, async: true
+defmodule Copilot.Core.UsersTest do
+  use Copilot.DataCase, async: true
 
-  alias CopilotApi.Core.Customers
-  alias CopilotApi.Core.Users
-  alias CopilotApi.Core.Data.User
-  alias CopilotApi.Repo
+  alias Copilot.Core.Customers
+  alias Copilot.Core.Users
+  alias Copilot.Core.Data.User
+  alias Copilot.Repo
 
   @moduletag :users
 

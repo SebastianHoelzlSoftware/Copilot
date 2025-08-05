@@ -1,4 +1,4 @@
-defmodule CopilotApi.Repo.Migrations.CreateUsers do
+defmodule Copilot.Repo.Migrations.CreateUsers do
   use Ecto.Migration
 
   def change do

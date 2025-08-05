@@ -1,7 +1,7 @@
-defmodule CopilotApi.Core.Data.CustomerTest do
-  use CopilotApi.DataCase, async: true
+defmodule Copilot.Core.Data.CustomerTest do
+  use Copilot.DataCase, async: true
 
-  alias CopilotApi.Core.Data.Customer
+  alias Copilot.Core.Data.Customer
 
   describe "changeset/2" do
     test "creates a valid changeset with valid nested attributes" do

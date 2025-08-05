@@ -1,4 +1,4 @@
-defmodule CopilotApi.Repo.Migrations.CreateAiAnalyses do
+defmodule Copilot.Repo.Migrations.CreateAiAnalyses do
   use Ecto.Migration
 
   def change do

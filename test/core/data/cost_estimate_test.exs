@@ -1,9 +1,9 @@
-defmodule CopilotApi.Core.Data.CostEstimateTest do
-  use CopilotApi.DataCase, async: true
+defmodule Copilot.Core.Data.CostEstimateTest do
+  use Copilot.DataCase, async: true
 
-  alias CopilotApi.Core.Data.CostEstimate
-  alias CopilotApi.Core.Data.Customer
-  alias CopilotApi.Repo
+  alias Copilot.Core.Data.CostEstimate
+  alias Copilot.Core.Data.Customer
+  alias Copilot.Repo
 
   defp customer_fixture do
     {:ok, customer} =

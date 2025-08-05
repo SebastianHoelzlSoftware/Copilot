@@ -1,4 +1,4 @@
-defmodule CopilotApi.Core.Data.Address do
+defmodule Copilot.Core.Data.Address do
   @moduledoc "An embedded schema for a physical address."
   use Ecto.Schema
   @derive {Jason.Encoder, only: [:street, :street_additional, :city, :postal_code, :country]}

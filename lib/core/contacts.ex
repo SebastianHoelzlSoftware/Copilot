@@ -1,12 +1,12 @@
-defmodule CopilotApi.Core.Contacts do
+defmodule Copilot.Core.Contacts do
   @moduledoc """
   The Contacts context.
   """
 
   import Ecto.Query, warn: false
-  alias CopilotApi.Repo
+  alias Copilot.Repo
 
-  alias CopilotApi.Core.Data.Contact
+  alias Copilot.Core.Data.Contact
 
   @doc """
   Returns the list of contacts.

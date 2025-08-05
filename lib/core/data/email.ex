@@ -1,4 +1,4 @@
-defmodule CopilotApi.Core.Data.Email do
+defmodule Copilot.Core.Data.Email do
   @moduledoc "Represents a validated email address as an embedded Ecto schema."
   use Ecto.Schema
   @derive {Jason.Encoder, only: [:address]}

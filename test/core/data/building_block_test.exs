@@ -1,7 +1,7 @@
-defmodule CopilotApi.Core.Data.BuildingBlockTest do
-  use CopilotApi.DataCase, async: true
+defmodule Copilot.Core.Data.BuildingBlockTest do
+  use Copilot.DataCase, async: true
 
-  alias CopilotApi.Core.Data.BuildingBlock
+  alias Copilot.Core.Data.BuildingBlock
 
   describe "changeset/2" do
     test "creates a valid changeset with valid attributes" do

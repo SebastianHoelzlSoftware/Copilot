@@ -1,15 +1,15 @@
-defmodule CopilotApi.Core.Fixtures do
+defmodule Copilot.Core.Fixtures do
   @moduledoc """
   This module defines test helpers for creating
-  entities via the `CopilotApi.Core` context.
+  entities via the `Copilot.Core` context.
   """
 
-  alias CopilotApi.Repo
-  alias CopilotApi.Core.Data.Customer
-  alias CopilotApi.Core.Contacts
-  alias CopilotApi.Core.Briefs
-  alias CopilotApi.Core.AIAnalyses
-  alias CopilotApi.Core.Data.CostEstimate
+  alias Copilot.Repo
+  alias Copilot.Core.Data.Customer
+  alias Copilot.Core.Contacts
+  alias Copilot.Core.Briefs
+  alias Copilot.Core.AIAnalyses
+  alias Copilot.Core.Data.CostEstimate
 
   @doc """
   Generate a customer.

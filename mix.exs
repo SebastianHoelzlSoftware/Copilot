@@ -1,9 +1,9 @@
-defmodule CopilotApi.MixProject do
+defmodule Copilot.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :copilot_api,
+      app: :copilot,
       version: "0.1.0",
       elixir: "~> 1.14",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -18,7 +18,7 @@ defmodule CopilotApi.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {CopilotApi.Application, []},
+      mod: {Copilot.Application, []},
       extra_applications: [:logger, :runtime_tools]
     ]
   end

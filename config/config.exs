@@ -7,23 +7,23 @@
 # General application configuration
 import Config
 
-config :copilot_api,
-  ecto_repos: [CopilotApi.Repo],
+config :copilot,
+  ecto_repos: [Copilot.Repo],
   generators: [timestamp_type: :utc_datetime]
 
 # Configures the endpoint
-config :copilot_api, CopilotApiWeb.Endpoint,
+config :copilot, CopilotWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [json: CopilotApiWeb.ErrorJSON],
+    formats: [json: CopilotWeb.ErrorJSON],
     layout: false
   ],
-  pubsub_server: CopilotApi.PubSub,
+  pubsub_server: Copilot.PubSub,
   live_view: [signing_salt: "ijjI4v2j"]
 
 # TODO: use "mix phx.gen.secret 64" and load it from an evironment
-config :copilot_api, :session_signing_salt, "alksjdhuöwjnbrjasdfkjj#p+aweufp9o8327z489uihwea8s"
+config :copilot, :session_signing_salt, "alksjdhuöwjnbrjasdfkjj#p+aweufp9o8327z489uihwea8s"
 
 # Configures the mailer
 #
@@ -32,7 +32,7 @@ config :copilot_api, :session_signing_salt, "alksjdhuöwjnbrjasdfkjj#p+aweufp9o8
 #
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
-config :copilot_api, CopilotApi.Mailer, adapter: Swoosh.Adapters.Local
+config :copilot, Copilot.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configures Elixir's Logger
 config :logger, :console,

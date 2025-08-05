@@ -1,9 +1,9 @@
-defmodule CopilotApi.Core.Data.CostEstimate do
+defmodule Copilot.Core.Data.CostEstimate do
   @moduledoc "Represents a cost estimate for a project or service."
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias CopilotApi.Core.Data.{AIAnalysis, Customer}
+  alias Copilot.Core.Data.{AIAnalysis, Customer}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

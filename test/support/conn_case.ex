@@ -1,4 +1,4 @@
-defmodule CopilotApiWeb.ConnCase do
+defmodule CopilotWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -11,7 +11,7 @@ defmodule CopilotApiWeb.ConnCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use CopilotApiWeb.ConnCase, async: true`, although
+  by setting `use CopilotWeb.ConnCase, async: true`, although
   this option is not recommended for other databases.
   """
 
@@ -20,19 +20,19 @@ defmodule CopilotApiWeb.ConnCase do
   using do
     quote do
       # The default endpoint for testing
-      @endpoint CopilotApiWeb.Endpoint
+      @endpoint CopilotWeb.Endpoint
 
-      use CopilotApiWeb, :verified_routes
+      use CopilotWeb, :verified_routes
 
       # Import conveniences for testing with connections
       import Plug.Conn
       import Phoenix.ConnTest
-      import CopilotApiWeb.ConnCase
+      import CopilotWeb.ConnCase
     end
   end
 
   setup tags do
-    CopilotApi.DataCase.setup_sandbox(tags)
+    Copilot.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

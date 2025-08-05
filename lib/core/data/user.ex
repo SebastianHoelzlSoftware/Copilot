@@ -1,4 +1,4 @@
-defmodule CopilotApi.Core.Data.User do
+defmodule Copilot.Core.Data.User do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -10,7 +10,7 @@ defmodule CopilotApi.Core.Data.User do
     field :name, :string
     field :roles, {:array, :string}, default: []
 
-    belongs_to :customer, CopilotApi.Core.Data.Customer
+    belongs_to :customer, Copilot.Core.Data.Customer
 
     timestamps()
   end

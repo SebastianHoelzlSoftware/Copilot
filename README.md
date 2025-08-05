@@ -1,4 +1,4 @@
-# CopilotAPI
+# Copilot
 
 Backend API for my business copilot
 

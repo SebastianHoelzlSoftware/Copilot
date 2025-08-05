@@ -1,4 +1,4 @@
-defmodule CopilotApi.Repo.Migrations.AddCustomerIdToUsers do
+defmodule Copilot.Repo.Migrations.AddCustomerIdToUsers do
   use Ecto.Migration
 
   def change do

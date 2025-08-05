@@ -38,7 +38,7 @@ defmodule Mix.Tasks.Users.GrantRole do
   end
 
   defp grant_role(email, role) do
-    alias CopilotApi.Core.Users
+    alias Copilot.Core.Users
 
     case Users.get_user_by(email: email) do
       nil ->

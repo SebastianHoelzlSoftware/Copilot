@@ -1,10 +1,10 @@
-defmodule CopilotApi.Core.ContactsTest do
-  use CopilotApi.DataCase
+defmodule Copilot.Core.ContactsTest do
+  use Copilot.DataCase
 
-  alias CopilotApi.Core.Contacts
-  alias CopilotApi.Core.Data.Contact
+  alias Copilot.Core.Contacts
+  alias Copilot.Core.Data.Contact
 
-  import CopilotApi.Core.Fixtures
+  import Copilot.Core.Fixtures
 
   @invalid_attrs %{name: nil}
 

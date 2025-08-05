@@ -1,11 +1,11 @@
-defmodule CopilotApi.Core.Data.Contact do
+defmodule Copilot.Core.Data.Contact do
   @moduledoc """
   A struct representing a customer contact.
   """
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias CopilotApi.Core.Data.{Address, Customer, Email, Name, PhoneNumber}
+  alias Copilot.Core.Data.{Address, Customer, Email, Name, PhoneNumber}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

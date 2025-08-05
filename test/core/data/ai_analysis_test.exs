@@ -1,10 +1,10 @@
-defmodule CopilotApi.Core.Data.AIAnalysisTest do
-  use CopilotApi.DataCase, async: true
+defmodule Copilot.Core.Data.AIAnalysisTest do
+  use Copilot.DataCase, async: true
 
-  alias CopilotApi.Core.Data.AIAnalysis
-  alias CopilotApi.Core.Data.ProjectBrief
-  alias CopilotApi.Core.Data.Customer
-  alias CopilotApi.Repo
+  alias Copilot.Core.Data.AIAnalysis
+  alias Copilot.Core.Data.ProjectBrief
+  alias Copilot.Core.Data.Customer
+  alias Copilot.Repo
 
   defp project_brief_fixture do
     customer =

@@ -1,9 +1,9 @@
-defmodule CopilotApi.Core.Data.ProjectBriefTest do
-  use CopilotApi.DataCase, async: true
+defmodule Copilot.Core.Data.ProjectBriefTest do
+  use Copilot.DataCase, async: true
 
-  alias CopilotApi.Core.Data.ProjectBrief
-  alias CopilotApi.Core.Data.Customer
-  alias CopilotApi.Repo
+  alias Copilot.Core.Data.ProjectBrief
+  alias Copilot.Core.Data.Customer
+  alias Copilot.Repo
 
   defp customer_fixture do
     {:ok, customer} =

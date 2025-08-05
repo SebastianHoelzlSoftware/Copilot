@@ -1,9 +1,9 @@
-defmodule CopilotApi.Core.Data.Customer do
+defmodule Copilot.Core.Data.Customer do
   @moduledoc "Represents a customer account."
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias CopilotApi.Core.Data.{
+  alias Copilot.Core.Data.{
     Address,
     Contact,
     CostEstimate,

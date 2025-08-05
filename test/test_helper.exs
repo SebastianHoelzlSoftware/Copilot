@@ -1,2 +1,2 @@
 ExUnit.start()
-Ecto.Adapters.SQL.Sandbox.mode(CopilotApi.Repo, :manual)
+Ecto.Adapters.SQL.Sandbox.mode(Copilot.Repo, :manual)

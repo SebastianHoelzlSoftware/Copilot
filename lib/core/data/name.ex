@@ -1,4 +1,4 @@
-defmodule CopilotApi.Core.Data.Name do
+defmodule Copilot.Core.Data.Name do
   @moduledoc "An embedded schema for a person's or company's name."
   use Ecto.Schema
   @derive {Jason.Encoder, only: [:first_name, :last_name, :company_name]}

@@ -1,11 +1,11 @@
-defmodule CopilotApi.Core.CostEstimatesTest do
-  use CopilotApi.DataCase
+defmodule Copilot.Core.CostEstimatesTest do
+  use Copilot.DataCase
 
-  alias CopilotApi.Core.CostEstimates
-  alias CopilotApi.Core.AIAnalyses
-  alias CopilotApi.Core.Data.CostEstimate
+  alias Copilot.Core.CostEstimates
+  alias Copilot.Core.AIAnalyses
+  alias Copilot.Core.Data.CostEstimate
 
-  import CopilotApi.Core.Fixtures
+  import Copilot.Core.Fixtures
 
   @invalid_attrs %{amount: nil}
 

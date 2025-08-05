@@ -1,12 +1,12 @@
-defmodule CopilotApi.Core.Customers do
+defmodule Copilot.Core.Customers do
   @moduledoc """
   The Customers context.
   """
 
   import Ecto.Query, warn: false
-  alias CopilotApi.Repo
+  alias Copilot.Repo
 
-  alias CopilotApi.Core.Data.Customer
+  alias Copilot.Core.Data.Customer
 
   @doc """
   Returns the list of customers.

@@ -1,4 +1,4 @@
-defmodule CopilotApi.Core.Data.PhoneNumber do
+defmodule Copilot.Core.Data.PhoneNumber do
   @moduledoc "Represents a validated phone number as an embedded Ecto schema."
   use Ecto.Schema
   @derive {Jason.Encoder, only: [:number]}

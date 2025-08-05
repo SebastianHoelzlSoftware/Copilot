@@ -1,7 +1,7 @@
-defmodule CopilotApi.Core.Data.NameTest do
-  use CopilotApi.DataCase, async: true
+defmodule Copilot.Core.Data.NameTest do
+  use Copilot.DataCase, async: true
 
-  alias CopilotApi.Core.Data.Name
+  alias Copilot.Core.Data.Name
   import Ecto.Changeset
 
   describe "changeset/2" do

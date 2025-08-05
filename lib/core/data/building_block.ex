@@ -1,4 +1,4 @@
-defmodule CopilotApi.Core.Data.BuildingBlock do
+defmodule Copilot.Core.Data.BuildingBlock do
   @moduledoc "An embedded schema for a suggested building block."
   use Ecto.Schema
   @derive {Jason.Encoder, only: [:name, :description]}

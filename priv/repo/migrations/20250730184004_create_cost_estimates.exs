@@ -1,4 +1,4 @@
-defmodule CopilotApi.Repo.Migrations.CreateCostEstimates do
+defmodule Copilot.Repo.Migrations.CreateCostEstimates do
   use Ecto.Migration
 
   def change do

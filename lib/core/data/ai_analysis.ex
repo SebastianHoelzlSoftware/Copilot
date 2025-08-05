@@ -1,9 +1,9 @@
-defmodule CopilotApi.Core.Data.AIAnalysis do
+defmodule Copilot.Core.Data.AIAnalysis do
   @moduledoc "Holds the results of an AI analysis of a project brief."
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias CopilotApi.Core.Data.{BuildingBlock, ClarifyingQuestion, CostEstimate, ProjectBrief}
+  alias Copilot.Core.Data.{BuildingBlock, ClarifyingQuestion, CostEstimate, ProjectBrief}
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id

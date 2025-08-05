@@ -1,12 +1,12 @@
-defmodule CopilotApi.Core.Briefs do
+defmodule Copilot.Core.Briefs do
   @moduledoc """
   The Briefs context.
   """
 
   import Ecto.Query, warn: false
-  alias CopilotApi.Repo
+  alias Copilot.Repo
 
-  alias CopilotApi.Core.Data.ProjectBrief
+  alias Copilot.Core.Data.ProjectBrief
 
   @doc """
   Returns the list of project_briefs.

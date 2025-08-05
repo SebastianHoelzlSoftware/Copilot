@@ -1,10 +1,10 @@
-defmodule CopilotApi.Core.BriefsTest do
-  use CopilotApi.DataCase
+defmodule Copilot.Core.BriefsTest do
+  use Copilot.DataCase
 
-  alias CopilotApi.Core.Briefs
-  alias CopilotApi.Core.Data.ProjectBrief
+  alias Copilot.Core.Briefs
+  alias Copilot.Core.Data.ProjectBrief
 
-  import CopilotApi.Core.Fixtures
+  import Copilot.Core.Fixtures
 
   @invalid_attrs %{title: nil}
 

@@ -1,14 +1,14 @@
-defmodule CopilotApi.Core.Users do
+defmodule Copilot.Core.Users do
   @moduledoc """
   The Users context.
   """
 
   import Ecto.Query, warn: false
   require Logger
-  alias CopilotApi.Repo
-  alias CopilotApi.Core.Customers
+  alias Copilot.Repo
+  alias Copilot.Core.Customers
 
-  alias CopilotApi.Core.Data.User
+  alias Copilot.Core.Data.User
 
   @doc """
   Returns the list of users.
