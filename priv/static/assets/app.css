@@ -1050,6 +1050,10 @@ select {
   padding-bottom: 8rem;
 }
 
+.pb-32 {
+  padding-bottom: 8rem;
+}
+
 .pl-16 {
   padding-left: 4rem;
 }
