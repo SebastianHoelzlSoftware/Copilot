@@ -154,7 +154,9 @@ defmodule Copilot.Core.Users do
       case get_user_by(provider_id: provider_id) do
         nil ->
           # This is a new user. Create them within a transaction.
-          create_user_for_registration(register_attrs)
+          registered = create_user_for_registration(register_attrs)
+          IO.inspect(registered, label: "REGISTERED")
+          registered
 
         user ->
           case Customers.get_customer!(id: user.customer_id) do
@@ -165,7 +167,8 @@ defmodule Copilot.Core.Users do
                 nil ->
                   {:error, "contact not found"}
                 contact ->
-                  {:ok, user, customer, contact}
+                  IO.inspect({user, customer, contact}, label: "FOUND USER CUSTOMER AND CONTACT")
+                  {:found, user, customer, contact}
               end
           end
       end
@@ -176,7 +179,6 @@ defmodule Copilot.Core.Users do
   Creates a user, customer, and contact in a single transaction.
   """
   def create_user_for_registration(register_attrs) do
-
     customer_attrs = %{
       name: %{
         company_name: register_attrs["company_name"]
@@ -184,16 +186,22 @@ defmodule Copilot.Core.Users do
     }
 
     contact_attrs = %{
-      first_name: register_attrs["contact_first_name"],
-      last_name: register_attrs["contact_last_name"],
-      email: register_attrs["contact_email"],
-      phone_number: register_attrs["contact_phone_number"]
+      name: %{
+        first_name: register_attrs["contact_first_name"],
+        last_name: register_attrs["contact_last_name"]
+      },
+      email: %{
+        address: register_attrs["contact_email"]
+      },
+      phone_number: %{
+        number: register_attrs["contact_phone_number"]
+      }
     }
 
     user_attrs = %{
       provider_id: register_attrs["provider_id"],
       email: register_attrs["email"],
-      name: register_attrs["name"],
+      name: register_attrs["name"]
     }
 
     Repo.transaction(fn ->
@@ -202,23 +210,28 @@ defmodule Copilot.Core.Users do
         {:ok, customer} ->
           # Create contact associated with the customer
           contact_attrs_with_customer = Map.put(contact_attrs, :customer_id, customer.id)
+
           case Contacts.create_contact(contact_attrs_with_customer) do
             {:ok, contact} ->
               # Create user associated with the customer and default roles
               user_attrs_with_customer_and_roles =
                 user_attrs
                 |> Map.put(:customer_id, customer.id)
+                |> Map.put(:contact_id, contact.id)
                 |> Map.put_new(:roles, ["customer", "user"])
 
               case create_user(user_attrs_with_customer_and_roles) do
                 {:ok, user} ->
-                  {:ok, user, customer, contact}
+                  {:created, user, customer, contact}
+
                 {:error, changeset} ->
                   Repo.rollback({:error, :user, changeset})
               end
+
             {:error, changeset} ->
               Repo.rollback({:error, :contact, changeset})
           end
+
         {:error, changeset} ->
           Repo.rollback({:error, :customer, changeset})
       end

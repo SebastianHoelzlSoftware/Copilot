@@ -13,7 +13,7 @@ defmodule CopilotWeb.RegistrationControllerTest do
     "contact_first_name" => "Jane",
     "contact_last_name" => "Doe",
     "contact_email" => "jane.doe@example.com",
-    "contac_phone_number" => "+15557654321"
+    "contact_phone_number" => "+15557654321"
   }
 
   @new_developer_registration_payload %{
@@ -25,7 +25,7 @@ defmodule CopilotWeb.RegistrationControllerTest do
     "contact_first_name" => "John",
     "contact_last_name" => "Hacker",
     "contact_email" => "john.hacker@example.com",
-    "contac_phone_number" => "+16666666666"
+    "contact_phone_number" => "+16666666666"
   }
 
   @invalid_payload %{
