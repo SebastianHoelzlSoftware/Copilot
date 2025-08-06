@@ -5,7 +5,7 @@ defmodule Copilot.Core.Data.UserTest do
   import Ecto.Changeset
 
   describe "registration_changeset" do
-    test "with valid attributes sets roles to customer" do
+    test "with valid attributes sets roles to customer and user" do
       attrs = %{
         "provider_id" => "test-provider-reg-1",
         "email" => "register@example.com",
@@ -14,7 +14,7 @@ defmodule Copilot.Core.Data.UserTest do
 
       changeset = User.registration_changeset(%User{}, attrs)
       assert changeset.valid?
-      assert get_change(changeset, :roles) == ["customer"]
+      assert get_change(changeset, :roles) == ["customer", "user"]
       assert get_change(changeset, :provider_id) == "test-provider-reg-1"
       assert get_change(changeset, :email) == "register@example.com"
       assert get_change(changeset, :name) == "Register User"
@@ -71,7 +71,7 @@ defmodule Copilot.Core.Data.UserTest do
 
       changeset = User.registration_changeset(%User{}, attrs)
       refute changeset.valid?
-      assert "only 'customer' role is allowed for registration" in errors_on(changeset)[:roles]
+      assert "only 'customer' and 'user' roles are allowed for registration" in errors_on(changeset)[:roles]
     end
 
     test "with existing provider_id returns an error" do

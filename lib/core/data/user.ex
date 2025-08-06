@@ -39,13 +39,17 @@ defmodule Copilot.Core.Data.User do
   defp validate_roles_for_registration(changeset) do
     case get_change(changeset, :roles) do
       nil ->
-        put_change(changeset, :roles, ["customer"])
+        put_change(changeset, :roles, ["customer", "user"])
+
       roles when is_list(roles) ->
-        if Enum.all?(roles, &(&1 == "customer")) do
+        allowed_roles = ["customer", "user"]
+
+        if Enum.all?(roles, &(&1 in allowed_roles)) do
           changeset
         else
-          add_error(changeset, :roles, "only 'customer' role is allowed for registration")
+          add_error(changeset, :roles, "only 'customer' and 'user' roles are allowed for registration")
         end
+
       _ ->
         add_error(changeset, :roles, "invalid roles format")
     end
