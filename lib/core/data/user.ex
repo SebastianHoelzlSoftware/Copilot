@@ -12,6 +12,7 @@ defmodule Copilot.Core.Data.User do
 
     belongs_to :customer, Copilot.Core.Data.Customer
 
+
     timestamps()
   end
 
@@ -23,6 +24,7 @@ defmodule Copilot.Core.Data.User do
     |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "must have the @ sign and no spaces")
     |> unique_constraint(:provider_id)
     |> unique_constraint(:email)
+    |> foreign_key_constraint(:customer_id)
   end
 
   @doc false
@@ -34,6 +36,8 @@ defmodule Copilot.Core.Data.User do
     |> validate_roles_for_registration()
     |> unique_constraint(:provider_id)
     |> unique_constraint(:email)
+    |> foreign_key_constraint(:customer_id)
+    |> foreign_key_constraint(:contact_id)
   end
 
   defp validate_roles_for_registration(changeset) do

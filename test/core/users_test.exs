@@ -4,6 +4,8 @@ defmodule Copilot.Core.UsersTest do
   alias Copilot.Core.Customers
   alias Copilot.Core.Users
   alias Copilot.Core.Data.User
+  alias Copilot.Core.Data.Customer
+  alias Copilot.Core.Data.Contact
   alias Copilot.Repo
 
   @moduletag :users
@@ -23,7 +25,6 @@ defmodule Copilot.Core.UsersTest do
 
       user
     end
-
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Users.create_user(@valid_attrs)
       assert user.email == "test@example.com"
@@ -149,6 +150,82 @@ defmodule Copilot.Core.UsersTest do
     test "change_user/2 returns a user changeset" do
       user = user_fixture()
       assert %Ecto.Changeset{} = Users.change_user(user)
+    end
+  end
+
+  describe "register_user/1" do
+    @valid_registration_attrs %{
+      "provider_id" => "reg-provider-123",
+      "email" => "register@example.com",
+      "name" => "Register User",
+      "company_name" => "Registered Inc.",
+      "contact_first_name" => "Regi",
+      "contact_last_name" => "Ster",
+      "contact_email" => "regi.ster@example.com",
+      "contact_phone_number" => "123-456-7890"
+    }
+
+    test "with valid data for a new user, creates user, customer, and contact" do
+      assert {:ok, {:created, %User{} = user, customer, contact}} =
+               Users.register_user(@valid_registration_attrs)
+
+      assert user.email == "register@example.com"
+      assert customer.name.company_name == "Registered Inc."
+      assert contact.name.first_name == "Regi"
+      assert contact.customer_id == customer.id
+      assert user.customer_id == customer.id
+      assert contact.email.address == "regi.ster@example.com"
+      assert contact.phone_number.number == "123-456-7890"
+    end
+
+    test "with invalid data for a new user, returns an error and rolls back" do
+      invalid_attrs = Map.put(@valid_registration_attrs, "email", "invalid-email")
+
+      assert {:error, %Ecto.Changeset{valid?: false}} = Users.register_user(invalid_attrs)
+
+      # Assert that nothing was created due to transaction rollback
+      assert Repo.all(User) == []
+      assert Repo.all(Customer) == []
+      assert Repo.all(Contact) == []
+    end
+
+    test "with an existing user, finds and returns the user, customer, and contact" do
+      # First, register the user
+      {:ok, {:created, user, customer, contact}} = Users.register_user(@valid_registration_attrs)
+
+      # Now, call register_user again with the same provider_id
+      assert {:ok, {:found, found_user, found_customer, found_contact}} =
+               Users.register_user(@valid_registration_attrs)
+
+      assert found_user.id == user.id
+      assert found_customer.id == customer.id
+      assert found_contact.id == contact.id
+    end
+
+    test "without a provider_id, returns an error changeset" do
+      attrs_without_provider = Map.delete(@valid_registration_attrs, "provider_id")
+      assert {:error, %Ecto.Changeset{}} = Users.register_user(attrs_without_provider)
+    end
+
+    test "with an existing user but missing customer, returns an error" do
+      # Setup: create a user and customer, then delete the customer
+      {:ok, customer} = Customers.create_customer(%{name: %{company_name: "Temp Corp"}})
+      user_attrs = Map.merge(@valid_attrs, %{"customer_id" => customer.id})
+      {:ok, user} = Users.create_user(user_attrs)
+      Repo.delete!(customer)
+
+      registration_attrs = %{"provider_id" => user.provider_id}
+      assert {:error, %Ecto.Changeset{data: %Customer{}}} = Users.register_user(registration_attrs)
+    end
+
+    test "with an existing user and customer but no contacts, returns an error" do
+      # Setup: create a user and customer, but no contact
+      {:ok, customer} = Customers.create_customer(%{name: %{company_name: "No Contact Corp"}})
+      user_attrs = Map.merge(@valid_attrs, %{"customer_id" => customer.id})
+      {:ok, user} = Users.create_user(user_attrs)
+
+      registration_attrs = %{"provider_id" => user.provider_id}
+      assert {:error, %Ecto.Changeset{data: %Contact{}}} = Users.register_user(registration_attrs)
     end
   end
 end
