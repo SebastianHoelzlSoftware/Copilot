@@ -71,12 +71,15 @@ defmodule Copilot.Core.Data.UserTest do
 
       changeset = User.registration_changeset(%User{}, attrs)
       refute changeset.valid?
-      assert "only 'customer' and 'user' roles are allowed for registration" in errors_on(changeset)[:roles]
+
+      assert "only 'customer' and 'user' roles are allowed for registration" in errors_on(
+               changeset
+             )[:roles]
     end
 
     test "with existing provider_id returns an error" do
       # Create a user first to simulate an existing provider_id
-      _user = 
+      _user =
         %User{}
         |> User.changeset(%{
           provider_id: "existing-provider",
@@ -92,7 +95,7 @@ defmodule Copilot.Core.Data.UserTest do
         "name" => "New User"
       }
 
-      changeset = 
+      changeset =
         %User{}
         |> User.registration_changeset(attrs)
         |> Repo.insert()
@@ -103,7 +106,7 @@ defmodule Copilot.Core.Data.UserTest do
 
     test "with existing email returns an error" do
       # Create a user first to simulate an existing email
-      _user = 
+      _user =
         %User{}
         |> User.changeset(%{
           provider_id: "another-provider",
@@ -119,7 +122,7 @@ defmodule Copilot.Core.Data.UserTest do
         "name" => "New User"
       }
 
-      changeset = 
+      changeset =
         %User{}
         |> User.registration_changeset(attrs)
         |> Repo.insert()

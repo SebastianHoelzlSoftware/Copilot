@@ -1,14 +1,14 @@
 defmodule Mix.Tasks.Users.GrantRole do
   @moduledoc """
   Grants a new role to a user.
-
+  
   This task finds a user by their email and adds the specified role to their
   list of roles. If the user already has the role, the list remains unchanged.
-
+  
   ## Examples
-
+  
       mix users.grant_role developer@example.com developer
-
+  
   """
   use Mix.Task
 

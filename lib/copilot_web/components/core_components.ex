@@ -5,6 +5,7 @@ defmodule CopilotWeb.Components.CoreComponents do
   Renders a header component.
   """
   attr :current_user, :any, default: nil
+
   def header(assigns) do
     ~H"""
     <header class="bg-white shadow-md">
@@ -36,6 +37,7 @@ defmodule CopilotWeb.Components.CoreComponents do
   Renders flash messages.
   """
   attr :flash, :map, default: %{}
+
   def flash_group(assigns) do
     ~H"""
     <div

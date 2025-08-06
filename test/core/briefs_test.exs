@@ -110,7 +110,7 @@ defmodule Copilot.Core.BriefsTest do
 
       assert length(briefs) == 2
       assert Enum.map(briefs, & &1.id) |> Enum.sort() == [brief1.id, brief2.id] |> Enum.sort()
-      assert Enum.all?(briefs, &(&1.customer))
+      assert Enum.all?(briefs, & &1.customer)
     end
   end
 end

@@ -1,5 +1,4 @@
 defmodule CopilotWeb.RegistrationJSON do
-
   def show(%{user: user, customer: customer, contact: contact}) do
     %{
       data: %{

@@ -105,7 +105,7 @@ defmodule CopilotWeb.Router do
     end
   end
 
-    # Now the catch all must always be at the bottom, add this snippet
+  # Now the catch all must always be at the bottom, add this snippet
   scope "/", CopilotWeb do
     pipe_through :api
     match :*, "/*path", CatchAllController, :match_invalid_routes

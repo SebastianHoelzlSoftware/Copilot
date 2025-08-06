@@ -40,7 +40,13 @@ defmodule CopilotWeb.RegistrationControllerTest do
 
       response = json_response(conn, 201)
       # IO.inspect(response, label: "REGISTER RESPONSE")
-      assert %{"data" => %{"id" => user_id, "customer_id" => customer_id, "contact_id" => contact_id}} = response
+      assert %{
+               "data" => %{
+                 "id" => user_id,
+                 "customer_id" => customer_id,
+                 "contact_id" => contact_id
+               }
+             } = response
 
       # Verify user was created
       user = Users.get_user!(user_id)
@@ -57,8 +63,6 @@ defmodule CopilotWeb.RegistrationControllerTest do
       contact = Contacts.get_contact!(contact_id)
       assert contact.customer_id == customer_id
     end
-
-
 
     # test "returns the existing user if they already exist", %{conn: conn} do
     #   # Pre-create the user to simulate a returning user

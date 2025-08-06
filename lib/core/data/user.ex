@@ -47,7 +47,11 @@ defmodule Copilot.Core.Data.User do
         if Enum.all?(roles, &(&1 in allowed_roles)) do
           changeset
         else
-          add_error(changeset, :roles, "only 'customer' and 'user' roles are allowed for registration")
+          add_error(
+            changeset,
+            :roles,
+            "only 'customer' and 'user' roles are allowed for registration"
+          )
         end
 
       _ ->

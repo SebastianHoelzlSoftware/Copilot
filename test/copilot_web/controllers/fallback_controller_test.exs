@@ -7,9 +7,11 @@ defmodule CopilotWeb.FallbackControllerTest do
     # When calling a controller directly, the connection parameters are not
     # automatically parsed, and the response format is not set. We must
     # fetch the params and set the format manually to allow `render` to work.
-    conn = conn
-    |> Plug.Conn.fetch_query_params()
-    |> put_private(:phoenix_format, "json")
+    conn =
+      conn
+      |> Plug.Conn.fetch_query_params()
+      |> put_private(:phoenix_format, "json")
+
     {:ok, conn: conn}
   end
 
@@ -41,6 +43,7 @@ defmodule CopilotWeb.FallbackControllerTest do
     conn = FallbackController.call(conn, {:error, changeset})
 
     assert conn.status == 422
+
     assert json_response(conn, 422) == %{
              "errors" => %{"base" => ["cannot be deleted due to associations"]}
            }

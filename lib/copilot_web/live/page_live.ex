@@ -115,7 +115,6 @@ defmodule CopilotWeb.PageLive do
   end
 
   def handle_event("navigate_to_info", _value, socket) do
-    
     {:noreply, push_navigate(socket, to: "/info")}
   end
 end

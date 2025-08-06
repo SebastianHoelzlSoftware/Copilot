@@ -2,13 +2,13 @@ defmodule CopilotWeb.Plugs.EnsureParams do
   @moduledoc """
   A plug to ensure that a required parameter key exists in the connection parameters.
   It halts the connection with a 400 Bad Request if the key is missing.
-
+  
   ## Example Usage
-
+  
   In your controller:
-
+  
       plug CopilotWeb.Plugs.EnsureParams, "customer" when action in [:create, :update]
-
+  
   This will ensure that the `customer` key is present in the params for the
   `create` and `update` actions.
   """

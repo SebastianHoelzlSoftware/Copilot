@@ -13,8 +13,6 @@ defmodule Copilot.Core.Users do
   alias Copilot.Core.Data.Customer
   alias Copilot.Core.Data.Contact
 
-
-
   @doc """
   Returns the list of users.
 
@@ -131,7 +129,12 @@ defmodule Copilot.Core.Users do
             # This is a non-customer user (e.g., a developer).
             # Create them without a customer record.
             with {:ok, user} <- attrs |> Map.put("roles", roles) |> create_user() do
-              Logger.info("New non-customer user created", %{event: "non_customer_user_created", user_id: user.id, email: user.email})
+              Logger.info("New non-customer user created", %{
+                event: "non_customer_user_created",
+                user_id: user.id,
+                email: user.email
+              })
+
               {:ok, user}
             end
           end
@@ -225,7 +228,8 @@ defmodule Copilot.Core.Users do
              user_attrs
              |> Map.put("customer_id", customer.id)
              |> Map.put("contact_id", contact.id),
-           {:ok, user} <- create_user_with_registration_changeset(user_attrs_with_customer_and_contact) do
+           {:ok, user} <-
+             create_user_with_registration_changeset(user_attrs_with_customer_and_contact) do
         {:created, user, customer, contact}
       else
         {:error, changeset} ->

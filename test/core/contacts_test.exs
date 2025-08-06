@@ -105,8 +105,11 @@ defmodule Copilot.Core.ContactsTest do
       contacts = Contacts.list_contacts_for_customer(customer)
 
       assert length(contacts) == 2
-      assert Enum.map(contacts, & &1.id) |> Enum.sort() == [contact1.id, contact2.id] |> Enum.sort()
-      assert Enum.all?(contacts, &(&1.customer))
+
+      assert Enum.map(contacts, & &1.id) |> Enum.sort() ==
+               [contact1.id, contact2.id] |> Enum.sort()
+
+      assert Enum.all?(contacts, & &1.customer)
     end
   end
 end

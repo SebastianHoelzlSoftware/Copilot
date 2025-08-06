@@ -15,7 +15,8 @@ defmodule CopilotWeb.CatchAllController do
   end
 
   defp route_info_fn(route_data) do
-    if route_data.verb != :* do # It will ignore every http method-agnostic endpoint by adding nil for such endpoints
+    # It will ignore every http method-agnostic endpoint by adding nil for such endpoints
+    if route_data.verb != :* do
       %{
         method: route_data.verb |> Atom.to_string() |> String.upcase(),
         path: route_data.path
