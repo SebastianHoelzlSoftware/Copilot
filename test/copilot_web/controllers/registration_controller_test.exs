@@ -46,7 +46,7 @@ defmodule CopilotWeb.RegistrationControllerTest do
       user = Users.get_user!(user_id)
       assert user.email == "new.customer@example.com"
       assert user.name == "New Customer Company"
-      assert user.roles == ["customer"]
+      assert user.roles == ["customer", "user"]
       assert user.customer_id == customer_id
 
       # Verify customer was created

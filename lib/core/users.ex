@@ -155,7 +155,7 @@ defmodule Copilot.Core.Users do
         nil ->
           # This is a new user. Create them within a transaction.
           registered = create_user_for_registration(register_attrs)
-          IO.inspect(registered, label: "REGISTERED")
+          #IO.inspect(registered, label: "REGISTERED")
           registered
 
         user ->
@@ -168,7 +168,7 @@ defmodule Copilot.Core.Users do
                   {:error, "contact not found"}
                 contact ->
                   IO.inspect({user, customer, contact}, label: "FOUND USER CUSTOMER AND CONTACT")
-                  {:found, user, customer, contact}
+                  {:ok, {:foud, user, customer, contact}}
               end
           end
       end
