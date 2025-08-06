@@ -10,6 +10,10 @@ defmodule Copilot.Core.Users do
   alias Copilot.Core.Contacts
 
   alias Copilot.Core.Data.User
+  alias Copilot.Core.Data.Customer
+  alias Copilot.Core.Data.Contact
+
+
 
   @doc """
   Returns the list of users.
@@ -149,7 +153,8 @@ defmodule Copilot.Core.Users do
     provider_id = register_attrs["provider_id"]
 
     if is_nil(provider_id) do
-      {:error, "provider_id is required"}
+      changeset = User.changeset(%User{}, register_attrs)
+      {:error, changeset}
     else
       case get_user_by(provider_id: provider_id) do
         nil ->
@@ -161,14 +166,15 @@ defmodule Copilot.Core.Users do
         user ->
           case Customers.get_customer!(id: user.customer_id) do
             nil ->
-              {:error, "customer not found"}
+              changeset = Customer.changeset(%Customer{}, register_attrs)
+              {:error, changeset}
             customer ->
               case Contacts.get_contact!(id: user.contact_id) do
                 nil ->
-                  {:error, "contact not found"}
+                  changeset = Contacts.changeset(%Contact{}, register_attrs)
+                  {:error, changeset}
                 contact ->
-                  IO.inspect({user, customer, contact}, label: "FOUND USER CUSTOMER AND CONTACT")
-                  {:ok, {:foud, user, customer, contact}}
+                  {:ok, {:found, user, customer, contact}}
               end
           end
       end
