@@ -143,59 +143,84 @@ defmodule Copilot.Core.Users do
   end
 
   @doc """
-  Registers a user by finding them by provider_id or creating a new one.
-
-  If the user is new and has the "customer" role, a corresponding Customer
-  record is also created. This entire operation is performed in a transaction.
-
-  Returns:
-  - `{:ok, {:created, user}}` if a new user was created.
-  - `{:ok, {:found, user}}` if an existing user was found.
-  - `{:error, changeset}` if there was a validation error.
+  Registers a user by finding them by provider_id or creating a new one along with customer and contact
   """
-  def register_user(attrs) do
-    provider_id = attrs["provider_id"]
+  def register_user(register_attrs) do
+    provider_id = register_attrs["provider_id"]
 
     if is_nil(provider_id) do
-      # If provider_id is nil, we can't find a user.
-      # Go straight to creation, which will fail validation as expected.
-      create_user(attrs)
-      |> case do
-        # This path should not be hit with invalid data, but we handle it for completeness.
-        {:ok, user} -> {:ok, {:created, user}}
-        {:error, changeset} -> {:error, changeset}
-      end
+      {:error, "provider_id is required"}
     else
       case get_user_by(provider_id: provider_id) do
         nil ->
           # This is a new user. Create them within a transaction.
-          create_user_for_registration(attrs)
+          create_user_for_registration(register_attrs)
 
         user ->
-          # User already exists, return them.
-          {:ok, {:found, user}}
+          case Customers.get_customer!(id: user.customer_id) do
+            nil ->
+              {:error, "customer not found"}
+            customer ->
+              case Contacts.get_contact!(id: user.contact_id) do
+                nil ->
+                  {:error, "contact not found"}
+                contact ->
+                  {:ok, user, customer, contact}
+              end
+          end
       end
     end
   end
 
-  defp create_user_for_registration(attrs) do
+  @doc """
+  Creates a user, customer, and contact in a single transaction.
+  """
+  def create_user_for_registration(register_attrs) do
+
+    customer_attrs = %{
+      name: %{
+        company_name: register_attrs["company_name"]
+      }
+    }
+
+    contact_attrs = %{
+      first_name: register_attrs["contact_first_name"],
+      last_name: register_attrs["contact_last_name"],
+      email: register_attrs["contact_email"],
+      phone_number: register_attrs["contact_phone_number"]
+    }
+
+    user_attrs = %{
+      provider_id: register_attrs["provider_id"],
+      email: register_attrs["email"],
+      name: register_attrs["name"],
+    }
+
     Repo.transaction(fn ->
-      user_attrs_with_customer =
-        if "customer" in Map.get(attrs, "roles", []) do
-          # Create a customer record first.
-          customer_attrs = %{name: %{company_name: attrs["name"]}}
+      # Create customer
+      case Customers.create_customer(customer_attrs) do
+        {:ok, customer} ->
+          # Create contact associated with the customer
+          contact_attrs_with_customer = Map.put(contact_attrs, :customer_id, customer.id)
+          case Contacts.create_contact(contact_attrs_with_customer) do
+            {:ok, contact} ->
+              # Create user associated with the customer and default roles
+              user_attrs_with_customer_and_roles =
+                user_attrs
+                |> Map.put(:customer_id, customer.id)
+                |> Map.put_new(:roles, ["customer", "user"])
 
-          case Customers.create_customer(customer_attrs) do
-            {:ok, customer} -> Map.put(attrs, "customer_id", customer.id)
-            {:error, changeset} -> Repo.rollback(changeset)
+              case create_user(user_attrs_with_customer_and_roles) do
+                {:ok, user} ->
+                  {:ok, user, customer, contact}
+                {:error, changeset} ->
+                  Repo.rollback({:error, :user, changeset})
+              end
+            {:error, changeset} ->
+              Repo.rollback({:error, :contact, changeset})
           end
-        else
-          attrs
-        end
-
-      case %User{} |> User.registration_changeset(user_attrs_with_customer) |> Repo.insert() do
-        {:ok, user} -> {:created, user}
-        {:error, changeset} -> Repo.rollback(changeset)
+        {:error, changeset} ->
+          Repo.rollback({:error, :customer, changeset})
       end
     end)
   end

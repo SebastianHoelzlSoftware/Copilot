@@ -41,6 +41,8 @@ defmodule Copilot.Core.Customers do
     |> Repo.preload(:contacts)
   end
 
+
+
   @doc """
   Creates a customer.
 
