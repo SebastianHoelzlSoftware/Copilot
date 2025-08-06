@@ -165,17 +165,18 @@ defmodule Copilot.Core.Users do
 
         user ->
           IO.inspect(register_attrs, label: "REGISTER_ATTRS")
-          case Customers.get_customer!(id: user.id) do
+          case Customers.get_customer!(user.customer_id) do
             nil ->
               changeset = Customer.changeset(%Customer{}, register_attrs)
               {:error, changeset}
             customer ->
               case Contacts.list_contacts_for_customer(customer) do
-                nil ->
+                [] ->
                   changeset = Contact.changeset(%Contact{}, register_attrs)
                   {:error, changeset}
-                contact ->
-                  {:ok, {:found, user, customer, contact}}
+                [first_contact | _] ->
+                  # For registration I guess it's okay to only return the first contact.
+                  {:ok, {:found, user, customer, first_contact}}
               end
           end
       end
