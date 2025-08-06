@@ -164,14 +164,15 @@ defmodule Copilot.Core.Users do
           registered
 
         user ->
-          case Customers.get_customer!(id: user.customer_id) do
+          IO.inspect(register_attrs, label: "REGISTER_ATTRS")
+          case Customers.get_customer!(id: user.id) do
             nil ->
               changeset = Customer.changeset(%Customer{}, register_attrs)
               {:error, changeset}
             customer ->
-              case Contacts.get_contact!(id: user.contact_id) do
+              case Contacts.list_contacts_for_customer(customer) do
                 nil ->
-                  changeset = Contacts.changeset(%Contact{}, register_attrs)
+                  changeset = Contact.changeset(%Contact{}, register_attrs)
                   {:error, changeset}
                 contact ->
                   {:ok, {:found, user, customer, contact}}
