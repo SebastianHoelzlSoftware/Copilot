@@ -72,8 +72,10 @@ The Copilot Software shall be composed of the following services but as a Monoli
 *   `mix phx.server`: Start the Phoenix web server.
 *   `mix test --trace`: Run the test suite with tracing.
 *   `mix compile`: Compile the project.
-*   `copilot`: loads .env environment variables, runs tests and then starts the server
-*   `copilot_apitest`: runs the api test suite
+*   `copilot`: loads `.env` environment variables, runs tests and then starts the server
+*   `copilot_apitest`: copies over the changes from `external_file_copies/api_test.ex` to `<ApiTest-Project>/lib/api_test.ex` and compiles and runs the test suite in the external directory.
+*   `checkin_apitest`: Checks in the project in the external directory to git. Requires commit message parameter.
+*   `push_apitest`: Pushes the project in the external directory to git. Returns to copilot root directory afterwards.
 
 
 ## Coding Conventions
