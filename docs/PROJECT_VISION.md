@@ -3,7 +3,10 @@
 Small Software companies, especially those with just one single developer (who might also be the business operator) often struggle with the project management overhead. Especially Requirements- and Change Request Management are affected by this. Too little care in the Requirements Gathering phase of the project leads to more Change Requests later on. The latter usually leads to big delays in development. Customers can't rely on cost and time estimates anymore and there's overall frustration. Furthermore those small businesses due to the lack of menpower are the most prone to chaotic business management. They often fail to deliver on their promises, guiding companies away to the often more expensive but bigger competitors.
 
 ## The Solution
-The Business Copilot is a tool that assists small software companies with their project management. It can be used to automate the process. It emphasizes the initial phases of requirement gathering and refining, as well as the change requests management. It also acts as an interface between commonly used services like (in my case, which will be the first one tackled by Copilot API) Jira, Slack, Google Calendar, Bugtracker and more. @TODO: refine this list
+The Business Copilot is a tool that assists small software companies with their project management. It can be used to automate the process. It emphasizes the initial phases of requirement gathering and refining, as well as the change requests management. It also acts as an interface between commonly used services like (in my case, which will be the first one tackled by Copilot API) Jira, Slack, Google Calendar, Bugtracker and more. 
+
+#### TODO:
+- [ ] refine this list
 
 ## The Architecture
 The Copilot Software shall be composed of the following services:
@@ -22,9 +25,15 @@ The Copilot Software shall be composed of the following services:
 
 7. Work Time Tracker Service: This will track the time spent on the project. It will be used to calculate the cost of the project. It's data will be made available for the Project Insight Service (see below)
 
-8. Project Insights Service: Here the customer will have the opportunity to get insights on the current development state. He shall see Jira summary (maybe even more, let's check out Jira's capabilites here), the actual time that has been worked on the project. Estimated releases and more. @TODO: Make a definitive list of insights worth displaying to the customer
+8. Project Insights Service: Here the customer will have the opportunity to get insights on the current development state. He shall see Jira summary (maybe even more, let's check out Jira's capabilites here), the actual time that has been worked on the project. Estimated releases and more. 
 
-9. Invoice Service: This will create invoices based on the customers data and the work time data from the Work Time Tracker Service. It will interact will the business operator's accounting software @TODO: decide which software this shall be
+#### TODO:
+- [ ] Make a definitive list of insights worth displaying to the customer
+
+9. Invoice Service: This will create invoices based on the customers data and the work time data from the Work Time Tracker Service. It will interact will the business operator's accounting software 
+
+#### TODO:
+- [ ] decide which software this shall be
 
 10. Payment Service: This will provide common payment methods to the customer. It will also interact with the business operator's accounting software. 
 
@@ -32,7 +41,10 @@ The Copilot Software shall be composed of the following services:
 
 12. Notification Service: This is a helper service getting all the notification work from the other services done. (Probably done via Phoenix PubSub and maybe not worth an extra entry in this list)
 
-13. Bugtracker Service: This will provide an interface (or just a link) to a common bugtracking software handling just the configuration and the entanglement with the project. @TODO: Refine this idea.
+13. Bugtracker Service: This will provide an interface (or just a link) to a common bugtracking software handling just the configuration and the entanglement with the project. 
+
+#### TODO:
+- [ ] Refine this idea.
 
 
 ## Target Audience

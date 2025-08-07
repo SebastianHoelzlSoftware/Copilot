@@ -22,4 +22,5 @@ For an overview of API Test scenarios please see [API_TEST_SCENARIOS](docs/API_T
 *   `checkin_apitest` - Checks in the project in the external directory to git. Requires commit message parameter.
 *   `push_apitest` - Pushes the project in the external directory to git. Returns to copilot root directory afterwards.
 
-@TODO: add more information here.
+#### TODO:
+- [ ] add more information here.
