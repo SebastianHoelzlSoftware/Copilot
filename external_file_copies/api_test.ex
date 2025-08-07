@@ -6,12 +6,16 @@ defmodule ApiTest do
     # Start Finch for our requests. This is idempotent.
     Finch.start_link(name: @finch_pool_name)
 
-    run_scenario_1()
-    run_scenario_2()
-    run_scenario_3()
-    run_scenario_4()
-    run_scenario_5()
-    run_scenario_6()
+    results = [
+      run_scenario_1(),
+      run_scenario_2(),
+      run_scenario_3(),
+      run_scenario_4(),
+      run_scenario_5(),
+      run_scenario_6()
+    ]
+
+    print_summary(results)
   end
 
   defp run_scenario_1 do
@@ -45,14 +49,17 @@ defmodule ApiTest do
         IO.puts("Status Code: 201")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ✅ PASS: Registration successful (201 Created) ---")
+        :pass
       {:ok, %{status: status_code, body: body}} ->
         IO.puts("Status Code: #{status_code}")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ❌ FAIL: Registration failed with status #{status_code} ---")
+        :fail
       {:error, reason} ->
         IO.puts("Error:")
         IO.inspect(reason)
         IO.puts("\n--- ❌ FAIL: Request failed ---")
+        :fail
     end
   end
 
@@ -87,19 +94,24 @@ defmodule ApiTest do
             IO.puts("Status Code: 200")
             IO.puts("Response Body: #{body}")
             IO.puts("\n--- ✅ PASS: Second registration successful (200 OK) ---")
+            :pass
           {:ok, %{status: status_code, body: body}} ->
             IO.puts("Status Code: #{status_code}")
             IO.puts("Response Body: #{body}")
             IO.puts("\n--- ❌ FAIL: Expected status 200, but got #{status_code} ---")
+            :fail
           {:error, reason} ->
             IO.puts("Error on second attempt: #{inspect(reason)}")
             IO.puts("\n--- ❌ FAIL: Second request failed unexpectedly ---")
+            :fail
         end
       {:ok, %{status: status_code}} ->
         IO.puts("\n--- ❌ FAIL: First registration failed with status #{status_code}. Cannot test duplicate case. ---")
+        :fail
       {:error, reason} ->
         IO.puts("Error on first attempt: #{inspect(reason)}")
         IO.puts("\n--- ❌ FAIL: First request failed unexpectedly. Cannot test duplicate case. ---")
+        :fail
     end
   end
 
@@ -127,13 +139,16 @@ defmodule ApiTest do
         IO.puts("Status Code: 422")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ✅ PASS: Registration failed as expected with 422 Unprocessable Entity ---")
+        :pass
       {:ok, %{status: status_code, body: body}} ->
         IO.puts("Status Code: #{status_code}")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ❌ FAIL: Expected status 422, but got #{status_code} ---")
+        :fail
       {:error, reason} ->
         IO.puts("Error: #{inspect(reason)}")
         IO.puts("\n--- ❌ FAIL: Request failed unexpectedly ---")
+        :fail
     end
   end
 
@@ -161,13 +176,16 @@ defmodule ApiTest do
         IO.puts("Status Code: 422")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ✅ PASS: Registration failed as expected with 422 Unprocessable Entity ---")
+        :pass
       {:ok, %{status: status_code, body: body}} ->
         IO.puts("Status Code: #{status_code}")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ❌ FAIL: Expected status 422, but got #{status_code} ---")
+        :fail
       {:error, reason} ->
         IO.puts("Error: #{inspect(reason)}")
         IO.puts("\n--- ❌ FAIL: Request failed unexpectedly ---")
+        :fail
     end
   end
 
@@ -194,13 +212,16 @@ defmodule ApiTest do
         IO.puts("Status Code: 422")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ✅ PASS: Registration failed as expected with 422 Unprocessable Entity ---")
+        :pass
       {:ok, %{status: status_code, body: body}} ->
         IO.puts("Status Code: #{status_code}")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ❌ FAIL: Expected status 422, but got #{status_code} ---")
+        :fail
       {:error, reason} ->
         IO.puts("Error: #{inspect(reason)}")
         IO.puts("\n--- ❌ FAIL: Request failed unexpectedly ---")
+        :fail
     end
   end
 
@@ -228,13 +249,16 @@ defmodule ApiTest do
         IO.puts("Status Code: 422")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ✅ PASS: Registration failed as expected with 422 Unprocessable Entity ---")
+        :pass
       {:ok, %{status: status_code, body: body}} ->
         IO.puts("Status Code: #{status_code}")
         IO.puts("Response Body: #{body}")
         IO.puts("\n--- ❌ FAIL: Expected status 422, but got #{status_code} ---")
+        :fail
       {:error, reason} ->
         IO.puts("Error: #{inspect(reason)}")
         IO.puts("\n--- ❌ FAIL: Request failed unexpectedly ---")
+        :fail
     end
   end
 
@@ -251,5 +275,21 @@ defmodule ApiTest do
     else
       {:error, reason} -> {:error, "Failed to encode payload or build request: #{inspect(reason)}"}
     end
+  end
+
+  defp print_summary(results) do
+    passes = Enum.count(results, &(&1 == :pass))
+    fails = Enum.count(results, &(&1 == :fail))
+    total = length(results)
+
+    IO.puts("\n\n--- Test Summary ---")
+    IO.puts("Total Scenarios: #{total}")
+    IO.puts("✅ Passed:        #{passes}")
+
+    if fails > 0 do
+      IO.puts("❌ Failed:        #{fails}")
+    end
+
+    IO.puts("--------------------")
   end
 end
