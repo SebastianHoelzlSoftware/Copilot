@@ -9,6 +9,8 @@ defmodule ApiTest do
     run_scenario_1()
     run_scenario_2()
     run_scenario_3()
+    run_scenario_4()
+    run_scenario_5()
   end
 
   defp run_scenario_1 do
@@ -118,6 +120,73 @@ defmodule ApiTest do
     }
 
     IO.puts("Attempting to register user with invalid payload (missing provider_id)...")
+
+    case register_user(payload) do
+      {:ok, %{status: 422, body: body}} ->
+        IO.puts("Status Code: 422")
+        IO.puts("Response Body: #{body}")
+        IO.puts("\n--- ✅ PASS: Registration failed as expected with 422 Unprocessable Entity ---")
+      {:ok, %{status: status_code, body: body}} ->
+        IO.puts("Status Code: #{status_code}")
+        IO.puts("Response Body: #{body}")
+        IO.puts("\n--- ❌ FAIL: Expected status 422, but got #{status_code} ---")
+      {:error, reason} ->
+        IO.puts("Error: #{inspect(reason)}")
+        IO.puts("\n--- ❌ FAIL: Request failed unexpectedly ---")
+    end
+  end
+
+  defp run_scenario_4 do
+    IO.puts("\n--- Scenario 4: Attempt to register a user with an empty provider_id ---")
+    IO.puts("--------------------------------------------------------------------------")
+
+    payload = %{
+      "registration" => %{
+        "provider_id" => "",
+        "email" => "empty.provider@example.com",
+        "name" => "Empty Provider Test Co",
+        "company_name" => "Empty Provider Test Co",
+        "contact_first_name" => "Empty",
+        "contact_last_name" => "Provider",
+        "contact_email" => "contact.empty.provider@example.com",
+        "contact_phone_number" => "+15556667777"
+      }
+    }
+
+    IO.puts("Attempting to register user with an empty provider_id...")
+
+    case register_user(payload) do
+      {:ok, %{status: 422, body: body}} ->
+        IO.puts("Status Code: 422")
+        IO.puts("Response Body: #{body}")
+        IO.puts("\n--- ✅ PASS: Registration failed as expected with 422 Unprocessable Entity ---")
+      {:ok, %{status: status_code, body: body}} ->
+        IO.puts("Status Code: #{status_code}")
+        IO.puts("Response Body: #{body}")
+        IO.puts("\n--- ❌ FAIL: Expected status 422, but got #{status_code} ---")
+      {:error, reason} ->
+        IO.puts("Error: #{inspect(reason)}")
+        IO.puts("\n--- ❌ FAIL: Request failed unexpectedly ---")
+    end
+  end
+
+  defp run_scenario_5 do
+    IO.puts("\n--- Scenario 5: Attempt to register a user with a missing email ---")
+    IO.puts("--------------------------------------------------------------------------")
+
+    payload = %{
+      "registration" => %{
+        "provider_id" => "elixir-test-#{System.unique_integer([:positive])}",
+        "name" => "Missing Email Test Co",
+        "company_name" => "Missing Email Test Co",
+        "contact_first_name" => "Missing",
+        "contact_last_name" => "Email",
+        "contact_email" => "contact.missing.email@example.com",
+        "contact_phone_number" => "+15558889999"
+      }
+    }
+
+    IO.puts("Attempting to register user with a missing email...")
 
     case register_user(payload) do
       {:ok, %{status: 422, body: body}} ->
