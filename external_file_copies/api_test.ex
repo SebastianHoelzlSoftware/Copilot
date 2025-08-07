@@ -11,6 +11,7 @@ defmodule ApiTest do
     run_scenario_3()
     run_scenario_4()
     run_scenario_5()
+    run_scenario_6()
   end
 
   defp run_scenario_1 do
@@ -187,6 +188,40 @@ defmodule ApiTest do
     }
 
     IO.puts("Attempting to register user with a missing email...")
+
+    case register_user(payload) do
+      {:ok, %{status: 422, body: body}} ->
+        IO.puts("Status Code: 422")
+        IO.puts("Response Body: #{body}")
+        IO.puts("\n--- ✅ PASS: Registration failed as expected with 422 Unprocessable Entity ---")
+      {:ok, %{status: status_code, body: body}} ->
+        IO.puts("Status Code: #{status_code}")
+        IO.puts("Response Body: #{body}")
+        IO.puts("\n--- ❌ FAIL: Expected status 422, but got #{status_code} ---")
+      {:error, reason} ->
+        IO.puts("Error: #{inspect(reason)}")
+        IO.puts("\n--- ❌ FAIL: Request failed unexpectedly ---")
+    end
+  end
+
+  defp run_scenario_6 do
+    IO.puts("\n--- Scenario 6: Attempt to register a user with an invalid email format ---")
+    IO.puts("--------------------------------------------------------------------------")
+
+    payload = %{
+      "registration" => %{
+        "provider_id" => "elixir-test-#{System.unique_integer([:positive])}",
+        "email" => "invalid-email-format",
+        "name" => "Invalid Email Test Co",
+        "company_name" => "Invalid Email Test Co",
+        "contact_first_name" => "Invalid",
+        "contact_last_name" => "Email",
+        "contact_email" => "contact.invalid.email@example.com",
+        "contact_phone_number" => "+15559998888"
+      }
+    }
+
+    IO.puts("Attempting to register user with an invalid email format...")
 
     case register_user(payload) do
       {:ok, %{status: 422, body: body}} ->
