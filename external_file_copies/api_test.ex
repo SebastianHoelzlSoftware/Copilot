@@ -8,14 +8,16 @@ defmodule ApiTest do
 
     run_scenario_1()
     run_scenario_2()
+    run_scenario_3()
   end
 
   defp run_scenario_1 do
     IO.puts("--- Scenario 1: Register a new user via the public /api/register endpoint ---")
 
-    provider_id = "elixir-test-#{System.unique_integer([:positive])}"
-    email = "elixir.test.user.#{System.unique_integer([:positive])}@example.com"
-    contact_email = "elixir.test.contact.#{System.unique_integer([:positive])}@example.com"
+    unique_part = "#{System.os_time(:nanosecond)}-#{System.unique_integer([:positive])}"
+    provider_id = "elixir-test-#{unique_part}"
+    email = "elixir.test.user.#{unique_part}@example.com"
+    contact_email = "elixir.test.contact.#{unique_part}@example.com"
 
     payload = %{
       "registration" => %{
@@ -95,6 +97,40 @@ defmodule ApiTest do
       {:error, reason} ->
         IO.puts("Error on first attempt: #{inspect(reason)}")
         IO.puts("\n--- ❌ FAIL: First request failed unexpectedly. Cannot test duplicate case. ---")
+    end
+  end
+
+  defp run_scenario_3 do
+    IO.puts("\n--- Scenario 3: Attempt to register a user with invalid data (missing provider_id) ---")
+    IO.puts("--------------------------------------------------------------------------")
+
+    # Missing provider_id which is a required field
+    payload = %{
+      "registration" => %{
+        "email" => "invalid.user@example.com",
+        "name" => "Invalid Test Co",
+        "company_name" => "Invalid Test Co",
+        "contact_first_name" => "Invalid",
+        "contact_last_name" => "Test",
+        "contact_email" => "contact.invalid@example.com",
+        "contact_phone_number" => "+15553334444"
+      }
+    }
+
+    IO.puts("Attempting to register user with invalid payload (missing provider_id)...")
+
+    case register_user(payload) do
+      {:ok, %{status: 422, body: body}} ->
+        IO.puts("Status Code: 422")
+        IO.puts("Response Body: #{body}")
+        IO.puts("\n--- ✅ PASS: Registration failed as expected with 422 Unprocessable Entity ---")
+      {:ok, %{status: status_code, body: body}} ->
+        IO.puts("Status Code: #{status_code}")
+        IO.puts("Response Body: #{body}")
+        IO.puts("\n--- ❌ FAIL: Expected status 422, but got #{status_code} ---")
+      {:error, reason} ->
+        IO.puts("Error: #{inspect(reason)}")
+        IO.puts("\n--- ❌ FAIL: Request failed unexpectedly ---")
     end
   end
 
