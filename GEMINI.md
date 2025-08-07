@@ -63,19 +63,28 @@ The Copilot Software shall be composed of the following services but as a Monoli
 - **Iterative Delivery**: The project will be built and delivered one service/module at a time, starting with the highest-value component (the "Dev Request Service"). This allows for incremental progress, user feedback, and a faster path to a usable product.
 - **Pragmatic AI**: The use of AI will be focused and purposeful, aimed at solving specific, high-impact problems in the project management workflow. We will avoid using AI for its own sake and prioritize solutions that provide tangible value to the user.
 
+## Endpoint Testing
+* The endpoint can be tested via the `copilot_apitest` alias.
+* The API test file that is executed in the external project has a copy in the `external_file_copies` directory. Changes to the tests will be made there and then automatically copied to the right location by the `copilot_apitest` alias. They will also be compiled and executed by that alias.
+* Documentation for the API test scenarios can be found in the `docs` directory: [API_TEST_SCENARIOS](docs/API_TEST_SCENARIOS.md)
+
+## Project Management
+
+*   The project is structured as a Monolith Multi Service Application.
+
 
 ## Common Commands
 
-*   `mix deps.get`: Install project dependencies.
-*   `mix test`: Run the test suite.
-*   `mix format`: Format the Elixir code.
-*   `mix phx.server`: Start the Phoenix web server.
-*   `mix test --trace`: Run the test suite with tracing.
-*   `mix compile`: Compile the project.
-*   `copilot`: loads `.env` environment variables, runs tests and then starts the server
-*   `copilot_apitest`: copies over the changes from `external_file_copies/api_test.ex` to `<ApiTest-Project>/lib/api_test.ex` and compiles and runs the test suite in the external directory.
-*   `checkin_apitest`: Checks in the project in the external directory to git. Requires commit message parameter.
-*   `push_apitest`: Pushes the project in the external directory to git. Returns to copilot root directory afterwards.
+*   `mix deps.get` - Install project dependencies.
+*   `mix test` - Run the test suite.
+*   `mix format` - Format the Elixir code.
+*   `mix phx.server` - Start the Phoenix web server.
+*   `mix test --trace` - Run the test suite with tracing.
+*   `mix compile` - Compile the project.
+*   `copilot` - Loads environment variables, run tests and then start the server
+*   `copilot_apitest` - Copies over the changes from `external_file_copies/api_test.ex` to `<ApiTest-Project>/lib/api_test.ex` and compiles and runs the test suite in the external directory.
+*   `checkin_apitest` - Checks in the project in the external directory to git. Requires commit message parameter.
+*   `push_apitest` - Pushes the project in the external directory to git. Returns to copilot root directory afterwards.
 
 
 ## Coding Conventions
