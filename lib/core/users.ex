@@ -7,11 +7,9 @@ defmodule Copilot.Core.Users do
   require Logger
   alias Copilot.Repo
   alias Copilot.Core.Customers
-  alias Copilot.Core.Contacts
-
   alias Copilot.Core.Data.User
   alias Copilot.Core.Data.Customer
-  alias Copilot.Core.Data.Contact
+
 
   @doc """
   Returns the list of users.
@@ -150,7 +148,7 @@ defmodule Copilot.Core.Users do
   end
 
   @doc """
-  Registers a user by finding them by provider_id or creating a new one along with customer and contact
+  Registers a user by finding them by provider_id or creating a new one along with customer
   """
   def register_user(register_attrs) do
     provider_id = register_attrs["provider_id"]
@@ -163,8 +161,8 @@ defmodule Copilot.Core.Users do
         nil ->
           # This is a new user. Create them within a transaction.
           case create_user_for_registration(register_attrs) do
-            {:ok, {:created, user, customer, contact}} ->
-              {:ok, {:created, user, customer, contact}}
+            {:ok, {:created, user, customer}} ->
+              {:ok, {:created, user, customer}}
 
             {:error, {:error, changeset}} ->
               {:error, changeset}
@@ -177,15 +175,7 @@ defmodule Copilot.Core.Users do
               {:error, changeset}
 
             customer ->
-              case Contacts.list_contacts_for_customer(customer) do
-                [] ->
-                  changeset = Contact.changeset(%Contact{}, register_attrs)
-                  {:error, changeset}
-
-                [first_contact | _] ->
-                  # For registration I guess it's okay to only return the first contact.
-                  {:ok, {:found, user, customer, first_contact}}
-              end
+              {:ok, {:found, user, customer}}
           end
       end
     end
@@ -201,36 +191,21 @@ defmodule Copilot.Core.Users do
       }
     }
 
-    contact_attrs = %{
-      "name" => %{
-        "first_name" => register_attrs["contact_first_name"],
-        "last_name" => register_attrs["contact_last_name"]
-      },
-      "email" => %{
-        "address" => register_attrs["contact_email"]
-      },
-      "phone_number" => %{
-        "number" => register_attrs["contact_phone_number"]
-      }
-    }
-
     user_attrs = %{
       "provider_id" => register_attrs["provider_id"],
       "email" => register_attrs["email"],
       "name" => register_attrs["name"]
     }
 
+
     Repo.transaction(fn ->
       with {:ok, customer} <- Customers.create_customer(customer_attrs),
-           contact_attrs_with_customer = Map.put(contact_attrs, "customer_id", customer.id),
-           {:ok, contact} <- Contacts.create_contact(contact_attrs_with_customer),
-           user_attrs_with_customer_and_contact =
+           user_attrs_with_customer =
              user_attrs
              |> Map.put("customer_id", customer.id)
-             |> Map.put("contact_id", contact.id),
-           {:ok, user} <-
-             create_user_with_registration_changeset(user_attrs_with_customer_and_contact) do
-        {:created, user, customer, contact}
+             |> Map.put("roles", ["customer", "user"]),
+           {:ok, user} <- create_user_with_registration_changeset(user_attrs_with_customer) do
+          {:created, user, customer}
       else
         {:error, changeset} ->
           Repo.rollback({:error, changeset})

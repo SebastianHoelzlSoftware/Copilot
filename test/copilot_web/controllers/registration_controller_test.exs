@@ -10,23 +10,15 @@ defmodule CopilotWeb.RegistrationControllerTest do
     "email" => "new.customer@example.com",
     "name" => "New Customer Company",
     "company_name" => "New Customer Company",
-    "contact_first_name" => "Jane",
-    "contact_last_name" => "Doe",
-    "contact_email" => "jane.doe@example.com",
-    "contact_phone_number" => "+15557654321"
   }
 
-  @new_developer_registration_payload %{
-    "provider_id" => "forbidden-developer-789",
-    "email" => "new.developer@example.com",
-    "name" => "New Developer Company",
-    "roles" => ["developer"],
-    "company_name" => "New Developer Company",
-    "contact_first_name" => "John",
-    "contact_last_name" => "Hacker",
-    "contact_email" => "john.hacker@example.com",
-    "contact_phone_number" => "+16666666666"
-  }
+  # @new_developer_registration_payload %{
+  #   "provider_id" => "forbidden-developer-789",
+  #   "email" => "new.developer@example.com",
+  #   "name" => "New Developer Company",
+  #   "roles" => ["developer"],
+  #   "company_name" => "New Developer Company",
+  # }
 
   @invalid_payload %{
     "email" => "invalid-email",
@@ -35,7 +27,7 @@ defmodule CopilotWeb.RegistrationControllerTest do
   }
 
   describe "create" do
-    test "creates a new customer user and associated customer and contact record", %{conn: conn} do
+    test "creates a new customer user and associated customer record", %{conn: conn} do
       conn = post(conn, ~p"/api/register", %{"registration" => @new_registration_payload})
 
       response = json_response(conn, 201)
@@ -44,7 +36,6 @@ defmodule CopilotWeb.RegistrationControllerTest do
                "data" => %{
                  "id" => user_id,
                  "customer_id" => customer_id,
-                 "contact_id" => contact_id
                }
              } = response
 
@@ -58,10 +49,6 @@ defmodule CopilotWeb.RegistrationControllerTest do
       # Verify customer was created
       customer = Customers.get_customer!(customer_id)
       assert customer.name.company_name == "New Customer Company"
-
-      # Verify contact was created
-      contact = Contacts.get_contact!(contact_id)
-      assert contact.customer_id == customer_id
     end
 
     # test "returns the existing user if they already exist", %{conn: conn} do

@@ -174,7 +174,6 @@ defmodule CopilotWeb.CustomerControllerTest do
       # Assert that the customer and all its associated data is gone.
       assert_raise Ecto.NoResultsError, fn -> Customers.get_customer!(customer.id) end
       assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
-      assert_raise Ecto.NoResultsError, fn -> Contacts.get_contact!(contact.id) end
       assert_raise Ecto.NoResultsError, fn -> Briefs.get_project_brief!(brief.id) end
     end
 

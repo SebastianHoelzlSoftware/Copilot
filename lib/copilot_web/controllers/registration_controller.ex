@@ -8,11 +8,17 @@ defmodule CopilotWeb.RegistrationController do
 
   def create(conn, %{"registration" => registration_params}) do
     case Users.register_user(registration_params) do
-      {:ok, {status, user, customer, contact}} ->
+      {:ok, {:created, user, customer}} ->
         conn
-        |> put_status(status_to_code(status))
+        |> put_status(:created)
         |> put_view(json: RegistrationJSON)
-        |> render(:show, user: user, customer: customer, contact: contact)
+        |> render(:show, user: user, customer: customer)
+
+      {:ok, {:found, user, customer}} ->
+        conn
+        |> put_status(:ok)
+        |> put_view(json: RegistrationJSON)
+        |> render(:show, user: user, customer: customer)
 
       {:error, changeset} ->
         conn
@@ -22,6 +28,5 @@ defmodule CopilotWeb.RegistrationController do
     end
   end
 
-  defp status_to_code(:created), do: :created
-  defp status_to_code(:found), do: :ok
+
 end

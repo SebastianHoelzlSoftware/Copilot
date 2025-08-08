@@ -159,23 +159,15 @@ defmodule Copilot.Core.UsersTest do
       "email" => "register@example.com",
       "name" => "Register User",
       "company_name" => "Registered Inc.",
-      "contact_first_name" => "Regi",
-      "contact_last_name" => "Ster",
-      "contact_email" => "regi.ster@example.com",
-      "contact_phone_number" => "123-456-7890"
     }
 
-    test "with valid data for a new user, creates user, customer, and contact" do
-      assert {:ok, {:created, %User{} = user, customer, contact}} =
+    test "with valid data for a new user, creates user and a customer" do
+      assert {:ok, {:created, %User{} = user, customer}} =
                Users.register_user(@valid_registration_attrs)
 
       assert user.email == "register@example.com"
       assert customer.name.company_name == "Registered Inc."
-      assert contact.name.first_name == "Regi"
-      assert contact.customer_id == customer.id
       assert user.customer_id == customer.id
-      assert contact.email.address == "regi.ster@example.com"
-      assert contact.phone_number.number == "123-456-7890"
     end
 
     test "with invalid data for a new user, returns an error and rolls back" do
@@ -189,17 +181,16 @@ defmodule Copilot.Core.UsersTest do
       assert Repo.all(Contact) == []
     end
 
-    test "with an existing user, finds and returns the user, customer, and contact" do
+    test "with an existing user, finds and returns the user and the customer" do
       # First, register the user
-      {:ok, {:created, user, customer, contact}} = Users.register_user(@valid_registration_attrs)
+      {:ok, {:created, user, customer}} = Users.register_user(@valid_registration_attrs)
 
       # Now, call register_user again with the same provider_id
-      assert {:ok, {:found, found_user, found_customer, found_contact}} =
+      assert {:ok, {:found, found_user, found_customer}} =
                Users.register_user(@valid_registration_attrs)
 
       assert found_user.id == user.id
       assert found_customer.id == customer.id
-      assert found_contact.id == contact.id
     end
 
     test "without a provider_id, returns an error changeset" do
@@ -216,16 +207,6 @@ defmodule Copilot.Core.UsersTest do
 
       registration_attrs = %{"provider_id" => user.provider_id}
       assert {:error, %Ecto.Changeset{data: %Customer{}}} = Users.register_user(registration_attrs)
-    end
-
-    test "with an existing user and customer but no contacts, returns an error" do
-      # Setup: create a user and customer, but no contact
-      {:ok, customer} = Customers.create_customer(%{name: %{company_name: "No Contact Corp"}})
-      user_attrs = Map.merge(@valid_attrs, %{"customer_id" => customer.id})
-      {:ok, user} = Users.create_user(user_attrs)
-
-      registration_attrs = %{"provider_id" => user.provider_id}
-      assert {:error, %Ecto.Changeset{data: %Contact{}}} = Users.register_user(registration_attrs)
     end
   end
 end
