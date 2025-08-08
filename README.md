@@ -1,21 +1,21 @@
 # Copilot
 
-See this Docs:
+Docs:
 
-
-- [PROJECT_VISION](docs/PROJECT_VISION.md)
-- [API_ENDPOINTS](docs/API_ENDPOINTS.md)
-- [API_TEST_SCENARIOS](docs/API_TEST_SCENARIOS.md)
-- [DATA_MODELS](docs/DATA_MODELS.md)
-- [CORE_SERVICE_WORKFLOWS](docs/CORE_SERVICE_WORKFLOWS.md)
-- [AUTHENTICATION_AUTHORIZATION](docs/AUTHENTICATION_AUTHORIZATION.md)
+1. [PROJECT_VISION](docs/PROJECT_VISION.md)
+2. [API_ENDPOINTS](docs/API_ENDPOINTS.md)
+3. [API_TEST_SCENARIOS](docs/API_TEST_SCENARIOS.md)
+4. [DATA_MODELS](docs/DATA_MODELS.md)
+5. [CORE_SERVICE_WORKFLOWS](docs/CORE_SERVICE_WORKFLOWS.md)
+6. [AUTHENTICATION_AUTHORIZATION](docs/AUTHENTICATION_AUTHORIZATION.md)
 
 
 > [!WARNING]
 > Please keep [GEMINI.md](GEMINI.md) up to date!
 
 
- Here is a Markdown table created from the information you provided.
+## Common Commands 
+
 | Command | Description |
 |---|---|
 | mix deps.get | Install project dependencies. |
