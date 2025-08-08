@@ -11,7 +11,7 @@ See this Docs:
 - [AUTHENTICATION_AUTHORIZATION](docs/AUTHENTICATION_AUTHORIZATION.md)
 
 
-> [!WARN]
+> [!WARNING]
 > Please keep [GEMINI.md](GEMINI.md) up to date!
 
 
