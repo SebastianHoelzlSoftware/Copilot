@@ -77,8 +77,16 @@ config :phoenix, :live_reload,
   ]
 
 # --- Logflare Development Configuration (For Manual Testing) ---
-# Add the Logflare backend to the list of loggers for development.
-config :logger, backends: [:console, LogflareLogger.HttpBackend]
+# Conditionally add Logflare backend if API key and source ID are present.
+# This prevents crashes during development if Logflare is not configured.
+logflare_backends =
+  if System.get_env("LOGFLARE_DEV_API_KEY") && System.get_env("LOGFLARE_DEV_SOURCE_ID") do
+    [LogflareLogger.HttpBackend]
+  else
+    []
+  end
+
+config :logger, backends: [:console | logflare_backends]
 
 # Configure the Logflare backend itself.
 config :logflare_logger_backend,
