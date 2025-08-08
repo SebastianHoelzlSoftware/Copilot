@@ -1,14 +1,18 @@
 # Copilot
 
-Please see [PROJECT_VISION](docs/PROJECT_VISION.md) for more information at this early stage of the project.
+See this Docs:
 
-For an overview of the API, please see [API_ENDPOINTS](docs/API_ENDPOINTS.md).
+* [PROJECT_VISION](docs/PROJECT_VISION.md)
+* [API_ENDPOINTS](docs/API_ENDPOINTS.md).
+* [API_TEST_SCENARIOS](docs/API_TEST_SCENARIOS)
+* [DATA_MODELS](docs/DATA_MODELS.md)
+* [CORE_DATA_WORKFLOWS](docs/CORE_DATA_WORKFLOWS)
+* [AUTHENTICATION_AUTHORIZATION](docs/AUTHENTICATION_AUTHORIZATION.md)
 
-To make project instructions available for Gemini please keep [GEMINI.md](GEMINI.md) up to date.
+> [!NOTE]
+> Please keep [GEMINI.md](GEMINI.md) up to date!
 
-For an overview of API Test scenarios please see [API_TEST_SCENARIOS](docs/API_TEST_SCENARIOS.md).
-
-
+ 
 ## Common Commands
 
 *   `mix deps.get` - Install project dependencies.
