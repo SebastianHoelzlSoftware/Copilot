@@ -37,7 +37,6 @@ defmodule Copilot.Core.Data.User do
     |> unique_constraint(:provider_id)
     |> unique_constraint(:email)
     |> foreign_key_constraint(:customer_id)
-    |> foreign_key_constraint(:contact_id)
   end
 
   defp validate_roles_for_registration(changeset) do
