@@ -12,7 +12,7 @@ defmodule Copilot.Application do
     # as it runs once when the application is booting.
     Logger.info("""
     \n
-    WOJTILA's
+    WOJTILA's                                         2025
     ░█████╗░░█████╗░██████╗░██╗██╗░░░░░░█████╗░████████╗
     ██╔══██╗██╔══██╗██╔══██╗██║██║░░░░░██╔══██╗╚══██╔══╝
     ██║░░╚═╝██║░░██║██████╔╝██║██║░░░░░██║░░██║░░░██║░░░
