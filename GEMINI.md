@@ -160,3 +160,7 @@ For Data Models see: [DATA_MODELS](docs/DATA_MODELS.md)
 *   Follow the standard Elixir and Phoenix conventions.
 *   Use the built-in code formatter (`mix format`).
 *   Always try to use common libraries and well maintained dependencies if they really need to be installed. Don't add them lightheadedly.
+
+## Authentication and Authorization Flow
+
+For a detailed explanation of the authentication and authorization pipeline, including API pipelines, key plugs, and resource-specific authorization, please refer to [AUTHENTICATION_AUTHORIZATION.md](docs/AUTHENTICATION_AUTHORIZATION.md).
