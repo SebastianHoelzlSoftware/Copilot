@@ -68,6 +68,42 @@ Updates the roles for a specific user. This will replace the existing roles.
 }
 ```
 
+## Registration
+
+**Endpoint:** `/api/register`
+
+**Access:** Public (no authentication required)
+
+| Method | Path          | Description                               |
+| :----- | :------------ | :---------------------------------------- |
+| `POST` | `/api/register` | Registers a new user and creates a customer account. |
+
+#### `POST /api/register`
+
+Registers a new user and creates an associated customer account.
+
+**Example Request Body**
+```json
+{
+  "registration": {
+    "email": "newuser@example.com",
+    "password": "securepassword",
+    "name": "New User Name",
+    "customer_name": "New User's Company"
+  }
+}
+```
+
+**Example Response (`201 Created` or `200 OK`)**
+```json
+{
+  "data": {
+    "id": "usr_abcdef",
+    "customer_id": "cust_123456"
+  }
+}
+```
+
 ---
 
 ## Customers (`/api/customers`)

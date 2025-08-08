@@ -40,17 +40,35 @@ defmodule ApiTest do
       {:ok, %{status: 201, body: body}} ->
         IO.puts("Status Code: 201")
         IO.puts("Response Body: #{body}")
-        IO.puts("\n--- ✅ PASS: Registration successful (201 Created) ---")
-        :pass
+        IO.puts("\n--- ✅ PASS: Initial registration successful (201 Created) ---")
+
+        IO.puts("\n--- Scenario 1.2: Attempt to register the same user again ---")
+        case register_user(payload) do
+          {:ok, %{status: 200, body: body2}} ->
+            IO.puts("Status Code: 200")
+            IO.puts("Response Body: #{body2}")
+            IO.puts("\n--- ✅ PASS: Subsequent registration returned 200 OK ---")
+            :pass
+          {:ok, %{status: status_code2, body: body2}} ->
+            IO.puts("Status Code: #{status_code2}")
+            IO.puts("Response Body: #{body2}")
+            IO.puts("\n--- ❌ FAIL: Subsequent registration failed with status #{status_code2} (expected 200) ---")
+            :fail
+          {:error, reason2} ->
+            IO.puts("Error:")
+            IO.inspect(reason2)
+            IO.puts("\n--- ❌ FAIL: Subsequent registration request failed ---")
+            :fail
+        end
       {:ok, %{status: status_code, body: body}} ->
         IO.puts("Status Code: #{status_code}")
         IO.puts("Response Body: #{body}")
-        IO.puts("\n--- ❌ FAIL: Registration failed with status #{status_code} ---")
+        IO.puts("\n--- ❌ FAIL: Initial registration failed with status #{status_code} (expected 201) ---")
         :fail
       {:error, reason} ->
         IO.puts("Error:")
         IO.inspect(reason)
-        IO.puts("\n--- ❌ FAIL: Request failed ---")
+        IO.puts("\n--- ❌ FAIL: Initial registration request failed ---")
         :fail
     end
   end
