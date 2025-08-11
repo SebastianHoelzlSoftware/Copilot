@@ -6,6 +6,8 @@ defmodule Copilot.Core.Fixtures do
 
   alias Copilot.Repo
   alias Copilot.Core.Data.Customer
+  alias Copilot.Core.Data.User
+  alias Copilot.Core.Users
   alias Copilot.Core.Contacts
   alias Copilot.Core.Briefs
   alias Copilot.Core.AIAnalyses
@@ -95,5 +97,25 @@ defmodule Copilot.Core.Fixtures do
       |> Contacts.create_contact()
 
     contact
+  end
+
+  @doc """
+  Generate a user.
+  """
+  def user_fixture(attrs \\ %{}) do
+    default_attrs = %{
+      email: "user-#{System.unique_integer([:positive])}@example.com",
+      name: %{first_name: "Test", last_name: "User"},
+      provider: "google",
+      provider_id: "user-#{System.unique_integer([:positive])}",
+      roles: ["customer"]
+    }
+
+    {:ok, user} =
+      attrs
+      |> Enum.into(default_attrs)
+      |> Users.create_user_for_registration()
+
+    user
   end
 end
