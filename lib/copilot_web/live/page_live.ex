@@ -2,9 +2,18 @@ defmodule CopilotWeb.PageLive do
   use CopilotWeb, :live_view
 
   alias CopilotWeb.Components.CoreComponents
+  alias Copilot.Core.Users
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :current_user, socket.assigns[:current_user])}
+  def mount(_params, session, socket) do
+    current_user =
+      if user_id = Map.get(session, "current_user_id") do
+        Users.get_user(user_id)
+      else
+        nil
+      end
+
+    IO.inspect(current_user, label: "CURRENT USER in PageLive mount")
+    {:ok, assign(socket, :current_user, current_user)}
   end
 
   def render(assigns) do

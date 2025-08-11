@@ -11,33 +11,26 @@ defmodule CopilotWeb.Plugs.DevAuth do
 
   def init(opts), do: opts
 
-  def call(conn, _opts) do
-    # Check for an override header for more flexible testing.
-    # (e.g. when using end to end tesing via curl):
-
-    # curl -i -X GET http://localhost:4000/api/me \
-    # -H 'x-dev-auth-override: {"provider_id":"new-customer-123","email":"new.customer@example.com",
-    # "name":"New Customer","roles":["customer","user"]}'
-
-    # If the x-dev-auth-override header is not present, the default developer payload will be used.
-
-    case get_req_header(conn, "x-dev-auth-override") do
+  def call(conn, opts) do
+    user_info = case get_req_header(conn, "x-dev-auth-override") do
       [override_json] ->
-        # If the override exists, use it and pass it through.
-        conn
-        |> put_req_header("x-user-info", override_json)
-        |> delete_req_header("x-dev-auth-override")
+        Jason.decode!(override_json)
 
       [] ->
-        # Otherwise, use the default developer payload.
-        user_info = %{
-          "provider_id" => "dev-user-123",
-          "email" => "developer@example.com",
-          "name" => "Dev User",
-          "roles" => ["developer", "user"]
-        }
+        %{"provider_id" => "dev-user-123", "email" => "developer@example.com", "name" => "Dev User", "roles" => ["developer", "user"]}
+    end
 
-        put_req_header(conn, "x-user-info", Jason.encode!(user_info))
+    # Always find or create the user
+    {:ok, user} = Copilot.Core.Users.find_or_create_user(user_info)
+
+    # If assign_to_conn is true (for browser pipeline/LiveView), put user ID in session
+    if opts[:assign_to_conn] do
+      put_session(conn, :current_user_id, user.id)
+    else
+      # For API pipeline, put header
+      conn
+      |> put_req_header("x-user-info", Jason.encode!(user_info))
+      |> delete_req_header("x-dev-auth-override")
     end
   end
 end
