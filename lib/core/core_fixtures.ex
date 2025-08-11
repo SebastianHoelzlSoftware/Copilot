@@ -28,13 +28,14 @@ defmodule Copilot.Core.Fixtures do
   end
 
   def developer_fixture(attrs \\ %{}) do
+    unique_int = System.unique_integer([:positive])
     %User{}
     |> User.changeset(
       Enum.into(attrs, %{
-        email: "dev.hoelzl.sebastian@gmail.com",
-        name: "Sebastian Hoelzl",
+        email: "developer-#{unique_int}@example.com",
+        name: "Dev User-#{unique_int}",
         provider: "google",
-        provider_id: "11",
+        provider_id: "dev-#{unique_int}",
         roles: ["developer"]
       })
     )
