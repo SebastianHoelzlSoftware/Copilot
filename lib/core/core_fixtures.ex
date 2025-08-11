@@ -27,6 +27,20 @@ defmodule Copilot.Core.Fixtures do
     |> Repo.preload(:contacts)
   end
 
+  def developer_fixture(attrs \\ %{}) do
+    %User{}
+    |> User.changeset(
+      Enum.into(attrs, %{
+        email: "dev.hoelzl.sebastian@gmail.com",
+        name: "Sebastian Hoelzl",
+        provider: "google",
+        provider_id: "11",
+        roles: ["developer"]
+      })
+    )
+    |> Repo.insert!()
+  end
+
   @doc """
   Generate a project_brief.
   """

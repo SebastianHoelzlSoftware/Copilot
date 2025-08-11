@@ -6,7 +6,7 @@ defmodule Copilot.TimeTracker do
   import Ecto.Query, warn: false
   alias Copilot.Repo
 
-  alias Copilot.Core.TimeEntry
+  alias Copilot.Core.Data.TimeEntry
 
   @doc """
   Returns the list of time_entries.

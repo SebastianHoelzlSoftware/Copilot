@@ -1,4 +1,4 @@
-defmodule Copilot.Core.TimeEntry do
+defmodule Copilot.Core.Data.TimeEntry do
   use Ecto.Schema
   import Ecto.Changeset
 
