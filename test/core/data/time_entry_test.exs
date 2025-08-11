@@ -25,5 +25,20 @@ defmodule Copilot.Core.Data.TimeEntryTest do
       assert changeset.changes.developer_id == developer_fixture.id
       assert changeset.changes.project_id == project_brief_fixture.id
     end
+
+    test "returns an invalid changeset when start_time is missing" do
+      project_brief_fixture = project_brief_fixture()
+      developer_fixture = developer_fixture()
+      attrs = %{
+        end_time: ~N[2025-08-11 20:30:00],
+        description: "some description",
+        developer_id: developer_fixture.id,
+        project_id: project_brief_fixture.id
+      }
+
+      changeset = TimeEntry.changeset(%TimeEntry{}, attrs)
+      refute changeset.valid?
+      assert "can't be blank" in errors_on(changeset).start_time
+    end
   end
 end
