@@ -2,7 +2,8 @@ defmodule Copilot.Repo.Migrations.CreateTimeEntries do
   use Ecto.Migration
 
   def change do
-    create table(:time_entries) do
+    create table(:time_entries, primary_key: false) do
+      add :id, :binary_id, primary_key: true
       add :start_time, :naive_datetime, null: false
       add :end_time, :naive_datetime, null: false
       add :description, :text

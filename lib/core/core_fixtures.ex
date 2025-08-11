@@ -12,6 +12,7 @@ defmodule Copilot.Core.Fixtures do
   alias Copilot.Core.Briefs
   alias Copilot.Core.AIAnalyses
   alias Copilot.Core.Data.CostEstimate
+  alias Copilot.Core.Data.TimeEntry
 
   @doc """
   Generate a customer.
@@ -132,5 +133,25 @@ defmodule Copilot.Core.Fixtures do
       |> Users.create_user_for_registration()
 
     user
+  end
+
+  @doc """
+  Generate a time_entry.
+  """
+  def time_entry_fixture(attrs \\ %{}) do
+    developer = Map.get(attrs, :developer) || developer_fixture()
+    project = Map.get(attrs, :project) || project_brief_fixture()
+
+    default_attrs = %{
+      start_time: ~N[2025-08-11 10:30:00],
+      end_time: ~N[2025-08-11 12:30:00],
+      description: "some description",
+      developer_id: developer.id,
+      project_id: project.id
+    }
+
+    %TimeEntry{}
+    |> TimeEntry.changeset(Enum.into(attrs, default_attrs))
+    |> Repo.insert!()
   end
 end

@@ -175,6 +175,7 @@ defmodule CopilotWeb.CustomerControllerTest do
       assert_raise Ecto.NoResultsError, fn -> Customers.get_customer!(customer.id) end
       assert_raise Ecto.NoResultsError, fn -> Users.get_user!(user.id) end
       assert_raise Ecto.NoResultsError, fn -> Briefs.get_project_brief!(brief.id) end
+      assert_raise Ecto.NoResultsError, fn -> Contacts.get_contact!(contact.id) end
     end
 
     test "is forbidden for a non-developer", %{conn: conn, customer: customer} do

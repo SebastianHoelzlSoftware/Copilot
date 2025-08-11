@@ -3,7 +3,6 @@ defmodule CopilotWeb.RegistrationControllerTest do
 
   alias Copilot.Core.Users
   alias Copilot.Core.Customers
-  alias Copilot.Core.Contacts
 
   @new_registration_payload %{
     "provider_id" => "new-customer-789",

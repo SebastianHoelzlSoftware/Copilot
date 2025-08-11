@@ -12,8 +12,8 @@ defmodule Copilot.Core.Data.TimeEntry do
     field :end_time, :naive_datetime
     field :description, :string
 
-    belongs_to :developer, User
-    belongs_to :project, ProjectBrief
+    belongs_to :developer, User, type: :binary_id
+    belongs_to :project, ProjectBrief, type: :binary_id
 
     timestamps()
   end
