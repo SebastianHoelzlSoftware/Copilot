@@ -9,6 +9,10 @@ This is an Elixir/Phoenix API and LiveView project.
 
 We are currently at the stage of building a solid project data foundation and the "Dev Request Service" ([see below](#dev-request-service)) with the API that will be later used for an Android app. There will also be a Website for the Copilot app. 
 
+### Immediate Priority:
+
+*   **Time Tracking Service**: Focus on enabling time tracking for the Copilot project, specifically for users with the 'developer' role.
+
 This is the project vision:
 
 ## Project Vision: Business Copilot
