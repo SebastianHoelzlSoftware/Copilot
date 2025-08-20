@@ -220,51 +220,51 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_index_test(developer_user_id) do
-    IO.puts("\n*** Scenario 2.2: List time entries as a developer ***")
+    IO.puts("\n#{yellow("*** Scenario 2.2: List time entries as a developer ***")}")
 
     case list_time_entries(developer_user_id) do
       {:ok, %{status: 200, body: _body}} ->
-        IO.puts("\n--- ✅ PASS: Time entries listed successfully. ---")
+        IO.puts("\n--- ✅ #{green("PASS: Time entries listed successfully. ")} ---")
         :pass
 
       {:ok, %{status: status, body: body}} ->
         IO.puts("Status Code: #{status}")
         IO.puts("Response Body: #{body}")
-        IO.puts("\n--- ❌ FAIL: Listing time entries failed with status #{status} (expected 200) ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Listing time entries failed with status #{status} (expected 200) ")} ---")
         :fail
 
       {:error, reason} ->
         IO.puts("Error:")
         IO.inspect(reason)
-        IO.puts("\n--- ❌ FAIL: Listing time entries request failed. ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Listing time entries request failed. ")} ---")
         :fail
     end
   end
 
   defp run_time_entry_show_test(time_entry_id, developer_user_id) do
-    IO.puts("\n*** Scenario 2.3: Show a specific time entry as a developer ***")
+    IO.puts("\n#{yellow("*** Scenario 2.3: Show a specific time entry as a developer ***")}")
 
     case get_time_entry(time_entry_id, developer_user_id) do
       {:ok, %{status: 200, body: _body}} ->
-        IO.puts("\n--- ✅ PASS: Time entry shown successfully. ---")
+        IO.puts("\n--- ✅ #{green("PASS: Time entry shown successfully.")} ---")
         :pass
 
       {:ok, %{status: status, body: body}} ->
         IO.puts("Status Code: #{status}")
         IO.puts("Response Body: #{body}")
-        IO.puts("\n--- ❌ FAIL: Showing time entry failed with status #{status} (expected 200) ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Showing time entry failed with status #{status} (expected 200)")} ---")
         :fail
 
       {:error, reason} ->
         IO.puts("Error:")
         IO.inspect(reason)
-        IO.puts("\n--- ❌ FAIL: Showing time entry request failed. ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Showing time entry request failed.")} ---")
         :fail
     end
   end
 
   defp run_time_entry_update_test(time_entry_id, developer_user_id) do
-    IO.puts("\n*** Scenario 2.4: Update a time entry as a developer ***")
+    IO.puts("\n#{yellow("*** Scenario 2.4: Update a time entry as a developer ***")}")
 
     update_payload = %{
       "time_entry" => %{
@@ -274,41 +274,41 @@ defmodule ApiTest do
 
     case update_time_entry(time_entry_id, update_payload, developer_user_id) do
       {:ok, %{status: 200, body: _body}} ->
-        IO.puts("\n--- ✅ PASS: Time entry updated successfully. ---")
+        IO.puts("\n--- ✅ #{green("PASS: Time entry updated successfully.")} ---")
         :pass
 
       {:ok, %{status: status, body: body}} ->
         IO.puts("Status Code: #{status}")
         IO.puts("Response Body: #{body}")
-        IO.puts("\n--- ❌ FAIL: Updating time entry failed with status #{status} (expected 200) ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Updating time entry failed with status #{status} (expected 200)")} ---")
         :fail
 
       {:error, reason} ->
         IO.puts("Error:")
         IO.inspect(reason)
-        IO.puts("\n--- ❌ FAIL: Updating time entry request failed. ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Updating time entry request failed.")} ---")
         :fail
     end
   end
 
   defp run_time_entry_delete_test(time_entry_id, developer_user_id) do
-    IO.puts("\n*** Scenario 2.5: Delete a time entry as a developer ***")
+    IO.puts("\n#{yellow("*** Scenario 2.5: Delete a time entry as a developer ***")}")
 
     case delete_time_entry(time_entry_id, developer_user_id) do
       {:ok, %{status: 204}} ->
-        IO.puts("\n--- ✅ PASS: Time entry deleted successfully. ---")
+        IO.puts("\n--- ✅ #{green("PASS: Time entry deleted successfully.")} ---")
         :pass
 
       {:ok, %{status: status, body: body}} ->
         IO.puts("Status Code: #{status}")
         IO.puts("Response Body: #{body}")
-        IO.puts("\n--- ❌ FAIL: Deleting time entry failed with status #{status} (expected 204) ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Deleting time entry failed with status #{status} (expected 204)")} ---")
         :fail
 
       {:error, reason} ->
         IO.puts("Error:")
         IO.inspect(reason)
-        IO.puts("\n--- ❌ FAIL: Deleting time entry request failed. ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Deleting time entry request failed.")} ---")
         :fail
     end
   end
@@ -358,7 +358,7 @@ defmodule ApiTest do
       {:ok, %{status: status, body: body}} ->
         IO.puts("Status Code: #{status}")
         IO.puts("Response Body: #{body}")
-        IO.puts("--- ❌ FAIL: Could not create project brief. ---")
+        IO.puts("--- ❌ #{red("FAIL: Could not create project brief.")} ---")
         :error
       {:error, reason} ->
         IO.puts("Error:")
@@ -427,11 +427,11 @@ defmodule ApiTest do
     total = length(results)
 
     IO.puts("\n\n--- Test Summary ---")
-    IO.puts("Total Scenarios: #{total}")
-    IO.puts("✅ Passed:        #{passes}")
+    IO.puts("Total Scenarios: #{blue(to_string(total))}")
+    IO.puts("✅ #{green("Passed:")}        #{green(to_string(passes))}")
 
     if fails > 0 do
-      IO.puts("❌ Failed:        #{fails}")
+      IO.puts("❌ #{red("Failed:")}        #{red(to_string(fails))}")
     end
 
     IO.puts("--------------------")
