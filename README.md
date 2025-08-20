@@ -8,6 +8,8 @@ To make project instructions available for Gemini please keep [GEMINI.md](GEMINI
 
 For an overview of API Test scenarios please see [API_TEST_SCENARIOS](docs/API_TEST_SCENARIOS.md).
 
+For the Time Manager or Time Tracker Service view [TIME_MANAGER.md](docs/TIME_MANAGER.md).
+
 
 ## Common Commands
 
