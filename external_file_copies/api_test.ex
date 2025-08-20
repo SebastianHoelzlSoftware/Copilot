@@ -383,68 +383,40 @@ defmodule ApiTest do
   end
 
   defp create_time_entry(payload, developer_data) do
-    auth_override_header = %{
-      "provider_id" => developer_data.provider_id,
-      "email" => developer_data.email,
-      "name" => developer_data.name,
-      "roles" => ["developer", "user"]
-    } |> Jason.encode!()
-
-    headers = [{"x-dev-auth-override", auth_override_header}]
-
+    headers = auth_headers_for(developer_data)
     make_request(:post, "/api/time_entries", headers, payload)
   end
 
   defp get_time_entry(time_entry_id, developer_data) do
-    auth_override_header = %{
-      "provider_id" => developer_data.provider_id,
-      "email" => developer_data.email,
-      "name" => developer_data.name,
-      "roles" => ["developer", "user"]
-    } |> Jason.encode!()
-
-    headers = [{"x-dev-auth-override", auth_override_header}]
-
+    headers = auth_headers_for(developer_data)
     make_request(:get, "/api/time_entries/" <> time_entry_id, headers, nil)
   end
 
   defp update_time_entry(time_entry_id, payload, developer_data) do
-    auth_override_header = %{
-      "provider_id" => developer_data.provider_id,
-      "email" => developer_data.email,
-      "name" => developer_data.name,
-      "roles" => ["developer", "user"]
-    } |> Jason.encode!()
-
-    headers = [{"x-dev-auth-override", auth_override_header}]
-
+    headers = auth_headers_for(developer_data)
     make_request(:put, "/api/time_entries/" <> time_entry_id, headers, payload)
   end
 
   defp delete_time_entry(time_entry_id, developer_data) do
-    auth_override_header = %{
-      "provider_id" => developer_data.provider_id,
-      "email" => developer_data.email,
-      "name" => developer_data.name,
-      "roles" => ["developer", "user"]
-    } |> Jason.encode!()
-
-    headers = [{"x-dev-auth-override", auth_override_header}]
-
+    headers = auth_headers_for(developer_data)
     make_request(:delete, "/api/time_entries/" <> time_entry_id, headers, nil)
   end
 
   defp list_time_entries(developer_data) do
-    auth_override_header = %{
-      "provider_id" => developer_data.provider_id,
-      "email" => developer_data.email,
-      "name" => developer_data.name,
-      "roles" => ["developer", "user"]
-    } |> Jason.encode!()
-
-    headers = [{"x-dev-auth-override", auth_override_header}]
-
+    headers = auth_headers_for(developer_data)
     make_request(:get, "/api/time_entries", headers, nil)
+  end
+
+  defp auth_headers_for(user_data, extra_claims \\ %{}) do
+    base_claims = %{
+      "provider_id" => user_data.provider_id,
+      "email" => user_data.email,
+      "name" => user_data.name,
+      "roles" => ["developer", "user"]
+    }
+
+    auth_override_header = Map.merge(base_claims, extra_claims) |> Jason.encode!()
+    [{"x-dev-auth-override", auth_override_header}]
   end
 
   defp print_summary(results) do
