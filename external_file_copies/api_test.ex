@@ -38,7 +38,9 @@ defmodule ApiTest do
   end
 
   defp run_scenario_1 do
-    IO.puts("--- Scenario 1: Register a new user via the public /api/register endpoint ---")
+    IO.puts("\n\n==========================================================================")
+    IO.puts("=== Scenario 1: Register a new user via the public /api/register endpoint ===")
+    IO.puts("==========================================================================")
 
     customer_data = customer_user_data()
 
@@ -61,7 +63,7 @@ defmodule ApiTest do
       {:ok, %{status: 201, body: _body}} ->
         IO.puts("\n--- ✅ PASS: Initial registration successful (201 Created) ---")
 
-        IO.puts("\n--- Scenario 1.2: Attempt to register the same user again ---")
+        IO.puts("\n*** Scenario 1.2: Attempt to register the same user again ***")
         case register_user(payload) do
           {:ok, %{status: 200, body: _body2}} ->
             IO.puts("\n--- ✅ PASS: Subsequent registration returned 200 OK ---")
@@ -91,7 +93,9 @@ defmodule ApiTest do
   end
 
   defp run_scenario_2_developer_workflow do
-    IO.puts("\n--- Scenario 2: Semi-automatic developer role grant and time entry creation ---")
+    IO.puts("\n\n=====================================================================================")
+    IO.puts("=== Scenario 2: Semi-automatic developer role grant and time entry creation ===")
+    IO.puts("=====================================================================================")
 
     developer_data = developer_user_data()
 
@@ -180,7 +184,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_creation_test(developer_user_id, project_brief_id, developer_data) do
-    IO.puts("\n--- Scenario 2.1: Create a time entry as a developer ---")
+    IO.puts("\n*** Scenario 2.1: Create a time entry as a developer ***")
 
     time_entry_payload = %{
       "time_entry" => %{
@@ -215,7 +219,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_index_test(developer_user_id) do
-    IO.puts("\n--- Scenario 2.2: List time entries as a developer ---")
+    IO.puts("\n*** Scenario 2.2: List time entries as a developer ***")
 
     case list_time_entries(developer_user_id) do
       {:ok, %{status: 200, body: _body}} ->
@@ -237,7 +241,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_show_test(time_entry_id, developer_user_id) do
-    IO.puts("\n--- Scenario 2.3: Show a specific time entry as a developer ---")
+    IO.puts("\n*** Scenario 2.3: Show a specific time entry as a developer ***")
 
     case get_time_entry(time_entry_id, developer_user_id) do
       {:ok, %{status: 200, body: _body}} ->
@@ -259,7 +263,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_update_test(time_entry_id, developer_user_id) do
-    IO.puts("\n--- Scenario 2.4: Update a time entry as a developer ---")
+    IO.puts("\n*** Scenario 2.4: Update a time entry as a developer ***")
 
     update_payload = %{
       "time_entry" => %{
@@ -287,7 +291,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_delete_test(time_entry_id, developer_user_id) do
-    IO.puts("\n--- Scenario 2.5: Delete a time entry as a developer ---")
+    IO.puts("\n*** Scenario 2.5: Delete a time entry as a developer ***")
 
     case delete_time_entry(time_entry_id, developer_user_id) do
       {:ok, %{status: 204}} ->
