@@ -123,9 +123,7 @@ defmodule ApiTest do
         IO.puts("--------------------------------------------------------------------------")
         IO.puts("\n>>> MANUAL STEP REQUIRED <<<")
         IO.puts("In another terminal, please run the following command to grant the 'developer' role:")
-        IO.puts(
-          "\n#{IO.ANSI.blue()}  mix users.grant_role #{developer_data.email} developer#{IO.ANSI.reset()}\n"
-        )
+        IO.puts("\n  #{blue("mix users.grant_role #{developer_data.email} developer")}\n")
         IO.gets("Press Enter to continue after you have run the mix task...")
         IO.puts("--------------------------------------------------------------------------")
         IO.puts("Resuming test...")
@@ -403,6 +401,10 @@ defmodule ApiTest do
 
     auth_override_header = Map.merge(base_claims, extra_claims) |> Jason.encode!()
     [{"x-dev-auth-override", auth_override_header}]
+  end
+
+  defp blue(string) do
+    "#{IO.ANSI.blue()}#{string}#{IO.ANSI.reset()}"
   end
 
   defp print_summary(results) do
