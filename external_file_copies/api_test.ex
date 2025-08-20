@@ -123,7 +123,9 @@ defmodule ApiTest do
         IO.puts("--------------------------------------------------------------------------")
         IO.puts("\n>>> MANUAL STEP REQUIRED <<<")
         IO.puts("In another terminal, please run the following command to grant the 'developer' role:")
-        IO.puts("\n  mix users.grant_role #{developer_data.email} developer\n")
+        IO.puts(
+          "\n#{IO.ANSI.blue()}  mix users.grant_role #{developer_data.email} developer#{IO.ANSI.reset()}\n"
+        )
         IO.gets("Press Enter to continue after you have run the mix task...")
         IO.puts("--------------------------------------------------------------------------")
         IO.puts("Resuming test...")
