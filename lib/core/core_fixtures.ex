@@ -30,6 +30,7 @@ defmodule Copilot.Core.Fixtures do
 
   def developer_fixture(attrs \\ %{}) do
     unique_int = System.unique_integer([:positive])
+
     %User{}
     |> User.changeset(
       Enum.into(attrs, %{
@@ -104,7 +105,10 @@ defmodule Copilot.Core.Fixtures do
     valid_attrs = %{
       customer_id: customer.id,
       name: %{first_name: "John", last_name: "Doe"},
-      email: %{address: "john.doe-" <> Integer.to_string(System.unique_integer([:positive])) <> "@example.com"}
+      email: %{
+        address:
+          "john.doe-" <> Integer.to_string(System.unique_integer([:positive])) <> "@example.com"
+      }
     }
 
     {:ok, contact} =

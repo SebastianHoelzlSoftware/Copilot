@@ -30,7 +30,8 @@ defmodule CopilotWeb.TimeEntryController do
   def update(conn, %{"time_entry" => time_entry_params}) do
     time_entry = conn.assigns.time_entry
 
-    with {:ok, %TimeEntry{} = time_entry} <- TimeTracking.update_time_entry(time_entry, time_entry_params) do
+    with {:ok, %TimeEntry{} = time_entry} <-
+           TimeTracking.update_time_entry(time_entry, time_entry_params) do
       render(conn, :show, time_entry: time_entry)
     end
   end

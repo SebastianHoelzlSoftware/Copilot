@@ -9,6 +9,7 @@ defmodule Copilot.Core.Data.TimeEntryTest do
     test "creates a valid changeset with valid nested attributes" do
       project_brief_fixture = project_brief_fixture()
       developer_fixture = developer_fixture()
+
       attrs = %{
         start_time: ~N[2025-08-11 10:30:00],
         end_time: ~N[2025-08-11 20:30:00],
@@ -29,6 +30,7 @@ defmodule Copilot.Core.Data.TimeEntryTest do
     test "returns an invalid changeset when start_time is missing" do
       project_brief_fixture = project_brief_fixture()
       developer_fixture = developer_fixture()
+
       attrs = %{
         end_time: ~N[2025-08-11 20:30:00],
         description: "some description",

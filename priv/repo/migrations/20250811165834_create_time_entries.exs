@@ -8,7 +8,9 @@ defmodule Copilot.Repo.Migrations.CreateTimeEntries do
       add :end_time, :naive_datetime, null: false
       add :description, :text
       add :developer_id, references(:users, on_delete: :nothing, type: :binary_id), null: false
-      add :project_id, references(:project_briefs, on_delete: :nothing, type: :binary_id), null: false
+
+      add :project_id, references(:project_briefs, on_delete: :nothing, type: :binary_id),
+        null: false
 
       timestamps()
     end

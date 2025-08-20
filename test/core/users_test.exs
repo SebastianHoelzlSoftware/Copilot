@@ -25,6 +25,7 @@ defmodule Copilot.Core.UsersTest do
 
       user
     end
+
     test "create_user/1 with valid data creates a user" do
       assert {:ok, %User{} = user} = Users.create_user(@valid_attrs)
       assert user.email == "test@example.com"
@@ -158,7 +159,7 @@ defmodule Copilot.Core.UsersTest do
       "provider_id" => "reg-provider-123",
       "email" => "register@example.com",
       "name" => "Register User",
-      "company_name" => "Registered Inc.",
+      "company_name" => "Registered Inc."
     }
 
     test "with valid data for a new user, creates user and a customer" do
@@ -206,7 +207,9 @@ defmodule Copilot.Core.UsersTest do
       Repo.delete!(customer)
 
       registration_attrs = %{"provider_id" => user.provider_id}
-      assert {:error, %Ecto.Changeset{data: %Customer{}}} = Users.register_user(registration_attrs)
+
+      assert {:error, %Ecto.Changeset{data: %Customer{}}} =
+               Users.register_user(registration_attrs)
     end
   end
 end

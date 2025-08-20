@@ -8,7 +8,7 @@ defmodule CopilotWeb.RegistrationControllerTest do
     "provider_id" => "new-customer-789",
     "email" => "new.customer@example.com",
     "name" => "New Customer Company",
-    "company_name" => "New Customer Company",
+    "company_name" => "New Customer Company"
   }
 
   # @new_developer_registration_payload %{
@@ -30,10 +30,11 @@ defmodule CopilotWeb.RegistrationControllerTest do
       conn = post(conn, ~p"/api/register", %{"registration" => @new_registration_payload})
 
       response = json_response(conn, 201)
+
       assert %{
                "data" => %{
                  "id" => user_id,
-                 "customer_id" => customer_id,
+                 "customer_id" => customer_id
                }
              } = response
 

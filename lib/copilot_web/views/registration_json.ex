@@ -3,7 +3,7 @@ defmodule CopilotWeb.RegistrationJSON do
     %{
       data: %{
         id: user.id,
-        customer_id: customer.id,
+        customer_id: customer.id
       }
     }
   end

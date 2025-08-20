@@ -12,7 +12,7 @@ defmodule CopilotWeb.ErrorJSON do
     %{errors: %{detail: "Internal Server Error"}}
   end
 
-    def render("400.json", _assigns) do
+  def render("400.json", _assigns) do
     %{errors: %{detail: "The request body is malformed. Please check the JSON syntax."}}
   end
 

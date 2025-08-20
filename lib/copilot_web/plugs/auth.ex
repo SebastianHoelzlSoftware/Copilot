@@ -1,12 +1,12 @@
 defmodule CopilotWeb.Plugs.Auth do
   @moduledoc """
   A placeholder plug for authentication.
-  
+
   In a real application, this plug would verify a token (e.g., JWT)
   from the request headers, load the corresponding user from the database,
   and assign it to the connection. It would halt with a 401 Unauthorized
   error if authentication fails.
-  
+
   For this example, it assigns a mock user to the connection based on
   request headers to allow the authorization plugs to function.
   """

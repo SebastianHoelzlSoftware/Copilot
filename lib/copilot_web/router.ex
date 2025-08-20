@@ -4,9 +4,11 @@ defmodule CopilotWeb.Router do
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
+
     if Application.compile_env(:copilot, :dev_routes) do
       plug CopilotWeb.Plugs.DevAuth, assign_to_conn: true
     end
+
     plug CopilotWeb.Plugs.UserInfo, check_session: true
     plug :fetch_live_flash
     plug :put_root_layout, html: {CopilotWeb.Layouts, :root}

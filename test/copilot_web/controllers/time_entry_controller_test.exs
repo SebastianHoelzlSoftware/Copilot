@@ -25,7 +25,9 @@ defmodule CopilotWeb.TimeEntryControllerTest do
     customer_user = user_fixture(%{customer_id: customer.id, roles: ["customer"]})
     project_brief = project_brief_fixture()
     time_entry = time_entry_fixture(%{developer_id: developer.id, project_id: project_brief.id})
-    other_time_entry = time_entry_fixture(%{developer_id: other_developer.id, project_id: project_brief.id})
+
+    other_time_entry =
+      time_entry_fixture(%{developer_id: other_developer.id, project_id: project_brief.id})
 
     {:ok,
      developer: developer,
@@ -38,7 +40,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
   end
 
   describe "index" do
-    test "lists all time_entries for a developer", %{conn: conn, time_entry: time_entry, developer: developer} do
+    test "lists all time_entries for a developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      developer: developer
+    } do
       conn =
         conn
         |> put_auth_header(developer)
@@ -48,7 +54,12 @@ defmodule CopilotWeb.TimeEntryControllerTest do
       assert Enum.any?(data, &(&1["id"] == time_entry.id))
     end
 
-    test "filters time_entries by developer_id", %{conn: conn, time_entry: time_entry, other_time_entry: other_time_entry, developer: developer} do
+    test "filters time_entries by developer_id", %{
+      conn: conn,
+      time_entry: time_entry,
+      other_time_entry: other_time_entry,
+      developer: developer
+    } do
       conn =
         conn
         |> put_auth_header(developer)
@@ -76,7 +87,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
   end
 
   describe "create" do
-    test "creates a time_entry for a developer", %{conn: conn, developer: developer, project_brief: project_brief} do
+    test "creates a time_entry for a developer", %{
+      conn: conn,
+      developer: developer,
+      project_brief: project_brief
+    } do
       create_attrs = %{
         "start_time" => "2025-08-20T10:00:00Z",
         "end_time" => "2025-08-20T11:00:00Z",
@@ -115,7 +130,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
   end
 
   describe "show" do
-    test "shows a time_entry for the owner developer", %{conn: conn, time_entry: time_entry, developer: developer} do
+    test "shows a time_entry for the owner developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      developer: developer
+    } do
       conn =
         conn
         |> put_auth_header(developer)
@@ -124,7 +143,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
       assert json_response(conn, 200)["data"]["id"] == time_entry.id
     end
 
-    test "is forbidden for another developer", %{conn: conn, time_entry: time_entry, other_developer: other_developer} do
+    test "is forbidden for another developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      other_developer: other_developer
+    } do
       conn =
         conn
         |> put_auth_header(other_developer)
@@ -133,7 +156,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
       assert conn.status == 403
     end
 
-    test "is forbidden for a non-developer", %{conn: conn, time_entry: time_entry, customer_user: customer_user} do
+    test "is forbidden for a non-developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      customer_user: customer_user
+    } do
       conn =
         conn
         |> put_auth_header(customer_user)
@@ -144,7 +171,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
   end
 
   describe "update" do
-    test "updates a time_entry for the owner developer", %{conn: conn, time_entry: time_entry, developer: developer} do
+    test "updates a time_entry for the owner developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      developer: developer
+    } do
       update_attrs = %{"description" => "Updated description"}
 
       conn =
@@ -155,7 +186,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
       assert json_response(conn, 200)["data"]["description"] == "Updated description"
     end
 
-    test "is forbidden for another developer", %{conn: conn, time_entry: time_entry, other_developer: other_developer} do
+    test "is forbidden for another developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      other_developer: other_developer
+    } do
       update_attrs = %{"description" => "Updated description"}
 
       conn =
@@ -166,7 +201,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
       assert conn.status == 403
     end
 
-    test "is forbidden for a non-developer", %{conn: conn, time_entry: time_entry, customer_user: customer_user} do
+    test "is forbidden for a non-developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      customer_user: customer_user
+    } do
       update_attrs = %{"description" => "Updated description"}
 
       conn =
@@ -179,7 +218,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
   end
 
   describe "delete" do
-    test "deletes a time_entry for the owner developer", %{conn: conn, time_entry: time_entry, developer: developer} do
+    test "deletes a time_entry for the owner developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      developer: developer
+    } do
       conn =
         conn
         |> put_auth_header(developer)
@@ -189,7 +232,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
       assert_raise Ecto.NoResultsError, fn -> TimeTracking.get_time_entry!(time_entry.id) end
     end
 
-    test "is forbidden for another developer", %{conn: conn, time_entry: time_entry, other_developer: other_developer} do
+    test "is forbidden for another developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      other_developer: other_developer
+    } do
       conn =
         conn
         |> put_auth_header(other_developer)
@@ -198,7 +245,11 @@ defmodule CopilotWeb.TimeEntryControllerTest do
       assert conn.status == 403
     end
 
-    test "is forbidden for a non-developer", %{conn: conn, time_entry: time_entry, customer_user: customer_user} do
+    test "is forbidden for a non-developer", %{
+      conn: conn,
+      time_entry: time_entry,
+      customer_user: customer_user
+    } do
       conn =
         conn
         |> put_auth_header(customer_user)

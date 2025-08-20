@@ -27,6 +27,4 @@ defmodule CopilotWeb.RegistrationController do
         |> render(:error, changeset: changeset)
     end
   end
-
-
 end

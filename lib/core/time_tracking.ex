@@ -27,21 +27,25 @@ defmodule Copilot.Core.TimeTracking do
   end
 
   defp maybe_filter_by_developer_id(query, nil), do: query
+
   defp maybe_filter_by_developer_id(query, developer_id) do
     from q in query, where: q.developer_id == ^developer_id
   end
 
   defp maybe_filter_by_project_brief_id(query, nil), do: query
+
   defp maybe_filter_by_project_brief_id(query, project_brief_id) do
     from q in query, where: q.project_brief_id == ^project_brief_id
   end
 
   defp maybe_filter_by_start_date(query, nil), do: query
+
   defp maybe_filter_by_start_date(query, start_date) do
     from q in query, where: q.start_time >= ^start_date
   end
 
   defp maybe_filter_by_end_date(query, nil), do: query
+
   defp maybe_filter_by_end_date(query, end_date) do
     from q in query, where: q.end_time <= ^end_date
   end

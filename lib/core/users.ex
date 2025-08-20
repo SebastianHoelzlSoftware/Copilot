@@ -10,15 +10,14 @@ defmodule Copilot.Core.Users do
   alias Copilot.Core.Data.User
   alias Copilot.Core.Data.Customer
 
-
   @doc """
   Returns the list of users.
-
+  
   ## Examples
-
+  
       iex> list_users()
       [%User{}, ...]
-
+  
   """
   def list_users do
     Repo.all(User)
@@ -26,44 +25,44 @@ defmodule Copilot.Core.Users do
 
   @doc """
   Gets a single user.
-
+  
   Returns `nil` if the User does not exist.
-
+  
   ## Examples
-
+  
       iex> get_user("some-uuid")
       %User{}
-
+  
       iex> get_user("another-uuid")
       nil
-
+  
   """
   def get_user(id), do: Repo.get(User, id)
 
   @doc """
   Gets a single user.
-
+  
   Raises `Ecto.NoResultsError` if the User does not exist.
-
+  
   ## Examples
-
+  
       iex> get_user!("some-uuid")
       %User{}
-
+  
       iex> get_user!("another-uuid")
       ** (Ecto.NoResultsError)
-
+  
   """
   def get_user!(id), do: Repo.get!(User, id)
 
   @doc """
   Gets a single user by a clause.
-
+  
   ## Examples
-
+  
       iex> get_user_by(email: "foo@bar.com")
       %User{}
-
+  
       iex> get_user_by(provider_id: "12345")
       %User{}
   """
@@ -71,15 +70,15 @@ defmodule Copilot.Core.Users do
 
   @doc """
   Creates a user.
-
+  
   ## Examples
-
+  
       iex> create_user(%{field: value})
       {:ok, %User{}}
-
+  
       iex> create_user(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def create_user(attrs \\ %{}) do
     %User{}
@@ -90,9 +89,9 @@ defmodule Copilot.Core.Users do
   @doc """
   Finds a user by provider_id or creates one if it doesn't exist.
   This is useful for authentication callbacks.
-
+  
   ## Examples
-
+  
       iex> find_or_create_user(%{"provider_id" => "123", "email" => "test@example.com", "name" => "Test"})
       {:ok, %User{}}
   """
@@ -197,7 +196,6 @@ defmodule Copilot.Core.Users do
       "name" => register_attrs["name"]
     }
 
-
     Repo.transaction(fn ->
       with {:ok, customer} <- Customers.create_customer(customer_attrs),
            user_attrs_with_customer =
@@ -205,7 +203,7 @@ defmodule Copilot.Core.Users do
              |> Map.put("customer_id", customer.id)
              |> Map.put("roles", ["customer", "user"]),
            {:ok, user} <- create_user_with_registration_changeset(user_attrs_with_customer) do
-          {:created, user, customer}
+        {:created, user, customer}
       else
         {:error, changeset} ->
           Repo.rollback({:error, changeset})
@@ -221,15 +219,15 @@ defmodule Copilot.Core.Users do
 
   @doc """
   Updates a user.
-
+  
   ## Examples
-
+  
       iex> update_user(user, %{field: new_value})
       {:ok, %User{}}
-
+  
       iex> update_user(user, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def update_user(%User{} = user, attrs) do
     user
@@ -239,15 +237,15 @@ defmodule Copilot.Core.Users do
 
   @doc """
   Deletes a user.
-
+  
   ## Examples
-
+  
       iex> delete_user(user)
       {:ok, %User{}}
-
+  
       iex> delete_user(user)
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def delete_user(%User{} = user) do
     Repo.delete(user)
@@ -255,12 +253,12 @@ defmodule Copilot.Core.Users do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking user changes.
-
+  
   ## Examples
-
+  
       iex> change_user(user)
       %Ecto.Changeset{data: %User{}}
-
+  
   """
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)

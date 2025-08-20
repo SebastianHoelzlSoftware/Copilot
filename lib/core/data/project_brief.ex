@@ -24,7 +24,7 @@ defmodule Copilot.Core.Data.ProjectBrief do
   """
   def changeset(brief, attrs) do
     brief
-        |> cast(attrs, [:title, :summary, :status, :developer_id, :customer_id])
+    |> cast(attrs, [:title, :summary, :status, :developer_id, :customer_id])
     |> validate_required([:title, :summary, :customer_id])
     |> foreign_key_constraint(:customer_id)
     |> cast_assoc(:ai_analysis, with: &AIAnalysis.changeset_for_brief/2)

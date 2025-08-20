@@ -12,13 +12,19 @@ defmodule CopilotWeb.Plugs.DevAuth do
   def init(opts), do: opts
 
   def call(conn, opts) do
-    user_info = case get_req_header(conn, "x-dev-auth-override") do
-      [override_json] ->
-        Jason.decode!(override_json)
+    user_info =
+      case get_req_header(conn, "x-dev-auth-override") do
+        [override_json] ->
+          Jason.decode!(override_json)
 
-      [] ->
-        %{"provider_id" => "dev-user-123", "email" => "developer@example.com", "name" => "Dev User", "roles" => ["developer", "user"]}
-    end
+        [] ->
+          %{
+            "provider_id" => "dev-user-123",
+            "email" => "developer@example.com",
+            "name" => "Dev User",
+            "roles" => ["developer", "user"]
+          }
+      end
 
     # Always find or create the user
     {:ok, user} = Copilot.Core.Users.find_or_create_user(user_info)
@@ -29,13 +35,16 @@ defmodule CopilotWeb.Plugs.DevAuth do
     else
       # For API pipeline, put header
       conn
-      |> put_req_header("x-user-info", Jason.encode!(%{
-        "provider_id" => user.provider_id,
-        "email" => user.email,
-        "name" => user.name,
-        "roles" => user.roles,
-        "customer_id" => user.customer_id
-      }))
+      |> put_req_header(
+        "x-user-info",
+        Jason.encode!(%{
+          "provider_id" => user.provider_id,
+          "email" => user.email,
+          "name" => user.name,
+          "roles" => user.roles,
+          "customer_id" => user.customer_id
+        })
+      )
       |> delete_req_header("x-dev-auth-override")
     end
   end

@@ -10,22 +10,25 @@ defmodule Copilot.Application do
   def start(_type, _args) do
     # Log application startup. This is a great place to put this log
     # as it runs once when the application is booting.
-    Logger.info("""
-    \n
-    WOJTILA's                                         2025
-    ░█████╗░░█████╗░██████╗░██╗██╗░░░░░░█████╗░████████╗
-    ██╔══██╗██╔══██╗██╔══██╗██║██║░░░░░██╔══██╗╚══██╔══╝
-    ██║░░╚═╝██║░░██║██████╔╝██║██║░░░░░██║░░██║░░░██║░░░
-    ██║░░██╗██║░░██║██╔═══╝░██║██║░░░░░██║░░██║░░░██║░░░
-    ╚█████╔╝╚█████╔╝██║░░░░░██║███████╗╚█████╔╝░░░██║░░░
-    ░╚════╝░░╚════╝░╚═╝░░░░░╚═╝╚══════╝░╚════╝░░░░╚═╝░░░
-    \n
-    """, %{
-      event: "application_started",
-      application: :copilot,
-      env: Mix.env(),
-      version: Application.spec(:copilot, :vsn) |> to_string()
-    })
+    Logger.info(
+      """
+      \n
+      WOJTILA's                                         2025
+      ░█████╗░░█████╗░██████╗░██╗██╗░░░░░░█████╗░████████╗
+      ██╔══██╗██╔══██╗██╔══██╗██║██║░░░░░██╔══██╗╚══██╔══╝
+      ██║░░╚═╝██║░░██║██████╔╝██║██║░░░░░██║░░██║░░░██║░░░
+      ██║░░██╗██║░░██║██╔═══╝░██║██║░░░░░██║░░██║░░░██║░░░
+      ╚█████╔╝╚█████╔╝██║░░░░░██║███████╗╚█████╔╝░░░██║░░░
+      ░╚════╝░░╚════╝░╚═╝░░░░░╚═╝╚══════╝░╚════╝░░░░╚═╝░░░
+      \n
+      """,
+      %{
+        event: "application_started",
+        application: :copilot,
+        env: Mix.env(),
+        version: Application.spec(:copilot, :vsn) |> to_string()
+      }
+    )
 
     children = [
       Copilot.Repo,

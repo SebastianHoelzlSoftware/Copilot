@@ -12,7 +12,6 @@ defmodule Copilot.Core.Data.User do
 
     belongs_to :customer, Copilot.Core.Data.Customer
 
-
     timestamps()
   end
 
