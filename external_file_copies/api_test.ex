@@ -38,9 +38,9 @@ defmodule ApiTest do
   end
 
   defp run_scenario_1 do
-    IO.puts("\n\n==========================================================================")
-    IO.puts("=== #{yellow("Scenario 1: Register a new user via the public /api/register endpoint")} ===")
-    IO.puts("==========================================================================")
+    IO.puts("\n\n=============================================================================")
+    IO.puts("=== #{cyan("Scenario 1: Register a new user via the public /api/register endpoint")} ===")
+    IO.puts("=============================================================================")
 
     customer_data = customer_user_data()
 
@@ -63,7 +63,7 @@ defmodule ApiTest do
       {:ok, %{status: 201, body: _body}} ->
         IO.puts("\n--- ✅ #{green("PASS: Initial registration successful (201 Created)")} ---")
 
-        IO.puts("\n*** Scenario 1.2: Attempt to register the same user again ***")
+        IO.puts("\n#{cyan("*** Scenario 1.2: Attempt to register the same user again ***")}")
         case register_user(payload) do
           {:ok, %{status: 200, body: _body2}} ->
             IO.puts("\n--- ✅ #{green("PASS: Subsequent registration returned 200 OK ")} ---")
@@ -93,9 +93,9 @@ defmodule ApiTest do
   end
 
   defp run_scenario_2_developer_workflow do
-    IO.puts("\n\n=====================================================================================")
-    IO.puts("=== #{yellow("Scenario 2: Semi-automatic developer role grant and time entry creation")} ===")
-    IO.puts("=====================================================================================")
+    IO.puts("\n\n==================================================================================")
+    IO.puts("=== #{cyan("Scenario 2: Semi-automatic developer role grant and time entry creation")} ===")
+    IO.puts("==================================================================================")
 
     developer_data = developer_user_data()
 
@@ -122,12 +122,12 @@ defmodule ApiTest do
         IO.puts("   (Developer Customer ID: #{developer_customer_id})")
 
         IO.puts("--------------------------------------------------------------------------")
-        IO.puts("\n>>> MANUAL STEP REQUIRED <<<")
+        IO.puts("\n#{blue(">>> MANUAL STEP REQUIRED <<<")}")
         IO.puts("In another terminal, please run the following command to grant the 'developer' role:")
         IO.puts("\n  #{blue("mix users.grant_role #{developer_data.email} developer")}\n")
-        IO.gets("Press Enter to continue after you have run the mix task...")
+        IO.gets("Press #{blue("Enter")} to continue after you have run the mix task...")
         IO.puts("--------------------------------------------------------------------------")
-        IO.puts("#{yellow("Resuming test...")}")
+        IO.puts("#{blue("Resuming test...\n")}")
         # Create a customer for the project brief
         customer_payload = %{
           "registration" => %{
@@ -185,7 +185,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_creation_test(developer_user_id, project_brief_id, developer_data) do
-    IO.puts("\n#{yellow("*** Scenario 2.1: Create a time entry as a developer ***")}")
+    IO.puts("\n#{cyan("*** Scenario 2.1: Create a time entry as a developer ***")}")
 
     time_entry_payload = %{
       "time_entry" => %{
@@ -220,7 +220,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_index_test(developer_user_id) do
-    IO.puts("\n#{yellow("*** Scenario 2.2: List time entries as a developer ***")}")
+    IO.puts("\n#{cyan("*** Scenario 2.2: List time entries as a developer ***")}")
 
     case list_time_entries(developer_user_id) do
       {:ok, %{status: 200, body: _body}} ->
@@ -242,7 +242,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_show_test(time_entry_id, developer_user_id) do
-    IO.puts("\n#{yellow("*** Scenario 2.3: Show a specific time entry as a developer ***")}")
+    IO.puts("\n#{cyan("*** Scenario 2.3: Show a specific time entry as a developer ***")}")
 
     case get_time_entry(time_entry_id, developer_user_id) do
       {:ok, %{status: 200, body: _body}} ->
@@ -264,7 +264,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_update_test(time_entry_id, developer_user_id) do
-    IO.puts("\n#{yellow("*** Scenario 2.4: Update a time entry as a developer ***")}")
+    IO.puts("\n#{cyan("*** Scenario 2.4: Update a time entry as a developer ***")}")
 
     update_payload = %{
       "time_entry" => %{
@@ -292,7 +292,7 @@ defmodule ApiTest do
   end
 
   defp run_time_entry_delete_test(time_entry_id, developer_user_id) do
-    IO.puts("\n#{yellow("*** Scenario 2.5: Delete a time entry as a developer ***")}")
+    IO.puts("\n#{cyan("*** Scenario 2.5: Delete a time entry as a developer ***")}")
 
     case delete_time_entry(time_entry_id, developer_user_id) do
       {:ok, %{status: 204}} ->
@@ -416,8 +416,12 @@ defmodule ApiTest do
     "#{IO.ANSI.red()}#{string}#{IO.ANSI.reset()}"
   end
 
-  defp yellow(string) do
-    "#{IO.ANSI.yellow()}#{string}#{IO.ANSI.reset()}"
+  defp cyan(string) do
+    "#{IO.ANSI.cyan()}#{string}#{IO.ANSI.reset()}"
+  end
+
+  defp magenta(string) do
+    "#{IO.ANSI.magenta()}#{string}#{IO.ANSI.reset()}"
   end
 
 
@@ -427,7 +431,7 @@ defmodule ApiTest do
     total = length(results)
 
     IO.puts("\n\n--- Test Summary ---")
-    IO.puts("Total Scenarios: #{blue(to_string(total))}")
+    IO.puts("Total Scenarios: #{magenta(to_string(total))}")
     IO.puts("✅ #{green("Passed:")}        #{green(to_string(passes))}")
 
     if fails > 0 do
