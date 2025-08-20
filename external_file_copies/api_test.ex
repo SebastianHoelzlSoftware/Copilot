@@ -58,16 +58,12 @@ defmodule ApiTest do
     IO.puts("--------------------------------------------------------------------------")
 
     case register_user(payload) do
-      {:ok, %{status: 201, body: body}} ->
-        IO.puts("Status Code: 201")
-        IO.puts("Response Body: #{body}")
+      {:ok, %{status: 201, body: _body}} ->
         IO.puts("\n--- ✅ PASS: Initial registration successful (201 Created) ---")
 
         IO.puts("\n--- Scenario 1.2: Attempt to register the same user again ---")
         case register_user(payload) do
-          {:ok, %{status: 200, body: body2}} ->
-            IO.puts("Status Code: 200")
-            IO.puts("Response Body: #{body2}")
+          {:ok, %{status: 200, body: _body2}} ->
             IO.puts("\n--- ✅ PASS: Subsequent registration returned 200 OK ---")
             :pass
           {:ok, %{status: status_code2, body: body2}} ->
@@ -116,12 +112,7 @@ defmodule ApiTest do
     case register_user(registration_payload) do
       {:ok, %{status: status, body: body}} when status in [200, 201] ->
         {:ok, %{"data" => %{"id" => developer_user_id, "customer_id" => developer_customer_id}}} = Jason.decode(body)
-        IO.inspect(body, label: "REGISTER USER RESPONSE BODY")
         IO.puts("✅ User registered successfully. Ready for promotion.")
-
-        # The user ID and customer ID are needed for the time entry and project brief payloads.
-        IO.inspect(developer_user_id, label: "developer_user_id")
-        IO.inspect(developer_customer_id, label: "developer_customer_id")
         IO.puts("   (Developer User ID: #{developer_user_id})")
         IO.puts("   (Developer Customer ID: #{developer_customer_id})")
 
@@ -201,8 +192,6 @@ defmodule ApiTest do
       }
     }
 
-    IO.puts("Time Entry Payload Developer ID: #{inspect(developer_user_id)}")
-
     IO.puts("Attempting to create a time entry with developer:")
     IO.puts("  Provider ID: #{developer_data.provider_id}")
 
@@ -229,9 +218,7 @@ defmodule ApiTest do
     IO.puts("\n--- Scenario 2.2: List time entries as a developer ---")
 
     case list_time_entries(developer_user_id) do
-      {:ok, %{status: 200, body: body}} ->
-        IO.puts("Status Code: 200")
-        IO.puts("Response Body: #{body}")
+      {:ok, %{status: 200, body: _body}} ->
         IO.puts("\n--- ✅ PASS: Time entries listed successfully. ---")
         :pass
 
@@ -253,9 +240,7 @@ defmodule ApiTest do
     IO.puts("\n--- Scenario 2.3: Show a specific time entry as a developer ---")
 
     case get_time_entry(time_entry_id, developer_user_id) do
-      {:ok, %{status: 200, body: body}} ->
-        IO.puts("Status Code: 200")
-        IO.puts("Response Body: #{body}")
+      {:ok, %{status: 200, body: _body}} ->
         IO.puts("\n--- ✅ PASS: Time entry shown successfully. ---")
         :pass
 
@@ -283,9 +268,7 @@ defmodule ApiTest do
     }
 
     case update_time_entry(time_entry_id, update_payload, developer_user_id) do
-      {:ok, %{status: 200, body: body}} ->
-        IO.puts("Status Code: 200")
-        IO.puts("Response Body: #{body}")
+      {:ok, %{status: 200, body: _body}} ->
         IO.puts("\n--- ✅ PASS: Time entry updated successfully. ---")
         :pass
 
@@ -308,7 +291,6 @@ defmodule ApiTest do
 
     case delete_time_entry(time_entry_id, developer_user_id) do
       {:ok, %{status: 204}} ->
-        IO.puts("Status Code: 204")
         IO.puts("\n--- ✅ PASS: Time entry deleted successfully. ---")
         :pass
 
@@ -363,8 +345,6 @@ defmodule ApiTest do
         "customer_id" => customer_id
       }
     }
-
-    IO.inspect(payload, label: "create_project_brief payload")
 
     case make_request(:post, "/api/briefs", headers, payload) do
       {:ok, %{status: 201, body: body}} ->
