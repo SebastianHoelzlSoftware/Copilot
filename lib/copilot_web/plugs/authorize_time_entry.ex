@@ -4,6 +4,7 @@ defmodule CopilotWeb.Plugs.AuthorizeTimeEntry do
   """
   import Plug.Conn
   import Phoenix.Controller
+  require Logger
 
   alias Copilot.Core.TimeTracking
 
@@ -14,6 +15,10 @@ defmodule CopilotWeb.Plugs.AuthorizeTimeEntry do
 
     case TimeTracking.get_time_entry!(time_entry_id) do
       time_entry ->
+        Logger.info("--- AuthorizeTimeEntry Debug ---")
+        Logger.info("User ID: #{inspect(conn.assigns.current_user.id)}")
+        Logger.info("Time Entry Developer ID: #{inspect(time_entry.developer_id)}")
+        Logger.info("------------------------------")
         if authorized?(conn.assigns.current_user, time_entry) do
           assign(conn, :time_entry, time_entry)
         else

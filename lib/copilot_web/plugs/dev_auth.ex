@@ -29,7 +29,13 @@ defmodule CopilotWeb.Plugs.DevAuth do
     else
       # For API pipeline, put header
       conn
-      |> put_req_header("x-user-info", Jason.encode!(user_info))
+      |> put_req_header("x-user-info", Jason.encode!(%{
+        "provider_id" => user.provider_id,
+        "email" => user.email,
+        "name" => user.name,
+        "roles" => user.roles,
+        "customer_id" => user.customer_id
+      }))
       |> delete_req_header("x-dev-auth-override")
     end
   end

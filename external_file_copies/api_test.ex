@@ -2,22 +2,28 @@ defmodule ApiTest do
   @base_url "http://localhost:4000"
   @finch_pool_name ApiTest.Finch
 
-  # --- Common Test Data ---
-  @unique_part "#{System.os_time(:nanosecond)}-#{System.unique_integer([:positive])}"
+  # --- Test Data Generation ---
+  defp unique_part, do: "#{System.os_time(:nanosecond)}-#{System.unique_integer([:positive])}"
 
-  # --- Customer User Data ---
-  @provider_id "api-test-#{@unique_part}"
-  @email "api.test.user.#{@unique_part}@testmyapi.com"
-  @name "TestMyApi Corp."
+  defp customer_user_data do
+    unique = unique_part()
+    %{
+      provider_id: "api-test-#{unique}",
+      email: "api.test.user.#{unique}@testmyapi.com",
+      name: "TestMyApi Corp."
+    }
+  end
 
-  # --- Developer User Data ---
-  @developer_email "developer-#{@unique_part}@testmyapi.com"
-  @developer_provider_id "dev-api-test-#{@unique_part}"
-  @developer_name "Test Customer"
+  defp developer_user_data do
+    unique = unique_part()
+    %{
+      provider_id: "dev-api-test-#{unique}",
+      email: "developer-#{unique}@testmyapi.com",
+      name: "Test Developer"
+    }
+  end
 
-  # --- Project Data ---
-  # Placeholder for a project ID. In a real scenario, this would be created via API or fetched.
-  @project_id "00000000-0000-0000-0000-000000000001"
+
 
   def run do
     # Start Finch for our requests. This is idempotent.
@@ -34,19 +40,21 @@ defmodule ApiTest do
   defp run_scenario_1 do
     IO.puts("--- Scenario 1: Register a new user via the public /api/register endpoint ---")
 
+    customer_data = customer_user_data()
+
     payload = %{
       "registration" => %{
-        "provider_id" => @provider_id,
-        "email" => @email,
-        "name" => @name,
-        "company_name" => @name
+        "provider_id" => customer_data.provider_id,
+        "email" => customer_data.email,
+        "name" => customer_data.name,
+        "company_name" => customer_data.name
       }
     }
 
     IO.puts("Attempting to register a customer-user with:")
-    IO.puts("  Provider ID: #{@provider_id}")
-    IO.puts("  Email:       #{@email}")
-    IO.puts("  Name:        #{@name}")
+    IO.puts("  Provider ID: #{customer_data.provider_id}")
+    IO.puts("  Email:       #{customer_data.email}")
+    IO.puts("  Name:        #{customer_data.name}")
     IO.puts("--------------------------------------------------------------------------")
 
     case register_user(payload) do
@@ -89,24 +97,25 @@ defmodule ApiTest do
   defp run_scenario_2_developer_workflow do
     IO.puts("\n--- Scenario 2: Semi-automatic developer role grant and time entry creation ---")
 
+    developer_data = developer_user_data()
+
     # 1. Register the user who will become a developer
     registration_payload = %{
       "registration" => %{
-        "provider_id" => @developer_provider_id,
-        "email" => @developer_email,
-        "name" => @developer_name,
-        "company_name" => @developer_name
+        "provider_id" => developer_data.provider_id,
+        "email" => developer_data.email,
+        "name" => developer_data.name,
+        "company_name" => developer_data.name
       }
     }
 
     IO.puts("Attempting to register a user to be promoted to developer:")
-    IO.puts("  Provider ID: #{@developer_provider_id}")
-    IO.puts("  Email:       #{@developer_email}")
+    IO.puts("  Provider ID: #{developer_data.provider_id}")
+    IO.puts("  Email:       #{developer_data.email}")
 
     case register_user(registration_payload) do
       {:ok, %{status: status, body: body}} when status in [200, 201] ->
         {:ok, %{"data" => %{"id" => developer_user_id, "customer_id" => developer_customer_id}}} = Jason.decode(body)
-        IO.inspect(body, label: "REGISTER USER RESPONSE BODY")
         IO.inspect(body, label: "REGISTER USER RESPONSE BODY")
         IO.puts("✅ User registered successfully. Ready for promotion.")
 
@@ -119,15 +128,15 @@ defmodule ApiTest do
         IO.puts("--------------------------------------------------------------------------")
         IO.puts("\n>>> MANUAL STEP REQUIRED <<<")
         IO.puts("In another terminal, please run the following command to grant the 'developer' role:")
-        IO.puts("\n  mix users.grant_role #{@developer_email} developer\n")
+        IO.puts("\n  mix users.grant_role #{developer_data.email} developer\n")
         IO.gets("Press Enter to continue after you have run the mix task...")
         IO.puts("--------------------------------------------------------------------------")
         IO.puts("Resuming test...")
         # Create a customer for the project brief
         customer_payload = %{
           "registration" => %{
-            "provider_id" => "customer-for-brief-#{@unique_part}",
-            "email" => "customer.brief.#{@unique_part}@testmyapi.com",
+            "provider_id" => "customer-for-brief-#{unique_part()}",
+            "email" => "customer.brief.#{unique_part()}@testmyapi.com",
             "name" => "Project Brief Customer",
             "company_name" => "Project Brief Customer Corp."
           }
@@ -139,15 +148,15 @@ defmodule ApiTest do
             IO.puts("✅ Customer for project brief registered successfully.")
             IO.puts("   (Project Brief Customer ID: #{project_brief_customer_id})")
 
-            case create_project_brief(project_brief_customer_id, developer_user_id) do
+            case create_project_brief(project_brief_customer_id, developer_user_id, developer_data) do
               {:ok, project_brief_id} ->
                 # 2. Proceed to create a time entry, passing the developer's user ID.
-                case run_time_entry_creation_test(developer_user_id, project_brief_id) do
+                case run_time_entry_creation_test(developer_user_id, project_brief_id, developer_data) do
                   {:ok, time_entry_id} ->
-                    run_time_entry_index_test(developer_user_id)
-                    run_time_entry_show_test(time_entry_id, developer_user_id)
-                    run_time_entry_update_test(time_entry_id, developer_user_id)
-                    run_time_entry_delete_test(time_entry_id, developer_user_id)
+                    run_time_entry_index_test(developer_data)
+                    run_time_entry_show_test(time_entry_id, developer_data)
+                    run_time_entry_update_test(time_entry_id, developer_data)
+                    run_time_entry_delete_test(time_entry_id, developer_data)
                   :error ->
                     :fail
                 end
@@ -179,7 +188,7 @@ defmodule ApiTest do
     end
   end
 
-  defp run_time_entry_creation_test(developer_user_id, project_brief_id) do
+  defp run_time_entry_creation_test(developer_user_id, project_brief_id, developer_data) do
     IO.puts("\n--- Scenario 2.1: Create a time entry as a developer ---")
 
     time_entry_payload = %{
@@ -192,10 +201,12 @@ defmodule ApiTest do
       }
     }
 
-    IO.puts("Attempting to create a time entry with developer:")
-    IO.puts("  Provider ID: #{@developer_provider_id}")
+    IO.puts("Time Entry Payload Developer ID: #{inspect(developer_user_id)}")
 
-    case create_time_entry(time_entry_payload, @developer_provider_id) do
+    IO.puts("Attempting to create a time entry with developer:")
+    IO.puts("  Provider ID: #{developer_data.provider_id}")
+
+        case create_time_entry(time_entry_payload, developer_data) do
       {:ok, %{status: 201, body: body}} ->
         {:ok, %{"data" => %{"id" => time_entry_id}}} = Jason.decode(body)
         {:ok, time_entry_id}
@@ -339,15 +350,15 @@ defmodule ApiTest do
 
 
 
-  defp create_project_brief(customer_id, developer_user_id) do
+  defp create_project_brief(customer_id, _developer_user_id, developer_data) do
     auth_override_header =
-      %{ "provider_id" => @developer_provider_id, "email" => @developer_email, "name" => @developer_name, "roles" => ["developer", "user"], "customer_id" => customer_id } |> Jason.encode!()
+      %{ "provider_id" => developer_data.provider_id, "email" => developer_data.email, "name" => developer_data.name, "roles" => ["developer", "user"], "customer_id" => customer_id } |> Jason.encode!()
 
     headers = [{"x-dev-auth-override", auth_override_header}]
 
     payload = %{
       "project_brief" => %{
-        "title" => "API Test Project Brief - #{@unique_part}",
+        "title" => "API Test Project Brief - #{unique_part()}",
         "summary" => "This is a test project brief created via the API for scenario 2.",
         "customer_id" => customer_id
       }
@@ -371,67 +382,67 @@ defmodule ApiTest do
     end
   end
 
-  defp create_time_entry(payload, developer_provider_id) do
-    auth_header = %{
-      "provider_id" => developer_provider_id,
-      "email" => @developer_email,
-      "name" => @developer_name,
+  defp create_time_entry(payload, developer_data) do
+    auth_override_header = %{
+      "provider_id" => developer_data.provider_id,
+      "email" => developer_data.email,
+      "name" => developer_data.name,
       "roles" => ["developer", "user"]
     } |> Jason.encode!()
 
-    headers = [{"x-user-info", auth_header}]
+    headers = [{"x-dev-auth-override", auth_override_header}]
 
     make_request(:post, "/api/time_entries", headers, payload)
   end
 
-  defp get_time_entry(time_entry_id, developer_provider_id) do
-    auth_header = %{
-      "provider_id" => developer_provider_id,
-      "email" => @developer_email,
-      "name" => @developer_name,
+  defp get_time_entry(time_entry_id, developer_data) do
+    auth_override_header = %{
+      "provider_id" => developer_data.provider_id,
+      "email" => developer_data.email,
+      "name" => developer_data.name,
       "roles" => ["developer", "user"]
     } |> Jason.encode!()
 
-    headers = [{"x-user-info", auth_header}]
+    headers = [{"x-dev-auth-override", auth_override_header}]
 
     make_request(:get, "/api/time_entries/" <> time_entry_id, headers, nil)
   end
 
-  defp update_time_entry(time_entry_id, payload, developer_provider_id) do
-    auth_header = %{
-      "provider_id" => developer_provider_id,
-      "email" => @developer_email,
-      "name" => @developer_name,
+  defp update_time_entry(time_entry_id, payload, developer_data) do
+    auth_override_header = %{
+      "provider_id" => developer_data.provider_id,
+      "email" => developer_data.email,
+      "name" => developer_data.name,
       "roles" => ["developer", "user"]
     } |> Jason.encode!()
 
-    headers = [{"x-user-info", auth_header}]
+    headers = [{"x-dev-auth-override", auth_override_header}]
 
     make_request(:put, "/api/time_entries/" <> time_entry_id, headers, payload)
   end
 
-  defp delete_time_entry(time_entry_id, developer_provider_id) do
-    auth_header = %{
-      "provider_id" => developer_provider_id,
-      "email" => @developer_email,
-      "name" => @developer_name,
+  defp delete_time_entry(time_entry_id, developer_data) do
+    auth_override_header = %{
+      "provider_id" => developer_data.provider_id,
+      "email" => developer_data.email,
+      "name" => developer_data.name,
       "roles" => ["developer", "user"]
     } |> Jason.encode!()
 
-    headers = [{"x-user-info", auth_header}]
+    headers = [{"x-dev-auth-override", auth_override_header}]
 
     make_request(:delete, "/api/time_entries/" <> time_entry_id, headers, nil)
   end
 
-  defp list_time_entries(developer_user_id) do
-    auth_header = %{
-      "provider_id" => @developer_provider_id,
-      "email" => @developer_email,
-      "name" => @developer_name,
+  defp list_time_entries(developer_data) do
+    auth_override_header = %{
+      "provider_id" => developer_data.provider_id,
+      "email" => developer_data.email,
+      "name" => developer_data.name,
       "roles" => ["developer", "user"]
     } |> Jason.encode!()
 
-    headers = [{"x-user-info", auth_header}]
+    headers = [{"x-dev-auth-override", auth_override_header}]
 
     make_request(:get, "/api/time_entries", headers, nil)
   end
