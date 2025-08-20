@@ -39,3 +39,6 @@ As outlined in the introduction, integration with a calendar service is a core g
 - A dedicated `TimeTracking.GoogleCalendar` module will be responsible for all interactions with the Google Calendar API.
 - This module will be triggered after a `TimeEntry` is created or updated, syncing the entry to the user's calendar.
 - The interaction with the Gemini API for natural language control will be handled primarily on the client-side (Android app), which will then call our secure API endpoints.
+
+#### TODO:
+- [] Add Details on External Service Integration here

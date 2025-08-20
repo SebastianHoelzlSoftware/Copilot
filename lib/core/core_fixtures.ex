@@ -33,10 +33,10 @@ defmodule Copilot.Core.Fixtures do
     %User{}
     |> User.changeset(
       Enum.into(attrs, %{
-        email: "developer-#{unique_int}@example.com",
-        name: "Dev User-#{unique_int}",
+        email: "developer-" <> Integer.to_string(unique_int) <> "@example.com",
+        name: "Dev User-" <> Integer.to_string(unique_int),
         provider: "google",
-        provider_id: "dev-#{unique_int}",
+        provider_id: "dev-" <> Integer.to_string(unique_int),
         roles: ["developer"]
       })
     )
@@ -104,7 +104,7 @@ defmodule Copilot.Core.Fixtures do
     valid_attrs = %{
       customer_id: customer.id,
       name: %{first_name: "John", last_name: "Doe"},
-      email: %{address: "john.doe-#{System.unique_integer([:positive])}@example.com"}
+      email: %{address: "john.doe-" <> Integer.to_string(System.unique_integer([:positive])) <> "@example.com"}
     }
 
     {:ok, contact} =
@@ -120,18 +120,16 @@ defmodule Copilot.Core.Fixtures do
   """
   def user_fixture(attrs \\ %{}) do
     default_attrs = %{
-      email: "user-#{System.unique_integer([:positive])}@example.com",
-      name: %{first_name: "Test", last_name: "User"},
+      email: "user-" <> Integer.to_string(System.unique_integer([:positive])) <> "@example.com",
+      name: "TestUser",
       provider: "google",
-      provider_id: "user-#{System.unique_integer([:positive])}",
+      provider_id: "user-" <> Integer.to_string(System.unique_integer([:positive])),
       roles: ["customer"]
     }
 
-    {:ok, user} =
-      attrs
-      |> Enum.into(default_attrs)
-      |> Users.create_user_for_registration()
+    user_attrs = Enum.into(attrs, default_attrs)
 
+    {:ok, user} = Users.create_user(user_attrs)
     user
   end
 
@@ -150,8 +148,6 @@ defmodule Copilot.Core.Fixtures do
       project_id: project.id
     }
 
-    %TimeEntry{}
-    |> TimeEntry.changeset(Enum.into(attrs, default_attrs))
-    |> Repo.insert!()
+    %TimeEntry{} |> TimeEntry.changeset(Enum.into(attrs, default_attrs)) |> Repo.insert!()
   end
 end
