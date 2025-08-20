@@ -30,7 +30,6 @@ defmodule CopilotWeb.RegistrationControllerTest do
       conn = post(conn, ~p"/api/register", %{"registration" => @new_registration_payload})
 
       response = json_response(conn, 201)
-      # IO.inspect(response, label: "REGISTER RESPONSE")
       assert %{
                "data" => %{
                  "id" => user_id,

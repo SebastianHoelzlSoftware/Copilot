@@ -23,7 +23,6 @@ defmodule Copilot.Core.Data.ProjectBrief do
   Builds a changeset for a ProjectBrief.
   """
   def changeset(brief, attrs) do
-    IO.inspect(attrs, label: "ProjectBrief changeset attrs")
     brief
         |> cast(attrs, [:title, :summary, :status, :developer_id, :customer_id])
     |> validate_required([:title, :summary, :customer_id])
