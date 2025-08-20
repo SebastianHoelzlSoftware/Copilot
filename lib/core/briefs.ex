@@ -64,6 +64,7 @@ defmodule Copilot.Core.Briefs do
 
   """
   def create_project_brief(attrs \\ %{}) do
+    IO.inspect(attrs, label: "Briefs.create_project_brief attrs")
     %ProjectBrief{}
     |> ProjectBrief.changeset(attrs)
     |> Repo.insert()

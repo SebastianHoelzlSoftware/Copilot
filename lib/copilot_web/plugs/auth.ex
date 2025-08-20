@@ -17,15 +17,21 @@ defmodule CopilotWeb.Plugs.Auth do
   def call(conn, _opts) do
     # In a real app, you'd get the user from a token.
     # For now, we'll create a mock user based on headers for demonstration.
+    user_id = List.first(get_req_header(conn, "x-user-id")) || Ecto.UUID.generate()
+
     user =
       if get_req_header(conn, "x-user-role") == ["developer"] do
-        %{id: Ecto.UUID.generate(), roles: ["developer"], customer_id: nil}
+        %{id: user_id, roles: ["developer"], customer_id: nil}
       else
+        customer_id_from_header = List.first(get_req_header(conn, "x-customer-id"))
+        customer_id_from_body = get_in(conn.params, ["project_brief", "customer_id"])
+
+        customer_id = customer_id_from_header || customer_id_from_body
+
         %{
-          id: Ecto.UUID.generate(),
+          id: user_id,
           roles: ["customer"],
-          # will be nil if header not set
-          customer_id: List.first(get_req_header(conn, "x-customer-id"))
+          customer_id: customer_id
         }
       end
 
