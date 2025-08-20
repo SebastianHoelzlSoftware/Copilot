@@ -39,7 +39,7 @@ defmodule ApiTest do
 
   defp run_scenario_1 do
     IO.puts("\n\n==========================================================================")
-    IO.puts("=== Scenario 1: Register a new user via the public /api/register endpoint ===")
+    IO.puts("=== #{yellow("Scenario 1: Register a new user via the public /api/register endpoint")} ===")
     IO.puts("==========================================================================")
 
     customer_data = customer_user_data()
@@ -61,40 +61,40 @@ defmodule ApiTest do
 
     case register_user(payload) do
       {:ok, %{status: 201, body: _body}} ->
-        IO.puts("\n--- ✅ PASS: Initial registration successful (201 Created) ---")
+        IO.puts("\n--- ✅ #{green("PASS: Initial registration successful (201 Created)")} ---")
 
         IO.puts("\n*** Scenario 1.2: Attempt to register the same user again ***")
         case register_user(payload) do
           {:ok, %{status: 200, body: _body2}} ->
-            IO.puts("\n--- ✅ PASS: Subsequent registration returned 200 OK ---")
+            IO.puts("\n--- ✅ #{green("PASS: Subsequent registration returned 200 OK ")} ---")
             :pass
           {:ok, %{status: status_code2, body: body2}} ->
             IO.puts("Status Code: #{status_code2}")
             IO.puts("Response Body: #{body2}")
-            IO.puts("\n--- ❌ FAIL: Subsequent registration failed with status #{status_code2} (expected 200) ---")
+            IO.puts("\n--- ❌ #{red("FAIL: Subsequent registration failed with status #{status_code2} (expected 200)")} ---")
             :fail
           {:error, reason2} ->
             IO.puts("Error:")
             IO.inspect(reason2)
-            IO.puts("\n--- ❌ FAIL: Subsequent registration request failed ---")
+            IO.puts("\n--- ❌ #{red("FAIL: Subsequent registration request failed")} ---")
             :fail
         end
       {:ok, %{status: status_code, body: body}} ->
         IO.puts("Status Code: #{status_code}")
         IO.puts("Response Body: #{body}")
-        IO.puts("\n--- ❌ FAIL: Initial registration failed with status #{status_code} (expected 201) ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Initial registration failed with status #{status_code} (expected 201)")} ---")
         :fail
       {:error, reason} ->
         IO.puts("Error:")
         IO.inspect(reason)
-        IO.puts("\n--- ❌ FAIL: Initial registration request failed ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Initial registration request failed")} ---")
         :fail
     end
   end
 
   defp run_scenario_2_developer_workflow do
     IO.puts("\n\n=====================================================================================")
-    IO.puts("=== Scenario 2: Semi-automatic developer role grant and time entry creation ===")
+    IO.puts("=== #{yellow("Scenario 2: Semi-automatic developer role grant and time entry creation")} ===")
     IO.puts("=====================================================================================")
 
     developer_data = developer_user_data()
@@ -116,7 +116,8 @@ defmodule ApiTest do
     case register_user(registration_payload) do
       {:ok, %{status: status, body: body}} when status in [200, 201] ->
         {:ok, %{"data" => %{"id" => developer_user_id, "customer_id" => developer_customer_id}}} = Jason.decode(body)
-        IO.puts("✅ User registered successfully. Ready for promotion.")
+        IO.puts("✅ #{green("User registered successfully. Ready for promotion.")}")
+        IO.puts("   (Developer User ID: #{developer_user_id})")
         IO.puts("   (Developer User ID: #{developer_user_id})")
         IO.puts("   (Developer Customer ID: #{developer_customer_id})")
 
@@ -126,7 +127,7 @@ defmodule ApiTest do
         IO.puts("\n  #{blue("mix users.grant_role #{developer_data.email} developer")}\n")
         IO.gets("Press Enter to continue after you have run the mix task...")
         IO.puts("--------------------------------------------------------------------------")
-        IO.puts("Resuming test...")
+        IO.puts("#{yellow("Resuming test...")}")
         # Create a customer for the project brief
         customer_payload = %{
           "registration" => %{
@@ -140,7 +141,7 @@ defmodule ApiTest do
         case register_user(customer_payload) do
           {:ok, %{status: status, body: body}} when status in [200, 201] ->
             {:ok, %{"data" => %{"id" => _customer_user_id, "customer_id" => project_brief_customer_id}}} = Jason.decode(body)
-            IO.puts("✅ Customer for project brief registered successfully.")
+            IO.puts("✅ #{green("Customer for project brief registered successfully.")}")
             IO.puts("   (Project Brief Customer ID: #{project_brief_customer_id})")
 
             case create_project_brief(project_brief_customer_id, developer_user_id, developer_data) do
@@ -156,35 +157,35 @@ defmodule ApiTest do
                     :fail
                 end
               :error ->
-                IO.puts("\n--- ❌ FAIL: Could not create project brief. ---")
+                IO.puts("\n--- ❌ #{red("FAIL: Could not create project brief.")} ---")
                 :fail
             end
           {:ok, %{status: status, body: body}} ->
             IO.puts("Status Code: #{status}")
             IO.puts("Response Body: #{body}")
-            IO.puts("\n--- ❌ FAIL: Could not register customer for project brief. ---")
+            IO.puts("\n--- ❌ #{red("FAIL: Could not register customer for project brief.")} ---")
             :fail
           {:error, reason} ->
             IO.puts("Error:")
             IO.inspect(reason)
-            IO.puts("\n--- ❌ FAIL: Request to register customer for project brief failed. ---")
+            IO.puts("\n--- ❌ #{red("FAIL: Request to register customer for project brief failed.")} ---")
             :fail
         end
       {:ok, %{status: status, body: body}} ->
         IO.puts("Status Code: #{status}")
         IO.puts("Response Body: #{body}")
-        IO.puts("\n--- ❌ FAIL: Could not register user to be promoted. ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Could not register user to be promoted. ")} ---")
         :fail
       {:error, reason} ->
         IO.puts("Error:")
         IO.inspect(reason)
-        IO.puts("\n--- ❌ FAIL: Request to register user to be promoted failed. ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Request to register user to be promoted failed.")} ---")
         :fail
     end
   end
 
   defp run_time_entry_creation_test(developer_user_id, project_brief_id, developer_data) do
-    IO.puts("\n*** Scenario 2.1: Create a time entry as a developer ***")
+    IO.puts("\n#{yellow("*** Scenario 2.1: Create a time entry as a developer ***")}")
 
     time_entry_payload = %{
       "time_entry" => %{
@@ -207,13 +208,13 @@ defmodule ApiTest do
       {:ok, %{status: status, body: body}} ->
         IO.puts("Status Code: #{status}")
         IO.puts("Response Body: #{body}")
-        IO.puts("\n--- ❌ FAIL: Time entry creation failed with status #{status} (expected 201) ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Time entry creation failed with status #{status} (expected 201)")} ---")
         :error
 
       {:error, reason} ->
         IO.puts("Error:")
         IO.inspect(reason)
-        IO.puts("\n--- ❌ FAIL: Time entry creation request failed. ---")
+        IO.puts("\n--- ❌ #{red("FAIL: Time entry creation request failed. ")}---")
         :error
     end
   end
@@ -406,6 +407,19 @@ defmodule ApiTest do
   defp blue(string) do
     "#{IO.ANSI.blue()}#{string}#{IO.ANSI.reset()}"
   end
+
+  defp green(string) do
+    "#{IO.ANSI.green()}#{string}#{IO.ANSI.reset()}"
+  end
+
+  defp red(string) do
+    "#{IO.ANSI.red()}#{string}#{IO.ANSI.reset()}"
+  end
+
+  defp yellow(string) do
+    "#{IO.ANSI.yellow()}#{string}#{IO.ANSI.reset()}"
+  end
+
 
   defp print_summary(results) do
     passes = Enum.count(results, &(&1 == :pass))
