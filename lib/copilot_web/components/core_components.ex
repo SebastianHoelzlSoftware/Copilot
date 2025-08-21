@@ -1,9 +1,7 @@
 defmodule CopilotWeb.Components.CoreComponents do
   use Phoenix.Component
 
-  import CopilotWeb.Gettext
   alias Phoenix.LiveView.JS
-  alias CopilotWeb.Gettext
 
   @doc """
   Renders a header component.

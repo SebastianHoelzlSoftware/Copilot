@@ -73,7 +73,7 @@ defmodule Copilot.Core.TimeTracking do
     TimeEntry
     |> where([t], t.developer_id == ^developer.id)
     |> order_by(desc: :start_time)
-    |> preload([:project])
+    |> preload([:developer, :project])
     |> Repo.all()
   end
 
