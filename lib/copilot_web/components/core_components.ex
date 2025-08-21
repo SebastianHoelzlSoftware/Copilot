@@ -56,6 +56,7 @@ defmodule CopilotWeb.Components.CoreComponents do
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+  attr :hide_after, :integer, default: nil, doc: "the number of milliseconds to hide the flash after"
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
   slot :inner_block, doc: "the optional inner block that renders the flash message"
@@ -67,6 +68,8 @@ defmodule CopilotWeb.Components.CoreComponents do
     <div
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
+      phx-hook={@hide_after && "Flash"}
+      data-hide-after={@hide_after}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
       class={[
@@ -100,8 +103,8 @@ defmodule CopilotWeb.Components.CoreComponents do
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title="Success!" flash={@flash} />
-      <.flash kind={:error} title="Error!" flash={@flash} />
+      <.flash kind={:info} title="Success!" flash={@flash} hide_after={2000} />
+      <.flash kind={:error} title="Error!" flash={@flash} hide_after={5000} />
       <.flash
         id="client-error"
         kind={:error}
