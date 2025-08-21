@@ -40,7 +40,8 @@ defmodule CopilotWeb.Live.TimeEntryLive.Form do
           field={f[:project_id]}
           type="select"
           label="Project"
-          options={Enum.map(@projects, &{&1.title, &1.id})}
+          options={Enum.map(@projects, fn p -> {p.title, p.id} end)}
+          selected={if is_struct(f[:project_id].value), do: f[:project_id].value.id, else: f[:project_id].value}
         />
       </:content>
       <:actions>

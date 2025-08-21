@@ -33,7 +33,7 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
       <:col :let={time_entry} label="Start Time"><%= time_entry.start_time %></:col>
       <:col :let={time_entry} label="End Time"><%= time_entry.end_time %></:col>
       <:col :let={time_entry} label="Description"><%= time_entry.description %></:col>
-      <:col :let={time_entry} label="Project"><%= time_entry.project.name %></:col>
+      <:col :let={time_entry} label="Project"><%= time_entry.project.title %></:col>
     </.table>
     """
   end
