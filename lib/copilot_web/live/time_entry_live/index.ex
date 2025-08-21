@@ -2,6 +2,7 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
   use CopilotWeb, :live_view
 
   alias Copilot.Core.TimeTracking
+  import CopilotWeb.Components.CoreComponents
 
   @impl true
   def mount(_params, _session, socket) do

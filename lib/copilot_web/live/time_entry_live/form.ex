@@ -4,6 +4,7 @@ defmodule CopilotWeb.Live.TimeEntryLive.Form do
   alias Copilot.Core.TimeTracking
   alias Copilot.Core.Data.TimeEntry
   alias Copilot.Core.Briefs
+  import CopilotWeb.Components.CoreComponents
 
   @impl true
   def mount(_params, _session, socket) do
@@ -31,15 +32,17 @@ defmodule CopilotWeb.Live.TimeEntryLive.Form do
       phx_submit="save"
       phx_change="validate"
     >
-      <.input field={@changeset[:start_time]} type="datetime-local" label="Start Time" />
-      <.input field={@changeset[:end_time]} type="datetime-local" label="End Time" />
-      <.input field={@changeset[:description]} type="text" label="Description" />
-      <.input
-        field={@changeset[:project_id]}
-        type="select"
-        label="Project"
-        options={Enum.map(@projects, &{&1.name, &1.id})}
-      />
+      <:content :let={f}>
+        <.input field={f[:start_time]} type="datetime-local" label="Start Time" />
+        <.input field={f[:end_time]} type="datetime-local" label="End Time" />
+        <.input field={f[:description]} type="text" label="Description" />
+        <.input
+          field={f[:project_id]}
+          type="select"
+          label="Project"
+          options={Enum.map(@projects, &{&1.title, &1.id})}
+        />
+      </:content>
       <:actions>
         <.button phx-disable-with="Saving...">Save Time Entry</.button>
       </:actions>

@@ -82,8 +82,6 @@ defmodule CopilotWeb do
     quote do
       # HTML escaping functionality
       import Phoenix.HTML
-      # Core UI components for building responsive pages
-      import CopilotWeb.Components.CoreComponents
       # Import LiveView helpers (render, live_render, live_component, etc.)
       import Phoenix.LiveView.Helpers
 
