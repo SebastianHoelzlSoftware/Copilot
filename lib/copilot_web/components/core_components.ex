@@ -1,7 +1,6 @@
 defmodule CopilotWeb.Components.CoreComponents do
   use Phoenix.Component
 
-  alias Phoenix.LiveView.JS
   import CopilotWeb.Gettext
 
   @doc """
@@ -61,11 +60,14 @@ defmodule CopilotWeb.Components.CoreComponents do
       >
         <%= for {key, message} <- @flash, kind = flash_kind(key) do %>
           <div
-            class={[
-              "relative mt-2 w-full rounded-lg p-4 text-white",
-              "bg-red-500": kind == :error,
-              "bg-green-500": kind == :info
-            ]}
+            class={
+              "relative mt-2 w-full rounded-lg p-4 text-white " <>
+              case kind do
+                :error -> "bg-red-500"
+                :info -> "bg-green-500"
+                _ -> ""
+              end
+            }
           >
             <p class="font-semibold"><%= message %></p>
           </div>

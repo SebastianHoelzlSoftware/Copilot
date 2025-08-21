@@ -11,7 +11,6 @@
 # and so on) as they will fail if something goes wrong.
 alias Copilot.Core.Users
 alias Copilot.Core.Data.Customer
-alias Copilot.Core.Data.Name
 alias Copilot.Core.Data.ProjectBrief
 alias Copilot.Repo
 
