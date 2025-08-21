@@ -8,7 +8,15 @@ defmodule CopilotWeb.Live.TimeEntryLive.Form do
 
   @impl true
   def mount(_params, _session, socket) do
-    changeset = TimeTracking.change_time_entry(%TimeEntry{})
+    now = DateTime.utc_now()
+    one_hour_later = DateTime.add(now, 3600, :second)
+
+    initial_time_entry = %TimeEntry{
+      start_time: now,
+      end_time: one_hour_later
+    }
+
+    changeset = TimeTracking.change_time_entry(initial_time_entry)
     projects = Briefs.list_project_briefs()
 
     socket =

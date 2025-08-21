@@ -1,7 +1,7 @@
 defmodule CopilotWeb.Components.CoreComponents do
   use Phoenix.Component
 
-  import CopilotWeb.Gettext
+  alias CopilotWeb.Gettext
 
   @doc """
   Renders a header component.
