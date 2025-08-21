@@ -86,10 +86,10 @@ Registers a new user and creates an associated customer account.
 ```json
 {
   "registration": {
+    "provider_id": "some-unique-provider-id",
     "email": "newuser@example.com",
-    "password": "securepassword",
     "name": "New User Name",
-    "customer_name": "New User's Company"
+    "company_name": "New User's Company"
   }
 }
 ```
@@ -216,3 +216,51 @@ Updates a cost estimate.
 ### AI Analyses (`/api/ai_analyses`)
 
 *Follows a similar authorization pattern to Cost Estimates.*
+
+---
+
+### Time Entries (`/api/time_entries`)
+
+These endpoints are for developers to track time spent on projects.
+
+| Method | Path | Description | Access Level |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/time_entries` | List time entries. Can be filtered. | Developer Only |
+| `POST` | `/api/time_entries` | Create a new time entry. | Developer Only |
+| `GET` | `/api/time_entries/:id` | Get a specific time entry. | Owner Developer Only |
+| `PUT` | `/api/time_entries/:id` | Update a specific time entry. | Owner Developer Only |
+| `DELETE`| `/api/time_entries/:id` | Delete a specific time entry. | Owner Developer Only |
+
+#### `POST /api/time_entries`
+
+Creates a new time entry for a developer on a specific project.
+
+**Example Request Body**
+```json
+{
+  "time_entry": {
+    "developer_id": "usr_dev123",
+    "project_id": "brief_abc456",
+    "start_time": "2025-08-11T09:00:00Z",
+    "end_time": "2025-08-11T10:30:00Z",
+    "description": "Initial project setup and configuration."
+  }
+}
+```
+
+**Example Response (`201 Created`)**
+
+The response will be the newly created time entry object.
+
+#### `PUT /api/time_entries/:id`
+
+Updates a time entry. Only the owner developer can update their own entries.
+
+**Example Request Body**
+```json
+{
+  "time_entry": {
+    "description": "Updated description for the time entry."
+  }
+}
+```
