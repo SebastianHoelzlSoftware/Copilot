@@ -25,6 +25,19 @@ defmodule Copilot.Core.TimeTrackingTest do
       assert TimeTracking.list_time_entries_for_project(project1) == [time_entry1]
     end
 
+    test "list_time_entries_for_developer/1 returns time entries for a specific developer" do
+      developer1 = developer_fixture()
+      developer2 = developer_fixture(%{email: "dev2@example.com"})
+      project = project_brief_fixture()
+
+      time_entry1 = time_entry_fixture(%{developer: developer1, project: project})
+      _time_entry2 = time_entry_fixture(%{developer: developer2, project: project})
+
+      [result_entry] = TimeTracking.list_time_entries_for_developer(developer1)
+      assert result_entry.id == time_entry1.id
+      assert result_entry.project.id == project.id
+    end
+
     test "get_time_entry!/1 returns the time_entry with given id" do
       time_entry = time_entry_fixture()
       assert TimeTracking.get_time_entry!(time_entry.id) == time_entry
@@ -79,5 +92,10 @@ defmodule Copilot.Core.TimeTrackingTest do
       assert {:ok, %TimeEntry{}} = TimeTracking.delete_time_entry(time_entry)
       assert_raise Ecto.NoResultsError, fn -> TimeTracking.get_time_entry!(time_entry.id) end
     end
+  end
+
+  test "change_time_entry/1 returns a time_entry changeset" do
+    time_entry = time_entry_fixture()
+    assert %Ecto.Changeset{} = TimeTracking.change_time_entry(time_entry)
   end
 end

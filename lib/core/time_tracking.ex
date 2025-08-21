@@ -67,6 +67,25 @@ defmodule Copilot.Core.TimeTracking do
   end
 
   @doc """
+  Returns the list of time_entries for a given developer.
+  """
+  def list_time_entries_for_developer(developer) do
+    TimeEntry
+    |> where([t], t.developer_id == ^developer.id)
+    |> order_by(desc: :start_time)
+    |> preload([:project])
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking time_entry changes.
+
+  """
+  def change_time_entry(%TimeEntry{} = time_entry, attrs \\ %{}) do
+    TimeEntry.changeset(time_entry, attrs)
+  end
+
+  @doc """
   Gets a single time_entry.
 
   Raises `Ecto.NoResultsError` if the Time entry does not exist.

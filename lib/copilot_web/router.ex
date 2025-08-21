@@ -1,6 +1,9 @@
 defmodule CopilotWeb.Router do
   use CopilotWeb, :router
 
+  
+
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -40,12 +43,17 @@ defmodule CopilotWeb.Router do
 
     live "/", PageLive, :index
     live "/info", InfoLive, :index
+
+    live_session :protected, on_mount: {CopilotWeb.Live.Auth, :default} do
+      live "/time-entries", Live.TimeEntryLive.Index, :index
+    end
   end
 
   # Public API routes
   scope "/api", CopilotWeb do
     pipe_through :public_api
     post "/register", RegistrationController, :create
+
   end
 
   scope "/api", CopilotWeb do
