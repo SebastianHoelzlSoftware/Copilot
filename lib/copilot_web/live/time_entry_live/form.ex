@@ -74,7 +74,7 @@ defmodule CopilotWeb.Live.TimeEntryLive.Form do
         {:noreply,
          socket
          |> put_flash(:info, "Time entry created successfully.")
-         |> push_navigate(to: ~p"/time-entries")}
+         |> redirect(to: ~p"/time-entries")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
