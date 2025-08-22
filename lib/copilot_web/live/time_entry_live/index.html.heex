@@ -4,7 +4,7 @@
       Time Entries
     </h1>
     <div class="ml-4 mt-0 flex-shrink-0">
-      <.link navigate={~p"/time_entries/new"}>
+      <.link navigate={~p"/time-entries/new"}>
         <.button>New Time entry</.button>
       </.link>
     </div>
@@ -20,9 +20,15 @@
     <:col :let={{_id, time_entry}} label="Description"><%= time_entry.description %></:col>
     <:col :let={{_id, time_entry}} label="Actions">
       <div class="flex items-center space-x-4 text-sm">
-        <.link navigate={~p"/time_entries/#{time_entry}"} class="text-indigo-600 hover:text-indigo-900 font-medium">Show</.link>
-        <.link navigate={~p"/time_entries/#{time_entry}/edit"} class="text-indigo-600 hover:text-indigo-900 font-medium">Edit</.link>
-        <.link phx-click="delete" phx-value-id={time_entry.id} data-confirm="Are you sure?" class="text-red-600 hover:text-red-900 font-medium">Delete</.link>
+        <.link navigate={~p"/api/time_entries/#{time_entry}"} class="text-indigo-600 hover:text-indigo-900 font-medium">
+          <.icon name="hero-eye" class="h-5 w-5" />
+        </.link>
+        <.link navigate={~p"/time-entries"} class="text-indigo-600 hover:text-indigo-900 font-medium">
+          <.icon name="hero-pencil" class="h-5 w-5" />
+        </.link>
+        <.link phx-click="delete" phx-value-id={time_entry.id} data-confirm="Are you sure?" class="text-red-600 hover:text-red-900 font-medium">
+          <.icon name="hero-trash" class="h-5 w-5" />
+        </.link>
       </div>
     </:col>
   </.table>
