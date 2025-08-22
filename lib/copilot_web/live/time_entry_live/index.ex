@@ -2,7 +2,6 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
   use CopilotWeb, :live_view
 
   alias Copilot.Core.TimeTracking
-  alias Copilot.Core.TimeTracking.TimeEntry
   import CopilotWeb.Components.CoreComponents
 
   @impl true

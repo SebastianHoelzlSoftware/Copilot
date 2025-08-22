@@ -357,6 +357,47 @@ defmodule CopilotWeb.Components.CoreComponents do
   end
 
   @doc """
+  Renders a list of items.
+  """
+  attr :rest, :global
+  slot :item, required: true do
+    attr :title, :string
+  end
+
+  def list(assigns) do
+    ~H"""
+    <div class="border-t border-gray-200 px-4 py-5 sm:p-0">
+      <dl class="sm:divide-y sm:divide-gray-200">
+        <%= for item <- @item do %>
+          <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+            <dt class="text-sm font-medium text-gray-500"><%= item.title %></dt>
+            <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+              <%= render_slot(item) %>
+            </dd>
+          </div>
+        <% end %>
+      </dl>
+    </div>
+    """
+  end
+
+  @doc """
+  Renders a back link.
+  """
+  attr :navigate, :string, required: true
+  slot :inner_block, required: true
+
+  def back(assigns) do
+    ~H"""
+    <div class="mt-8">
+      <.link navigate={@navigate} class="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-900">
+        &larr; <%= render_slot(@inner_block) %>
+      </.link>
+    </div>
+    """
+  end
+
+  @doc """
   Renders a [Heroicon](https://heroicons.com).
 
   Heroicons come in three styles – outline, solid, and mini.

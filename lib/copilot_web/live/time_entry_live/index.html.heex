@@ -20,7 +20,7 @@
     <:col :let={{_id, time_entry}} label="Description"><%= time_entry.description %></:col>
     <:col :let={{_id, time_entry}} label="Actions">
       <div class="flex items-center space-x-4 text-sm">
-        <.link navigate={~p"/api/time_entries/#{time_entry}"} class="text-indigo-600 hover:text-indigo-900 font-medium">
+        <.link navigate={~p"/time-entries/#{time_entry}"} class="text-indigo-600 hover:text-indigo-900 font-medium">
           <.icon name="hero-eye" class="h-5 w-5" />
         </.link>
         <.link navigate={~p"/time-entries"} class="text-indigo-600 hover:text-indigo-900 font-medium">

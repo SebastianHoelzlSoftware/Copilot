@@ -1,0 +1,13 @@
+<.header>
+  Time Entry Details
+</.header>
+
+<.list>
+  <:item title="Developer"><%= @time_entry.developer.name %></:item>
+  <:item title="Project"><%= @time_entry.project.title %></:item>
+  <:item title="Start Time"><%= @time_entry.start_time %></:item>
+  <:item title="End Time"><%= @time_entry.end_time %></:item>
+  <:item title="Description"><%= @time_entry.description %></:item>
+</.list>
+
+<.back navigate={~p"/time-entries"}>Back to Time Entries</.back>
