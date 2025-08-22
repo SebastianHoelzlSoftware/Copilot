@@ -85,6 +85,7 @@ defmodule CopilotWeb do
       # Import LiveView helpers (render, live_render, live_component, etc.)
       import Phoenix.LiveView.Helpers
       import CopilotWeb.Components.CoreComponents
+      import CopilotWeb.Helpers.TimeHelper
       import CopilotWeb.Gettext
       unquote(verified_routes())
     end
