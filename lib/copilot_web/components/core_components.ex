@@ -20,9 +20,9 @@ defmodule CopilotWeb.Components.CoreComponents do
           </a>
         </div>
         <div class="hidden lg:flex lg:gap-x-12">
-          <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Features</a>
-          <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Marketplace</a>
-          <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Company</a>
+          <a href="/" class="text-sm font-semibold leading-6 text-gray-900">Home</a>
+          <a href="/time-tracking" class="text-sm font-semibold leading-6 text-gray-900">Time Tracking</a>
+          <a href="/info" class="text-sm font-semibold leading-6 text-gray-900">Info Page</a>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end">
           <%= if @current_user do %>

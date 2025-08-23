@@ -1427,12 +1427,12 @@ select {
   padding-left: 4rem;
 }
 
-.pt-14 {
-  padding-top: 3.5rem;
-}
-
 .pl-4 {
   padding-left: 1rem;
+}
+
+.pt-14 {
+  padding-top: 3.5rem;
 }
 
 .text-left {

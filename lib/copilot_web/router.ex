@@ -45,9 +45,9 @@ defmodule CopilotWeb.Router do
     live "/info", InfoLive, :index
 
     live_session :protected, on_mount: {CopilotWeb.Live.Auth, :default} do
-      live "/time-entries", Live.TimeEntryLive.Index, :index
-      live "/time-entries/new", Live.TimeEntryLive.Form, :new
-      live "/time-entries/:id", Live.TimeEntryLive.Show, :show
+      live "/time-tracking", Live.TimeEntryLive.Index, :index
+      live "/time-tracking/new", Live.TimeEntryLive.Form, :new
+      live "/time-tracking/:id", Live.TimeEntryLive.Show, :show
     end
   end
 
