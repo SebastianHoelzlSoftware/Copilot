@@ -325,6 +325,7 @@ defmodule CopilotWeb.Components.CoreComponents do
 
   slot :col, required: true do
     attr :label, :string
+    attr :class, :string
   end
 
   def table(assigns) do
@@ -334,7 +335,7 @@ defmodule CopilotWeb.Components.CoreComponents do
         <thead class="bg-gray-50">
           <tr>
             <%= for col <- @col do %>
-              <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th scope="col" class={"px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider #{Map.get(col, :class, "")}"}>
                 <%= col.label %>
               </th>
             <% end %>
@@ -344,7 +345,7 @@ defmodule CopilotWeb.Components.CoreComponents do
           <%= for row <- @rows do %>
             <tr>
               <%= for col <- @col do %>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class={["px-6 py-4 whitespace-nowrap text-sm text-gray-500", Map.get(col, :class, "")]}>
                   <%= render_slot(col, row) %>
                 </td>
               <% end %>

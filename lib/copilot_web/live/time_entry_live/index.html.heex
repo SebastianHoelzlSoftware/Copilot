@@ -17,7 +17,7 @@
     <:col :let={{_id, time_entry}} label="Project"><%= time_entry.project.title %></:col>
     <:col :let={{_id, time_entry}} label="Start Time"><%= format_datetime(time_entry.start_time) %></:col>
     <:col :let={{_id, time_entry}} label="End Time"><%= format_datetime(time_entry.end_time) %></:col>
-    <:col :let={{_id, time_entry}} label="Description"><%= time_entry.description %></:col>
+    <:col :let={{_id, time_entry}} label="Description" class="max-w-[250px] truncate"><%= time_entry.description %></:col>
     <:col :let={{_id, time_entry}} label="Actions">
       <div class="flex items-center space-x-4 text-sm">
         <.link navigate={~p"/time-tracking/#{time_entry}"} class="text-indigo-600 hover:text-indigo-900 font-medium">
