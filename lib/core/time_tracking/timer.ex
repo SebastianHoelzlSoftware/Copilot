@@ -53,6 +53,8 @@ defmodule Copilot.Core.TimeTracking.Timer do
 
     case TimeTracking.create_time_entry(attrs) do
       {:ok, time_entry} ->
+        # Preload the developer and project associations before broadcasting
+        time_entry = Copilot.Repo.preload(time_entry, [:developer, :project])
         Phoenix.PubSub.broadcast(Copilot.PubSub, "user_timers:#{state.user_id}", %{event: "stopped", payload: %{time_entry: time_entry}})
 
       {:error, changeset} ->
