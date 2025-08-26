@@ -19,9 +19,9 @@ defmodule CopilotWeb.Plugs.DevAuth do
 
         [] ->
           %{
-            "provider_id" => "dev-user-123",
-            "email" => "developer@example.com",
-            "name" => "Dev User",
+            "provider_id" => "dev-seed-001",
+            "email" => "dev@copilot.com",
+            "name" => "Copilot Developer",
             "roles" => ["developer", "user"]
           }
       end

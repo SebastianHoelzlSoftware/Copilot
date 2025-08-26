@@ -8,7 +8,7 @@ defmodule CopilotWeb.Plugs.DevAuthTest do
     [user_info] = get_req_header(conn, "x-user-info")
     decoded = Jason.decode!(user_info)
 
-    assert decoded["email"] == "developer@example.com"
+    assert decoded["email"] == "dev@copilot.com"
     assert "developer" in decoded["roles"]
   end
 

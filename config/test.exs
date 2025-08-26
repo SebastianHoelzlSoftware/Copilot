@@ -18,7 +18,13 @@ config :copilot, Copilot.Repo,
 config :copilot, CopilotWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
   secret_key_base: "rDI5KIsJnFQVzvk3xiU0ZB1cE//jTHNixe1DXQKkqwYQgVSRGVhpU3y3+BbJOdR+",
-  server: false
+  server: false,
+  session: [
+    store: :cookie,
+    key: "_copilot_key",
+    signing_salt: "alksjdhuöwjnbrjasdfkjj#p+aweufp9o8327z489uihwea8s"
+  ],
+  live_view: [signing_salt: "alksjdhuöwjnbrjasdfkjj#p+aweufp9o8327z489uihwea8s"]
 
 # In test we don't send emails
 config :copilot, Copilot.Mailer, adapter: Swoosh.Adapters.Test

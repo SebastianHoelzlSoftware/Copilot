@@ -3,11 +3,12 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
 
   alias Copilot.Core.TimeTracking
   alias Copilot.Core.Briefs
+  alias Copilot.Repo
   import CopilotWeb.Components.CoreComponents
 
   @impl true
   def mount(_params, _session, socket) do
-    developer = socket.assigns.current_user
+    developer = Repo.preload(socket.assigns.current_user, :customer)
     projects = Briefs.list_project_briefs_for_developer(developer)
 
     if connected?(socket) do
