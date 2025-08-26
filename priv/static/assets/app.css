@@ -1125,10 +1125,6 @@ select {
   max-width: 36rem;
 }
 
-.max-w-\[50px\] {
-  max-width: 50px;
-}
-
 .flex-none {
   flex: none;
 }
@@ -1173,6 +1169,10 @@ select {
 
 .animate-spin {
   animation: spin 1s linear infinite;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
 }
 
 .grid-cols-1 {
@@ -1299,6 +1299,11 @@ select {
 .bg-emerald-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(236 253 245 / var(--tw-bg-opacity));
+}
+
+.bg-gray-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
 }
 
 .bg-gray-50 {

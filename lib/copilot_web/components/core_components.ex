@@ -306,12 +306,22 @@ defmodule CopilotWeb.Components.CoreComponents do
   @doc """
   Renders a button.
   """
+  attr :disabled, :boolean, default: false
   slot :inner_block, required: true
   attr :rest, :global
 
   def button(assigns) do
+    assigns =
+      assign_new(assigns, :class, fn ->
+        if assigns.disabled do
+          "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-gray-400 cursor-not-allowed"
+        else
+          "inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        end
+      end)
+
     ~H"""
-    <button {@rest} class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+    <button disabled={@disabled} class={@class} {@rest}>
       <%= render_slot(@inner_block) %>
     </button>
     """

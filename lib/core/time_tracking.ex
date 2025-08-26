@@ -7,6 +7,7 @@ defmodule Copilot.Core.TimeTracking do
   alias Copilot.Repo
 
   alias Copilot.Core.Data.TimeEntry
+  alias Copilot.Core.TimeTracking.Supervisor
 
   @doc """
   Returns the list of time_entries.
@@ -142,5 +143,24 @@ defmodule Copilot.Core.TimeTracking do
   """
   def delete_time_entry(%TimeEntry{} = time_entry) do
     Repo.delete(time_entry)
+  end
+
+  def start_timer(user_id, description, project_id) do
+    Supervisor.start_timer(user_id, description, project_id)
+  end
+
+  def stop_timer(user_id) do
+    Supervisor.stop_timer(user_id)
+  end
+
+  def update_timer_description(user_id, description) do
+    Supervisor.update_timer_description(user_id, description)
+  end
+
+  def is_timer_running?(user_id) do
+    case Registry.lookup(Copilot.Registry, {"timer", user_id}) do
+      [{pid, _}] when is_pid(pid) -> true
+      [] -> false
+    end
   end
 end

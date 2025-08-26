@@ -34,6 +34,8 @@ defmodule Copilot.Application do
       Copilot.Repo,
       CopilotWeb.Telemetry,
       {Phoenix.PubSub, name: Copilot.PubSub},
+      {Registry, [keys: :unique, name: Copilot.Registry]},
+      Copilot.Core.TimeTracking.Supervisor,
       CopilotWeb.Endpoint
     ]
 

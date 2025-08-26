@@ -32,6 +32,17 @@ defmodule Copilot.Core.Briefs do
   end
 
   @doc """
+  Returns the list of project_briefs for a given developer.
+  """
+  def list_project_briefs_for_developer(developer) do
+    if developer.customer_id do
+      list_project_briefs_for_customer(developer.customer)
+    else
+      []
+    end
+  end
+
+  @doc """
   Gets a single project_brief.
 
   Raises `Ecto.NoResultsError` if the Project brief does not exist.
