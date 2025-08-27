@@ -10,6 +10,14 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
   def mount(_params, _session, socket) do
     developer = Repo.preload(socket.assigns.current_user, :customer)
     projects = Briefs.list_project_briefs_for_developer(developer)
+    timer_running? = TimeTracking.is_timer_running?(developer.id)
+
+    description =
+      if timer_running? do
+        TimeTracking.get_timer_description(developer.id)
+      else
+        ""
+      end
 
     if connected?(socket) do
       Phoenix.PubSub.subscribe(Copilot.PubSub, "user_timers:#{developer.id}")
@@ -21,9 +29,9 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
       |> assign(
         projects: projects,
         selected_project_id: (if not Enum.empty?(projects), do: List.first(projects).id, else: nil),
-        timer_running?: TimeTracking.is_timer_running?(developer.id),
+        timer_running?: timer_running?,
         elapsed_time: "00:00:00",
-        description: ""
+        description: description
       )
 
     {:ok, socket}

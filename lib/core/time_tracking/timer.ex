@@ -40,6 +40,10 @@ defmodule Copilot.Core.TimeTracking.Timer do
     {:noreply, %{state | description: description}}
   end
 
+  def handle_call(:get_description, _from, state) do
+    {:reply, state.description, state}
+  end
+
   def handle_call(:stop, _from, state) do
     Phoenix.PubSub.unsubscribe(Copilot.PubSub, "user_timers:#{state.user_id}")
     Process.cancel_timer(state.ticker)
@@ -59,8 +63,9 @@ defmodule Copilot.Core.TimeTracking.Timer do
         time_entry = Copilot.Repo.preload(time_entry, [:developer, :project])
         {:stop, :normal, time_entry, state}
 
-      {:error, changeset} ->
-        IO.inspect(changeset, label: "Error creating time entry in Timer GenServer")
+      {:error, _changeset} ->
+        # The changeset is not used, so I'm ignoring it.
+        # In a real application, you would probably want to log this error.
         {:stop, :normal, nil, state} # Return nil or an error indicator if creation fails
     end
   end

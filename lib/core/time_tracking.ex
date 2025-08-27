@@ -158,6 +158,10 @@ defmodule Copilot.Core.TimeTracking do
     TimerSupervisor.update_timer_description(user_id, description)
   end
 
+  def get_timer_description(user_id) do
+    TimerSupervisor.get_timer_description(user_id)
+  end
+
   def is_timer_running?(user_id) do
     case Registry.lookup(Copilot.Registry, {"timer", user_id}) do
       [{pid, _}] when is_pid(pid) -> true

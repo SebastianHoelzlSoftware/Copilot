@@ -24,12 +24,13 @@
     </div>
     <div class="flex-grow">
       <form phx-submit="start_timer" phx-change="update_description" class="w-full">
-        <.input
+                <.input
           id="description-input"
           type="text"
           name="description"
           value={@description}
           placeholder="What are you working on?"
+          disabled={@timer_running?}
         />
       </form>
     </div>
