@@ -69,8 +69,7 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
 
     socket =
       if time_entry do
-        time_entries = TimeTracking.list_time_entries_for_developer(developer)
-        stream(socket, :time_entries, time_entries)
+        stream(socket, :time_entries, TimeTracking.list_time_entries_for_developer(developer))
       else
         # You might want to add a flash message here to notify the user
         # that saving the time entry failed.
