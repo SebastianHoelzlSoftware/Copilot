@@ -12,7 +12,6 @@ defmodule CopilotWeb.PageLive do
         nil
       end
 
-    IO.inspect(current_user, label: "CURRENT USER in PageLive mount")
     {:ok, assign(socket, :current_user, current_user)}
   end
 

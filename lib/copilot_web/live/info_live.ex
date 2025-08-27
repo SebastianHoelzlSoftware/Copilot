@@ -11,7 +11,6 @@ defmodule CopilotWeb.InfoLive do
         nil
       end
 
-    IO.inspect(current_user, label: "CURRENT USER in Info live mount")
     {:ok, assign(socket, :current_user, current_user)}
   end
 

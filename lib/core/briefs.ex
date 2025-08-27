@@ -25,7 +25,6 @@ defmodule Copilot.Core.Briefs do
   Returns the list of project_briefs for a given customer.
   """
     def list_project_briefs_for_developer(developer) do
-    IO.inspect(developer, label: "DEVELOPER IN BRIEFS")
     if developer.customer_id do
       list_project_briefs_for_customer(developer.customer)
     else
@@ -101,12 +100,10 @@ defmodule Copilot.Core.Briefs do
   end
 
   def list_project_briefs_for_customer(customer) do
-    IO.inspect(customer, label: "CUSTOMER IN BRIEFS")
     projects = ProjectBrief
     |> where([p], p.customer_id == ^customer.id)
     |> Repo.all()
     |> Repo.preload(:customer)
-    IO.inspect(projects, label: "PROJECTS FROM CUSTOMER")
     projects
   end
 end

@@ -58,9 +58,7 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
 
   def handle_event("stop_timer", _, socket) do
     developer = socket.assigns.current_user
-    IO.inspect(developer, label: "DEVELOPER IN STOP TIMER")
     time_entry = TimeTracking.stop_timer(developer.id)
-    IO.inspect(time_entry, label: "TIME ENTRY")
 
     socket =
       assign(socket,
@@ -72,7 +70,6 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
     socket =
       if time_entry do
         time_entries = TimeTracking.list_time_entries_for_developer(developer)
-        IO.inspect(time_entries, label: "TIME ENTRIES IN STOP TIMER")
         stream(socket, :time_entries, time_entries)
       else
         # You might want to add a flash message here to notify the user
@@ -85,7 +82,6 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
 
   @impl true
   def handle_info(%{event: "tick", payload: %{elapsed_seconds: elapsed_seconds}}, socket) do
-    IO.inspect("INDEX GOT TICK")
     elapsed_time = format_time(elapsed_seconds)
     {:noreply, assign(socket, :elapsed_time, elapsed_time)}
   end

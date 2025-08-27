@@ -8,7 +8,6 @@ defmodule Copilot.Core.TimeTracking do
 
   alias Copilot.Core.Data.TimeEntry
   alias Copilot.Core.TimeTracking.TimerSupervisor
-  alias Copilot.Core.TimeTracking.Timer
 
 
   @doc """
