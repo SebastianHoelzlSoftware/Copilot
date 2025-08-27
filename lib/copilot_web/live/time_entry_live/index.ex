@@ -58,6 +58,7 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
 
   def handle_event("stop_timer", _, socket) do
     developer = socket.assigns.current_user
+    IO.inspect(developer, label: "DEVELOPER IN STOP TIMER")
     time_entry = TimeTracking.stop_timer(developer.id)
     IO.inspect(time_entry, label: "TIME ENTRY")
 
@@ -70,7 +71,9 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
 
     socket =
       if time_entry do
-        stream_insert(socket, :time_entries, time_entry, at: 0)
+        time_entries = TimeTracking.list_time_entries_for_developer(developer)
+        IO.inspect(time_entries, label: "TIME ENTRIES IN STOP TIMER")
+        stream(socket, :time_entries, time_entries)
       else
         # You might want to add a flash message here to notify the user
         # that saving the time entry failed.
