@@ -58,26 +58,33 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
 
   def handle_event("stop_timer", _, socket) do
     developer = socket.assigns.current_user
-    TimeTracking.stop_timer(developer.id)
-    {:noreply, socket}
-  end
+    time_entry = TimeTracking.stop_timer(developer.id)
+    IO.inspect(time_entry, label: "TIME ENTRY")
 
-  @impl true
-  def handle_info(%{event: "tick", payload: %{elapsed_seconds: elapsed_seconds}}, socket) do
-    elapsed_time = format_time(elapsed_seconds)
-    {:noreply, assign(socket, :elapsed_time, elapsed_time)}
-  end
-
-  def handle_info(%{event: "stopped", payload: %{time_entry: time_entry}}, socket) do
     socket =
       assign(socket,
         timer_running?: false,
         elapsed_time: "00:00:00",
         description: ""
       )
-      |> stream_insert(:time_entries, time_entry, at: 0)
+
+    socket =
+      if time_entry do
+        stream_insert(socket, :time_entries, time_entry, at: 0)
+      else
+        # You might want to add a flash message here to notify the user
+        # that saving the time entry failed.
+        socket
+      end
 
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info(%{event: "tick", payload: %{elapsed_seconds: elapsed_seconds}}, socket) do
+    IO.inspect("INDEX GOT TICK")
+    elapsed_time = format_time(elapsed_seconds)
+    {:noreply, assign(socket, :elapsed_time, elapsed_time)}
   end
 
   defp format_time(total_seconds) do

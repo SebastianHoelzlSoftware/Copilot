@@ -1,4 +1,4 @@
-defmodule Copilot.Core.TimeTracking.Supervisor do
+defmodule Copilot.Core.TimeTracking.TimerSupervisor do
   use DynamicSupervisor
 
   def start_link(arg) do
@@ -21,7 +21,7 @@ defmodule Copilot.Core.TimeTracking.Supervisor do
   end
 
   def stop_timer(user_id) do
-    GenServer.cast(Copilot.Core.TimeTracking.Timer.via_tuple(user_id), :stop)
+    GenServer.call(Copilot.Core.TimeTracking.Timer.via_tuple(user_id), :stop)
   end
 
   def update_timer_description(user_id, description) do

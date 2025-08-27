@@ -4,11 +4,13 @@ defmodule Copilot.Core.TimeTracking.Timer do
   alias Copilot.Core.TimeTracking
 
   def start_link(opts) do
+    IO.inspect("TIMER START LINK CALLED")
     user_id = Keyword.fetch!(opts, :user_id)
     GenServer.start_link(__MODULE__, opts, name: via_tuple(user_id))
   end
 
   def init(opts) do
+    IO.inspect("TIMER INIT CALLED")
     user_id = Keyword.fetch!(opts, :user_id)
     description = Keyword.get(opts, :description, "")
     project_id = Keyword.fetch!(opts, :project_id)
@@ -40,7 +42,10 @@ defmodule Copilot.Core.TimeTracking.Timer do
     {:noreply, %{state | description: description}}
   end
 
-  def handle_cast(:stop, state) do
+  def handle_call(:stop, _from, state) do
+    Phoenix.PubSub.unsubscribe(Copilot.PubSub, "user_timers:#{state.user_id}")
+    Process.cancel_timer(state.ticker)
+    IO.inspect("TICKER PROCESS CANCELLED")
     end_time = DateTime.utc_now()
 
     attrs = %{
@@ -53,15 +58,16 @@ defmodule Copilot.Core.TimeTracking.Timer do
 
     case TimeTracking.create_time_entry(attrs) do
       {:ok, time_entry} ->
-        # Preload the developer and project associations before broadcasting
+        IO.inspect("CREATE TIME ENTRY SUCCESSFUL")
+        # Preload the developer and project associations before returning
         time_entry = Copilot.Repo.preload(time_entry, [:developer, :project])
-        Phoenix.PubSub.broadcast(Copilot.PubSub, "user_timers:#{state.user_id}", %{event: "stopped", payload: %{time_entry: time_entry}})
+        {:stop, :normal, time_entry, state}
 
       {:error, changeset} ->
+        IO.inspect("CREATE TIME ENTRY FAILED")
         IO.inspect(changeset, label: "Error creating time entry in Timer GenServer")
+        {:stop, :normal, nil, state} # Return nil or an error indicator if creation fails
     end
-
-    {:stop, :normal, state}
   end
 
   def via_tuple(user_id) do

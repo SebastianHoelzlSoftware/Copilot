@@ -5,6 +5,7 @@ defmodule Copilot.Application do
 
   use Application
   require Logger
+  alias Copilot.Core.TimeTracking.TimerSupervisor
 
   @impl true
   def start(_type, _args) do
@@ -34,8 +35,8 @@ defmodule Copilot.Application do
       Copilot.Repo,
       CopilotWeb.Telemetry,
       {Phoenix.PubSub, name: Copilot.PubSub},
+      {TimerSupervisor, []},
       {Registry, [keys: :unique, name: Copilot.Registry]},
-      Copilot.Core.TimeTracking.Supervisor,
       CopilotWeb.Endpoint
     ]
 
