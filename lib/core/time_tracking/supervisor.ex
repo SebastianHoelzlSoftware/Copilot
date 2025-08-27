@@ -10,11 +10,14 @@ defmodule Copilot.Core.TimeTracking.TimerSupervisor do
   end
 
   def start_timer(user_id, description, project_id) do
-    spec = {
-      Copilot.Core.TimeTracking.Timer,
-      user_id: user_id,
-      description: description,
-      project_id: project_id
+    spec = %{
+      id: {Copilot.Core.TimeTracking.Timer, user_id},
+      start: {
+        Copilot.Core.TimeTracking.Timer,
+        :start_link,
+        [[user_id: user_id, description: description, project_id: project_id]]
+      },
+      restart: :temporary
     }
 
     DynamicSupervisor.start_child(__MODULE__, spec)
