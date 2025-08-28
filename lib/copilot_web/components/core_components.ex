@@ -11,7 +11,7 @@ defmodule CopilotWeb.Components.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class="bg-white shadow-md">
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-md">
       <nav class="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
         <div class="flex lg:flex-1">
           <a href="/" class="-m-1.5 p-1.5">
@@ -20,15 +20,15 @@ defmodule CopilotWeb.Components.CoreComponents do
           </a>
         </div>
         <div class="hidden lg:flex lg:gap-x-12">
-          <a href="/" class="text-sm font-semibold leading-6 text-gray-900">Home</a>
-          <a href="/time-tracking" class="text-sm font-semibold leading-6 text-gray-900">Time Tracking</a>
-          <a href="/info" class="text-sm font-semibold leading-6 text-gray-900">Info Page</a>
+          <a href="/" class="text-sm font-semibold leading-6 text-white">Home</a>
+          <a href="/time-tracking" class="text-sm font-semibold leading-6 text-white">Time Tracking</a>
+          <a href="/info" class="text-sm font-semibold leading-6 text-white">Info Page</a>
         </div>
         <div class="hidden lg:flex lg:flex-1 lg:justify-end">
           <%= if @current_user do %>
-            <a href="#" class="text-sm font-semibold leading-6 text-gray-900"><%= @current_user.email %></a>
+            <a href="#" class="text-sm font-semibold leading-6 text-white"><%= @current_user.email %></a>
           <% else %>
-            <a href="#" class="text-sm font-semibold leading-6 text-gray-900">Log in <span aria-hidden="true">&rarr;</span></a>
+            <a href="#" class="text-sm font-semibold leading-6 text-white">Log in <span aria-hidden="true">&rarr;</span></a>
           <% end %>
         </div>
       </nav>

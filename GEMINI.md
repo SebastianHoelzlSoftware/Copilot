@@ -3,6 +3,10 @@
 * An external API Test (with different scenarios) can be run via the shell alias `copilot_apitest`.
 * The project's latest Jira tasks will beexported as `yyyymmddhhmm_jira_export.xml` in the `.jira` folder in the project's root directory. The directory might be empty or not up to date always. But you can check there to talk about current tasks. To read those files, keep in mind that the `.jira` folder was added to the `.gitignore` file. And your glob tool usually respects the exclusions done by `.gitignore`. And another reminder concering your readd access to this directory: Your tool is telling you that the path `~\.jira\*_jira_export.xml is not within the project's root directory. You might find this is unexpected, as the glob tool returns this path.
 
+Important: You are messing up you replace call for files very often and display this message:
+"I messed up the replace call, using newContent instead of new_string. I'll fix that and retry."
+Maybe you can already rethink you replace strategy when you read this line so we can save time :)
+
 # Project Overview
 
 This is an Elixir/Phoenix API and LiveView project.
