@@ -32,7 +32,7 @@ defmodule CopilotWeb.PageLive do
             <p class="mt-6 text-lg leading-8 text-gray-600">From initial concept to detailed cost estimates, our AI-driven platform streamlines your project planning, ensuring accuracy and efficiency every step of the way.</p>
             <div class="mt-10 flex items-center justify-center gap-x-6">
               <a href="#" class="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Get started</a>
-              <a href="#" phx-click="navigate_to_info" class="text-sm font-semibold leading-6 text-gray-900">Login <span aria-hidden="true">→</span></a>
+              <a href="#" phx-click="navigate_to_time_tracking" class="text-sm font-semibold leading-6 text-gray-900">Login <span aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
@@ -122,7 +122,7 @@ defmodule CopilotWeb.PageLive do
     """
   end
 
-  def handle_event("navigate_to_info", _value, socket) do
-    {:noreply, push_navigate(socket, to: "/info")}
+  def handle_event("navigate_to_time_tracking", _value, socket) do
+    {:noreply, push_navigate(socket, to: "/time-tracking")}
   end
 end
