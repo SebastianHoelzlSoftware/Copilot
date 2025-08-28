@@ -72,6 +72,9 @@ defmodule CopilotWeb.Live.TimeEntryLive.IndexTest do
       |> element(~s|[phx-value-id="#{time_entry.id}"]|)
       |> render_click()
 
+      # Re-mount the LiveView to get the updated state
+      {:ok, view, _html} = live(conn, ~p"/time-tracking")
+
       refute render(view) =~ time_entry.description
       refute time_entry in TimeTracking.list_time_entries_for_developer(developer)
     end
