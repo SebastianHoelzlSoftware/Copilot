@@ -42,7 +42,10 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
     time_entry = TimeTracking.get_time_entry!(id)
     {:ok, _} = TimeTracking.delete_time_entry(time_entry)
 
-    {:noreply, stream_delete(socket, :time_entries, time_entry)}
+    developer = socket.assigns.current_user
+    socket = stream(socket, :time_entries, TimeTracking.list_time_entries_for_developer(developer))
+
+    {:noreply, socket}
   end
 
   def handle_event("select_project", %{"project_id" => project_id}, socket) do
