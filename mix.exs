@@ -50,7 +50,8 @@ defmodule Copilot.MixProject do
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
       {:heroicons, "~> 0.5"},
-      {:phoenix_live_reload, "~> 1.2", only: :dev}
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:floki, ">= 0.30.0", only: :test}
     ]
   end
 
