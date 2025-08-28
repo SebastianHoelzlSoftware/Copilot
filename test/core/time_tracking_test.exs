@@ -92,10 +92,10 @@ defmodule Copilot.Core.TimeTrackingTest do
       assert {:ok, %TimeEntry{}} = TimeTracking.delete_time_entry(time_entry)
       assert_raise Ecto.NoResultsError, fn -> TimeTracking.get_time_entry!(time_entry.id) end
     end
-  end
 
-  test "change_time_entry/1 returns a time_entry changeset" do
-    time_entry = time_entry_fixture()
-    assert %Ecto.Changeset{} = TimeTracking.change_time_entry(time_entry)
+    test "change_time_entry/1 returns a time_entry changeset" do
+      time_entry = time_entry_fixture()
+      assert %Ecto.Changeset{} = TimeTracking.change_time_entry(time_entry)
+    end
   end
 end
