@@ -56,7 +56,7 @@
         <.link navigate={~p"/time-tracking/#{time_entry}"} class="text-indigo-600 hover:text-indigo-900 font-medium">
           <.icon name="hero-eye" class="h-5 w-5" />
         </.link>
-        <.link navigate={~p"/time-tracking"} class="text-indigo-600 hover:text-indigo-900 font-medium">
+        <.link navigate={~p"/time-tracking/#{time_entry.id}/edit"} class="text-indigo-600 hover:text-indigo-900 font-medium">
           <.icon name="hero-pencil" class="h-5 w-5" />
         </.link>
         <.link phx-click="delete" phx-value-id={time_entry.id} data-confirm="Are you sure?" class="text-red-600 hover:text-red-900 font-medium">
