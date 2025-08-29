@@ -59,7 +59,7 @@
         <.link navigate={~p"/time-tracking/#{time_entry.id}/edit"} class="text-indigo-600 hover:text-indigo-900 font-medium">
           <.icon name="hero-pencil" class="h-5 w-5" />
         </.link>
-        <.link phx-click="delete" phx-value-id={time_entry.id} data-confirm="Are you sure?" class="text-red-600 hover:text-red-900 font-medium">
+        <.link phx-click="delete" phx-value-id={time_entry.id} data-confirm={"Are you sure to delete the following time entry?\n\nDescription: '#{time_entry.description}'\nStart time: #{format_datetime(time_entry.start_time)}\nEnd time: #{format_datetime(time_entry.end_time)}\nProject: #{time_entry.project.title}"} class="text-red-600 hover:text-red-900 font-medium">
           <.icon name="hero-trash" class="h-5 w-5" />
         </.link>
       </div>
