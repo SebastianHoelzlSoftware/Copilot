@@ -28,21 +28,23 @@ defmodule CopilotWeb.Live.TimeEntryLive.Form do
   def mount(_params, _session, socket) do
     now = DateTime.utc_now() |> DateTime.truncate(:second)
     one_hour_later = DateTime.add(now, 3600, :second)
+    projects = Briefs.list_project_briefs()
+    default_project_id = if not Enum.empty?(projects), do: List.first(projects).id, else: nil
 
     initial_time_entry = %TimeEntry{
       start_time: now,
-      end_time: one_hour_later
+      end_time: one_hour_later,
+      project_id: default_project_id
     }
 
     changeset = TimeTracking.change_time_entry(initial_time_entry)
-    projects = Briefs.list_project_briefs()
 
     socket =
       socket
       |> assign(
         changeset: changeset,
         page_title: "New Time Entry",
-        time_entry: %TimeEntry{},
+        time_entry: initial_time_entry,
         action: :new
       )
       |> assign(projects: projects)
@@ -87,7 +89,14 @@ defmodule CopilotWeb.Live.TimeEntryLive.Form do
     changeset =
       TimeTracking.change_time_entry(socket.assigns.time_entry, time_entry_params)
 
-    {:noreply, assign(socket, :changeset, changeset)}
+    time_entry = Ecto.Changeset.apply_changes(changeset)
+
+    socket =
+      socket
+      |> assign(changeset: changeset)
+      |> assign(time_entry: time_entry)
+
+    {:noreply, socket}
   end
 
   def handle_event("save", %{"time_entry" => time_entry_params}, socket) do

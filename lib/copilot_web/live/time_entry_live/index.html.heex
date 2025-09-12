@@ -20,6 +20,7 @@
         value={@selected_project_id}
         phx-change="select_project"
         name="project_id"
+        disabled={@timer_running?}
       />
     </div>
     <div class="flex-grow">
