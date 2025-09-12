@@ -27,25 +27,32 @@ defmodule CopilotWeb.Plugs.DevAuth do
       end
 
     # Always find or create the user
-    {:ok, user} = Copilot.Core.Users.find_or_create_user(user_info)
+    case Copilot.Core.Users.find_or_create_user(user_info) do
+      {:ok, user} ->
+        # If assign_to_conn is true (for browser pipeline/LiveView), put user ID in session
+        if opts[:assign_to_conn] do
+          put_session(conn, :current_user_id, user.id)
+        else
+          # For API pipeline, put header
+          conn
+          |> put_req_header(
+            "x-user-info",
+            Jason.encode!(%{
+              "provider_id" => user.provider_id,
+              "email" => user.email,
+              "name" => user.name,
+              "roles" => user.roles,
+              "customer_id" => user.customer_id
+            })
+          )
+          |> delete_req_header("x-dev-auth-override")
+        end
 
-    # If assign_to_conn is true (for browser pipeline/LiveView), put user ID in session
-    if opts[:assign_to_conn] do
-      put_session(conn, :current_user_id, user.id)
-    else
-      # For API pipeline, put header
-      conn
-      |> put_req_header(
-        "x-user-info",
-        Jason.encode!(%{
-          "provider_id" => user.provider_id,
-          "email" => user.email,
-          "name" => user.name,
-          "roles" => user.roles,
-          "customer_id" => user.customer_id
-        })
-      )
-      |> delete_req_header("x-dev-auth-override")
+      {:error, changeset} ->
+        conn
+        |> put_resp_content_type("application/json")
+        |> send_resp(:bad_request, Jason.encode!(%{error: "Failed to authenticate dev user", details: inspect(changeset.errors)}))
+        |> halt()
     end
   end
 end
