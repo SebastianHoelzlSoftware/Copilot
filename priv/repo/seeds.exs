@@ -27,21 +27,25 @@ if Mix.env() == :dev do
 
   # Seed a developer for easy testing.
   # You can grant them the developer role with: mix users.grant_role dev@copilot.com developer
-  {:ok, developer} = Users.find_or_create_user(%{
-    "provider_id" => "dev-seed-001",
-    "email" => "dev@copilot.com",
-    "name" => "Copilot Developer",
-    "customer_id" => customer.id
-  })
+  {:ok, developer} =
+    Users.find_or_create_user(%{
+      "provider_id" => "dev-seed-001",
+      "email" => "dev@copilot.com",
+      "name" => "Copilot Developer",
+      "customer_id" => customer.id
+    })
+
   IO.puts("Seeded developer: #{developer.email}")
 
   # Seed a project brief
   project_brief_attrs = %{
     title: "Develop Time Tracking Feature",
-    summary: "Develop a new time tracking feature for the Copilot application, allowing developers to log their work hours against specific projects.",
+    summary:
+      "Develop a new time tracking feature for the Copilot application, allowing developers to log their work hours against specific projects.",
     customer_id: customer.id,
     developer_id: developer.id
   }
+
   {:ok, project_brief} = Repo.insert(ProjectBrief.changeset(%ProjectBrief{}, project_brief_attrs))
   IO.puts("Seeded project brief: #{project_brief.title}")
 end

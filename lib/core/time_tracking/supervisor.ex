@@ -28,7 +28,10 @@ defmodule Copilot.Core.TimeTracking.TimerSupervisor do
   end
 
   def update_timer_description(user_id, description) do
-    GenServer.cast(Copilot.Core.TimeTracking.Timer.via_tuple(user_id), {:update_description, description})
+    GenServer.cast(
+      Copilot.Core.TimeTracking.Timer.via_tuple(user_id),
+      {:update_description, description}
+    )
   end
 
   def get_timer_description(user_id) do

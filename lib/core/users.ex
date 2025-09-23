@@ -105,15 +105,17 @@ defmodule Copilot.Core.Users do
           roles = Map.get(attrs, "roles", ["customer", "user"])
 
           if "customer" in roles do
-            customer = 
+            customer =
               if customer_id = Map.get(attrs, "customer_id") do
                 Customers.get_customer!(customer_id)
               else
-                {:ok, new_customer} = Customers.create_customer(%{name: %{company_name: attrs["name"]}})
+                {:ok, new_customer} =
+                  Customers.create_customer(%{name: %{company_name: attrs["name"]}})
+
                 new_customer
               end
 
-            with {:ok, user} <- 
+            with {:ok, user} <-
                    attrs
                    |> Map.put("customer_id", customer.id)
                    |> Map.put("roles", roles)

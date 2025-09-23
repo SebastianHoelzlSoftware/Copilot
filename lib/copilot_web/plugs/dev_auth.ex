@@ -1,7 +1,7 @@
 defmodule CopilotWeb.Plugs.DevAuth do
   @moduledoc """
   Mocks an authentication header in development.
-
+  
   In production, an API Gateway would validate a JWT and inject a similar
   header. This plug simulates that behavior for local development.
   """
@@ -51,7 +51,13 @@ defmodule CopilotWeb.Plugs.DevAuth do
       {:error, changeset} ->
         conn
         |> put_resp_content_type("application/json")
-        |> send_resp(:bad_request, Jason.encode!(%{error: "Failed to authenticate dev user", details: inspect(changeset.errors)}))
+        |> send_resp(
+          :bad_request,
+          Jason.encode!(%{
+            error: "Failed to authenticate dev user",
+            details: inspect(changeset.errors)
+          })
+        )
         |> halt()
     end
   end

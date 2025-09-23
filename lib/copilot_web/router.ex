@@ -1,9 +1,6 @@
 defmodule CopilotWeb.Router do
   use CopilotWeb, :router
 
-
-
-
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -56,7 +53,6 @@ defmodule CopilotWeb.Router do
   scope "/api", CopilotWeb do
     pipe_through :public_api
     post "/register", RegistrationController, :create
-
   end
 
   scope "/api", CopilotWeb do

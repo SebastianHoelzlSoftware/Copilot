@@ -10,7 +10,7 @@ defmodule CopilotWeb.Live.TimeEntryLive.IndexTest do
     developer = Fixtures.developer_fixture(%{customer_id: customer.id})
     project = Fixtures.project_brief_fixture(%{customer: customer})
 
-    conn = 
+    conn =
       Phoenix.ConnTest.build_conn()
       |> Phoenix.ConnTest.init_test_session(%{current_user_id: developer.id})
 

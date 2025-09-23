@@ -41,12 +41,11 @@ defmodule CopilotWeb.Components.CoreComponents do
     """
   end
 
-
   @doc """
   Renders flash notices.
-
+  
   ## Examples
-
+  
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:info} phx-mounted={show("#flash")}>Welcome Back!</.flash>
   """
@@ -54,7 +53,11 @@ defmodule CopilotWeb.Components.CoreComponents do
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
-  attr :hide_after, :integer, default: nil, doc: "the number of milliseconds to hide the flash after"
+
+  attr :hide_after, :integer,
+    default: nil,
+    doc: "the number of milliseconds to hide the flash after"
+
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
   slot :inner_block, doc: "the optional inner block that renders the flash message"
@@ -90,8 +93,6 @@ defmodule CopilotWeb.Components.CoreComponents do
     """
   end
 
-
-
   @doc """
   Renders flash messages.
   """
@@ -114,7 +115,7 @@ defmodule CopilotWeb.Components.CoreComponents do
         <%= "Attempting to reconnect" %>
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
-
+    
       <.flash
         id="server-error"
         kind={:error}
@@ -127,7 +128,7 @@ defmodule CopilotWeb.Components.CoreComponents do
         <.icon name="hero-arrow-path" class="ml-1 h-3 w-3 animate-spin" />
       </.flash>
     </div>
-    """;
+    """
   end
 
   @doc """
@@ -163,27 +164,27 @@ defmodule CopilotWeb.Components.CoreComponents do
 
   @doc """
   Renders an input with label and error messages.
-
+  
   A `Phoenix.HTML.FormField` may be passed as argument,
   which is used to retrieve the input name, id, and values.
   Otherwise all attributes may be passed explicitly.
-
+  
   ## Types
-
+  
   This function accepts all HTML input types, considering that:
-
+  
     * You may also set `type="select"` to render a `<select>` tag
-
+  
     * `type="checkbox"` is used exclusively to render boolean values
-
+  
     * For live file uploads, see `Phoenix.Component.live_file_input/1`
-
+  
   See https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input
   for more information. Unsupported types, such as hidden and radio,
   are best written directly in your templates.
-
+  
   ## Examples
-
+  
       <.input field={@form[:email]} type="email" />
       <.input name="my-input" errors={["oh no!"]} />
   """
@@ -302,7 +303,6 @@ defmodule CopilotWeb.Components.CoreComponents do
     """
   end
 
-
   @doc """
   Renders a button.
   """
@@ -371,6 +371,7 @@ defmodule CopilotWeb.Components.CoreComponents do
   Renders a list of items.
   """
   attr :rest, :global
+
   slot :item, required: true do
     attr :title, :string
   end
@@ -410,19 +411,19 @@ defmodule CopilotWeb.Components.CoreComponents do
 
   @doc """
   Renders a [Heroicon](https://heroicons.com).
-
+  
   Heroicons come in three styles – outline, solid, and mini.
   By default, the outline style is used, but solid and mini may
   be applied by using the `-solid` and `-mini` suffix.
-
+  
   You can customize the size and colors of the icons by setting
   width, height, and background color classes.
-
+  
   Icons are extracted from the `deps/heroicons` directory and bundled within
   your compiled app.css by the plugin in your `assets/tailwind.config.js`.
-
+  
   ## Examples
-
+  
       <.icon name="hero-x-mark-solid" />
       <.icon name="hero-arrow-path" class="ml-1 w-3 h-3 animate-spin" />
   """

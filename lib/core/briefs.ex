@@ -10,12 +10,12 @@ defmodule Copilot.Core.Briefs do
 
   @doc """
   Returns the list of project_briefs.
-
+  
   ## Examples
-
+  
       iex> list_project_briefs()
       [%ProjectBrief{}, ...]
-
+  
   """
   def list_project_briefs do
     Repo.all(from p in ProjectBrief, preload: [:customer])
@@ -24,7 +24,7 @@ defmodule Copilot.Core.Briefs do
   @doc """
   Returns the list of project_briefs for a given customer.
   """
-    def list_project_briefs_for_developer(developer) do
+  def list_project_briefs_for_developer(developer) do
     if developer.customer_id do
       list_project_briefs_for_customer(developer.customer)
     else
@@ -34,17 +34,17 @@ defmodule Copilot.Core.Briefs do
 
   @doc """
   Gets a single project_brief.
-
+  
   Raises `Ecto.NoResultsError` if the Project brief does not exist.
-
+  
   ## Examples
-
+  
       iex> get_project_brief!(123)
       %ProjectBrief{}
-
+  
       iex> get_project_brief!(456)
       ** (Ecto.NoResultsError)
-
+  
   """
   def get_project_brief!(id) do
     ProjectBrief
@@ -54,15 +54,15 @@ defmodule Copilot.Core.Briefs do
 
   @doc """
   Creates a project_brief.
-
+  
   ## Examples
-
+  
       iex> create_project_brief(%{field: value})
       {:ok, %ProjectBrief{}}
-
+  
       iex> create_project_brief(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def create_project_brief(attrs \\ %{}) do
     %ProjectBrief{}
@@ -88,22 +88,24 @@ defmodule Copilot.Core.Briefs do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking project_brief changes.
-
+  
   ## Examples
-
+  
       iex> change_project_brief(project_brief)
       %Ecto.Changeset{data: %ProjectBrief{}}
-
+  
   """
   def change_project_brief(%ProjectBrief{} = project_brief, attrs \\ %{}) do
     ProjectBrief.changeset(project_brief, attrs)
   end
 
   def list_project_briefs_for_customer(customer) do
-    projects = ProjectBrief
-    |> where([p], p.customer_id == ^customer.id)
-    |> Repo.all()
-    |> Repo.preload(:customer)
+    projects =
+      ProjectBrief
+      |> where([p], p.customer_id == ^customer.id)
+      |> Repo.all()
+      |> Repo.preload(:customer)
+
     projects
   end
 end

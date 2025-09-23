@@ -28,7 +28,8 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
       |> stream(:time_entries, TimeTracking.list_time_entries_for_developer(developer))
       |> assign(
         projects: projects,
-        selected_project_id: (if not Enum.empty?(projects), do: List.first(projects).id, else: nil),
+        selected_project_id:
+          if(not Enum.empty?(projects), do: List.first(projects).id, else: nil),
         timer_running?: timer_running?,
         elapsed_time: "00:00:00",
         description: description
@@ -43,7 +44,9 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
     {:ok, _} = TimeTracking.delete_time_entry(time_entry)
 
     developer = socket.assigns.current_user
-    socket = stream(socket, :time_entries, TimeTracking.list_time_entries_for_developer(developer))
+
+    socket =
+      stream(socket, :time_entries, TimeTracking.list_time_entries_for_developer(developer))
 
     {:noreply, socket}
   end

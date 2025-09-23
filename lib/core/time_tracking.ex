@@ -9,15 +9,14 @@ defmodule Copilot.Core.TimeTracking do
   alias Copilot.Core.Data.TimeEntry
   alias Copilot.Core.TimeTracking.TimerSupervisor
 
-
   @doc """
   Returns the list of time_entries.
-
+  
   ## Examples
-
+  
       iex> list_time_entries()
       [%TimeEntry{}, ...]
-
+  
   """
   def list_time_entries(params \\ %{}) do
     TimeEntry
@@ -54,12 +53,12 @@ defmodule Copilot.Core.TimeTracking do
 
   @doc """
   Returns the list of time_entries for a given project.
-
+  
   ## Examples
-
+  
       iex> list_time_entries_for_project(project)
       [%TimeEntry{}, ...]
-
+  
   """
   def list_time_entries_for_project(project) do
     Repo.all(
@@ -81,7 +80,7 @@ defmodule Copilot.Core.TimeTracking do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking time_entry changes.
-
+  
   """
   def change_time_entry(%TimeEntry{} = time_entry, attrs \\ %{}) do
     TimeEntry.changeset(time_entry, attrs)
@@ -89,31 +88,31 @@ defmodule Copilot.Core.TimeTracking do
 
   @doc """
   Gets a single time_entry.
-
+  
   Raises `Ecto.NoResultsError` if the Time entry does not exist.
-
+  
   ## Examples
-
+  
       iex> get_time_entry!(123)
       %TimeEntry{}
-
+  
       iex> get_time_entry!(456)
       ** (Ecto.NoResultsError)
-
+  
   """
   def get_time_entry!(id), do: Repo.get!(TimeEntry, id)
 
   @doc """
   Creates a time_entry.
-
+  
   ## Examples
-
+  
       iex> create_time_entry(%{field: value})
       {:ok, %TimeEntry{}}
-
+  
       iex> create_time_entry(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def create_time_entry(attrs \\ %{}) do
     %TimeEntry{}
@@ -123,15 +122,15 @@ defmodule Copilot.Core.TimeTracking do
 
   @doc """
   Updates a time_entry.
-
+  
   ## Examples
-
+  
       iex> update_time_entry(time_entry, %{field: new_value})
       {:ok, %TimeEntry{}}
-
+  
       iex> update_time_entry(time_entry, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def update_time_entry(%TimeEntry{} = time_entry, attrs) do
     time_entry

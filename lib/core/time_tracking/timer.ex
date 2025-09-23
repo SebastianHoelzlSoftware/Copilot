@@ -31,7 +31,10 @@ defmodule Copilot.Core.TimeTracking.Timer do
     ticker = Process.send_after(self(), :tick, 1000)
     new_state = %{state | ticker: ticker}
 
-    Phoenix.PubSub.broadcast(Copilot.PubSub, "user_timers:#{state.user_id}", %{event: "tick", payload: %{elapsed_seconds: elapsed_seconds}})
+    Phoenix.PubSub.broadcast(Copilot.PubSub, "user_timers:#{state.user_id}", %{
+      event: "tick",
+      payload: %{elapsed_seconds: elapsed_seconds}
+    })
 
     {:noreply, new_state}
   end
@@ -66,7 +69,8 @@ defmodule Copilot.Core.TimeTracking.Timer do
       {:error, _changeset} ->
         # The changeset is not used, so I'm ignoring it.
         # In a real application, you would probably want to log this error.
-        {:stop, :normal, nil, state} # Return nil or an error indicator if creation fails
+        # Return nil or an error indicator if creation fails
+        {:stop, :normal, nil, state}
     end
   end
 
