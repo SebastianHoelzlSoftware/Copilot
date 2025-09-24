@@ -29,6 +29,20 @@ defmodule CopilotWeb.Live.TimeEntryLive.IndexTest do
       refute has_element?(view, "button[disabled]", "Start")
     end
 
+    test "shows a message if the developer has no projects", %{} do
+      # Create a developer with no projects
+      developer = Fixtures.developer_fixture()
+
+      conn =
+        Phoenix.ConnTest.build_conn()
+        |> Phoenix.ConnTest.init_test_session(%{current_user_id: developer.id})
+
+      {:ok, view, html} = live(conn, ~p"/time-tracking")
+      assert html =~ "No Projects Assigned"
+      # When there are no projects, the entire timer control block is hidden.
+      refute has_element?(view, "button", "Start")
+    end
+
     test "starts and stops the timer", %{conn: conn, developer: developer, project: project} do
       {:ok, view, _html} = live(conn, ~p"/time-tracking")
 

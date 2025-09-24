@@ -25,13 +25,15 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
       Phoenix.PubSub.subscribe(Copilot.PubSub, "user_timers:#{developer.id}")
     end
 
+    has_projects? = not Enum.empty?(projects)
+
     socket =
       socket
       |> stream(:time_entries, TimeTracking.list_time_entries_for_developer(developer))
       |> assign(
         projects: projects,
-        selected_project_id:
-          if(not Enum.empty?(projects), do: List.first(projects).id, else: nil),
+        has_projects?: has_projects?,
+        selected_project_id: if(has_projects?, do: List.first(projects).id, else: nil),
         timer_running?: timer_running?,
         elapsed_time: elapsed_time,
         description: description
