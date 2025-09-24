@@ -12,11 +12,13 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
     projects = Briefs.list_project_briefs_for_developer(developer)
     timer_running? = TimeTracking.is_timer_running?(developer.id)
 
-    description =
+    {description, elapsed_time} =
       if timer_running? do
-        TimeTracking.get_timer_description(developer.id)
+        state = TimeTracking.get_timer_state(developer.id)
+        elapsed_time = format_time(state.elapsed_seconds)
+        {state.description, elapsed_time}
       else
-        ""
+        {"", "00:00:00"}
       end
 
     if connected?(socket) do
@@ -31,7 +33,7 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
         selected_project_id:
           if(not Enum.empty?(projects), do: List.first(projects).id, else: nil),
         timer_running?: timer_running?,
-        elapsed_time: "00:00:00",
+        elapsed_time: elapsed_time,
         description: description
       )
 

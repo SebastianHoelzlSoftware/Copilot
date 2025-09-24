@@ -24,17 +24,25 @@ defmodule Copilot.Core.TimeTracking.TimerSupervisor do
   end
 
   def stop_timer(user_id) do
-    GenServer.call(Copilot.Core.TimeTracking.Timer.via_tuple(user_id), :stop)
+    GenServer.call(via_tuple(user_id), :stop)
   end
 
   def update_timer_description(user_id, description) do
     GenServer.cast(
-      Copilot.Core.TimeTracking.Timer.via_tuple(user_id),
+      via_tuple(user_id),
       {:update_description, description}
     )
   end
 
   def get_timer_description(user_id) do
-    GenServer.call(Copilot.Core.TimeTracking.Timer.via_tuple(user_id), :get_description)
+    GenServer.call(via_tuple(user_id), :get_description)
+  end
+
+  def get_timer_state(user_id) do
+    GenServer.call(via_tuple(user_id), :get_state)
+  end
+
+  defp via_tuple(user_id) do
+    {:via, Registry, {Copilot.Registry, {"timer", user_id}}}
   end
 end

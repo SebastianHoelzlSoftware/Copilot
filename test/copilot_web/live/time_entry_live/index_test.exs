@@ -78,5 +78,37 @@ defmodule CopilotWeb.Live.TimeEntryLive.IndexTest do
       refute render(view) =~ time_entry.description
       refute time_entry in TimeTracking.list_time_entries_for_developer(developer)
     end
+
+    test "re-joins a running timer", %{conn: conn} do
+      # 1. Initial mount and start the timer
+      {:ok, view, _html} = live(conn, ~p"/time-tracking")
+
+      view
+      |> element("form")
+      |> render_change(%{"description" => "Testing re-join"})
+
+      view
+      |> element("form")
+      |> render_submit()
+
+      assert has_element?(view, "button[disabled]", "Start")
+
+      # 2. Disconnect the LiveView, simulating the user navigating away
+      # We manually stop the LiveView process to simulate a disconnect.
+      Process.unlink(view.pid)
+      Process.exit(view.pid, :normal)
+
+      # 3. Wait for a couple of seconds
+      Process.sleep(2100)
+
+      # 4. Reconnect a new LiveView for the same user
+      {:ok, new_view, new_html} = live(conn, ~p"/time-tracking")
+
+      # 5. Assert that the new view reflects the running timer's state
+      assert new_html =~ "Testing re-join"
+      assert has_element?(new_view, "button[disabled]", "Start")
+      refute has_element?(new_view, "button[disabled]", "Stop")
+      assert new_html =~ ~r/00:00:0[2-9]/
+    end
   end
 end

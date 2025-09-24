@@ -47,6 +47,15 @@ defmodule Copilot.Core.TimeTracking.Timer do
     {:reply, state.description, state}
   end
 
+  def handle_call(:get_state, _from, state) do
+    elapsed_seconds = DateTime.diff(DateTime.utc_now(), state.start_time)
+    reply = %{
+      description: state.description,
+      elapsed_seconds: elapsed_seconds
+    }
+    {:reply, reply, state}
+  end
+
   def handle_call(:stop, _from, state) do
     Phoenix.PubSub.unsubscribe(Copilot.PubSub, "user_timers:#{state.user_id}")
     Process.cancel_timer(state.ticker)
@@ -74,7 +83,7 @@ defmodule Copilot.Core.TimeTracking.Timer do
     end
   end
 
-  def via_tuple(user_id) do
+  defp via_tuple(user_id) do
     {:via, Registry, {Copilot.Registry, {"timer", user_id}}}
   end
 end
