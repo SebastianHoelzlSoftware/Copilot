@@ -23,6 +23,11 @@ defmodule Copilot.Core.TimeTracking.Timer do
       ticker: ticker
     }
 
+    Phoenix.PubSub.broadcast(Copilot.PubSub, "user_timers:#{user_id}", %{
+      event: "started",
+      payload: %{description: description}
+    })
+
     {:ok, state}
   end
 
@@ -57,7 +62,6 @@ defmodule Copilot.Core.TimeTracking.Timer do
   end
 
   def handle_call(:stop, _from, state) do
-    Phoenix.PubSub.unsubscribe(Copilot.PubSub, "user_timers:#{state.user_id}")
     Process.cancel_timer(state.ticker)
     end_time = DateTime.utc_now()
 
@@ -73,6 +77,13 @@ defmodule Copilot.Core.TimeTracking.Timer do
       {:ok, time_entry} ->
         # Preload the developer and project associations before returning
         time_entry = Copilot.Repo.preload(time_entry, [:developer, :project])
+
+        # Broadcast the stop event to other connected clients *after* stopping and creating the entry.
+        Phoenix.PubSub.broadcast(Copilot.PubSub, "user_timers:#{state.user_id}", %{
+          event: "stopped",
+          payload: %{time_entry: time_entry}
+        })
+
         {:stop, :normal, time_entry, state}
 
       {:error, _changeset} ->

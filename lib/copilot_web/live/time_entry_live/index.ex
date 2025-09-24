@@ -74,7 +74,6 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
 
   def handle_event("stop_timer", _, socket) do
     developer = socket.assigns.current_user
-    time_entry = TimeTracking.stop_timer(developer.id)
 
     socket =
       assign(socket,
@@ -83,14 +82,10 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
         description: ""
       )
 
-    socket =
-      if time_entry do
-        stream(socket, :time_entries, TimeTracking.list_time_entries_for_developer(developer))
-      else
-        # You might want to add a flash message here to notify the user
-        # that saving the time entry failed.
-        socket
-      end
+    # The Timer process will broadcast the "stopped" event with the new time_entry.
+    # This same LiveView will receive that event in handle_info and update its stream,
+    # just like any other connected client. This simplifies the logic and ensures consistency.
+    TimeTracking.stop_timer(developer.id)
 
     {:noreply, socket}
   end
@@ -99,6 +94,24 @@ defmodule CopilotWeb.Live.TimeEntryLive.Index do
   def handle_info(%{event: "tick", payload: %{elapsed_seconds: elapsed_seconds}}, socket) do
     elapsed_time = format_time(elapsed_seconds)
     {:noreply, assign(socket, :elapsed_time, elapsed_time)}
+  end
+
+  def handle_info(%{event: "started", payload: %{description: description}}, socket) do
+    socket =
+      assign(socket,
+        timer_running?: true,
+        description: description
+      )
+
+    {:noreply, socket}
+  end
+
+  def handle_info(%{event: "stopped", payload: %{time_entry: time_entry}}, socket) do
+    socket =
+      assign(socket, timer_running?: false, elapsed_time: "00:00:00", description: "")
+      |> stream_insert(:time_entries, time_entry, at: 0)
+
+    {:noreply, socket}
   end
 
   defp format_time(total_seconds) do

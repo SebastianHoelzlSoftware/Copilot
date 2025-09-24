@@ -110,5 +110,52 @@ defmodule CopilotWeb.Live.TimeEntryLive.IndexTest do
       refute has_element?(new_view, "button[disabled]", "Stop")
       assert new_html =~ ~r/00:00:0[2-9]/
     end
+
+    test "updates the timer in real-time via PubSub", %{conn: conn, developer: developer} do
+      # 1. Connect two LiveViews for the same user
+      # Subscribe the test process to the user's timer topic to listen for events.
+      Phoenix.PubSub.subscribe(Copilot.PubSub, "user_timers:#{developer.id}")
+
+      {:ok, view_a, _html_a} = live(conn, ~p"/time-tracking")
+      {:ok, view_b, html_b} = live(conn, ~p"/time-tracking")
+
+      # 2. Assert initial state for the second view
+      assert html_b =~ "00:00:00"
+      refute has_element?(view_b, "button[disabled]", "Start")
+
+      # 3. Start the timer in the first view
+      view_a
+      |> element("form")
+      |> render_submit()
+
+      # 4. Wait for a tick and assert the second view was updated
+      Process.sleep(1100)
+      assert render(view_b) =~ ~r/00:00:0[1-9]/
+      assert has_element?(view_b, "button[disabled]", "Start")
+
+      # 5. Stop the timer in the first view
+      render_click(view_a, "stop_timer")
+
+      # Deterministically wait for the "stopped" event to be broadcast.
+      # This ensures that view_b has received and processed the message
+      # before we make our assertions, avoiding a race condition.
+      assert_receive %{event: "stopped", payload: %{time_entry: time_entry}}
+
+      # 6. Assert the second view was stopped and the new entry is visible.
+      # We use a helper to wait for the async update to appear in the DOM.
+      assert_eventually(fn ->
+        assert has_element?(view_b, "##{time_entry.id} td:contains(\"#{developer.name}\")")
+      end)
+    end
+  end
+
+  defp assert_eventually(check_fun, retries \\ 10, delay \\ 10) do
+    try do
+      check_fun.()
+    rescue
+      ExUnit.AssertionError ->
+        if retries > 0, do: :timer.sleep(delay)
+        if retries > 0, do: assert_eventually(check_fun, retries - 1, delay)
+    end
   end
 end
