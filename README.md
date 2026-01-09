@@ -34,10 +34,16 @@ For the Time Manager or Time Tracker Service view [TIME_MANAGER.md](docs/TIME_MA
 | mix phx.server | Start the Phoenix web server. |
 | mix test --trace | Run the test suite with tracing. |
 | mix compile | Compile the project. |
+| BASH SHELL ALIASES. PLEASE SEE BELOW
 | copilot | Loads environment variables, run tests and then start the server. |
 | copilot_apitest | Copies over the changes from external_file_copies/api_test.ex to <ApiTest-Project>/lib/api_test.ex and compiles and runs the test suite in the external directory. |
 | checkin_apitest | Checks in the project in the external directory to git. Requires commit message parameter. |
 | push_apitest | Pushes the project in the external directory to git. Returns to copilot root directory afterwards. |
+
+```
+alias copilot="source ~/copilot/.env && cd ~/copilot && mix test && mix phx.server"
+alias copilot_apitest='(cd ~/api_test && cp ~/copilot/external_file_copies/api_test.ex lib/api_test.ex && mix compile && mix run -e "ApiTest.run()")'
+
 
 
 #### TODO:
