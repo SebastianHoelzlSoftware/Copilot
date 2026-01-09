@@ -52,7 +52,8 @@ Note that the `copilot_apitest` command needs the apitest project present (Not i
 ## Setup
 1. Clone the Repo.
 2. Add the above alias for the `copilot` command to your ~/.bashrc shell source file. Adjust the paths to the repo if needed. For Windows do it differently.
-3. If you want to use the Logflase Logger Backend add the following to the project's .env file:
+3. Set up a postgres database and adjust the database credentials in both the `test.exs` and `dev.exs` in the `config` folder in the project's root directory.
+4. If you want to use the Logflase Logger Backend add the following to the project's .env file:
 
       ```
       export LOGFLARE_DEV_API_KEY="XXXXX...XXX"
