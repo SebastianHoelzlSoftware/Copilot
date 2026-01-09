@@ -40,10 +40,13 @@ For the Time Manager or Time Tracker Service view [TIME_MANAGER.md](docs/TIME_MA
 | checkin_apitest | Checks in the project in the external directory to git. Requires commit message parameter. |
 | push_apitest | Pushes the project in the external directory to git. Returns to copilot root directory afterwards. |
 
+
+# Shell Aliases (Compare table above)
+
 ```
 alias copilot="source ~/copilot/.env && cd ~/copilot && mix test && mix phx.server"
 alias copilot_apitest='(cd ~/api_test && cp ~/copilot/external_file_copies/api_test.ex lib/api_test.ex && mix compile && mix run -e "ApiTest.run()")'
-
+```
 
 
 #### TODO:
