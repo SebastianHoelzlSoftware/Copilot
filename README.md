@@ -8,6 +8,9 @@
       ░╚════╝░░╚════╝░╚═╝░░░░░╚═╝╚══════╝░╚════╝░░░░╚═╝░░░
 ```
 
+> [!WARNING]
+> Work in Progress. With the server running, a part of the API and the Time tracking live view feature are already available.
+
 Docs:
 
 1. [PROJECT_VISION](docs/PROJECT_VISION.md)
@@ -63,7 +66,7 @@ Note that the `copilot_apitest` command needs the apitest project present (Not i
 
 
 ## Run App
-Start app with the `copilot` shell alias.
+Start app with the `copilot` shell alias. Visit `localhost:4000` for the only live view feature that exist so far or check the API with postman etc.
 
 
 #### TODO:
