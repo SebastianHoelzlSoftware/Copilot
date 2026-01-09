@@ -46,6 +46,7 @@ For the Time Manager or Time Tracker Service view [TIME_MANAGER.md](docs/TIME_MA
 alias copilot="source ~/copilot/.env && cd ~/copilot && mix test && mix phx.server"
 alias copilot_apitest='(cd ~/api_test && cp ~/copilot/external_file_copies/api_test.ex lib/api_test.ex && mix compile && mix run -e "ApiTest.run()")'
 ```
+Note that the copilot_apitest command needs the apitest project present (Not included in this repo yet).
 
 ## Setup
 Clone Repo. Add the above aliases to your ~/.bashrc shell source file. Adjust the paths if needed. 
